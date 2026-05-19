@@ -1,0 +1,170 @@
+{
+  "epic_id": "EP-01 + EP-02",
+  "epic_title": "Platform Foundation & Customer Registration (Sprint 1)",
+  "mode": "greenfield",
+
+  "discovery": {
+    "existing_components_analysed": [],
+    "existing_docs_analysed": [
+      "kb-L0-next-enterprise-architecture.md — system landscape, integration patterns, security architecture, data architecture",
+      "kb-L0-next-retail-domain.md — channels, customer behaviour, terminology, regulatory context",
+      "loyalty-program-requirements.json — 30 FRs, 9 NFRs",
+      "loyalty-program-epics.json — EP-01 (7 features), EP-02 (4 features)",
+      "stories/EP-01-stories.json — 14 stories, 54 pts",
+      "stories/EP-02-stories.json — 10 stories, 25 pts"
+    ]
+  },
+
+  "change_impact": {
+    "screens_modified": [],
+    "screens_new": [
+      {"route": "/", "purpose": "App shell with bottom navigation (Home, History, QR, Profile)", "stories": ["US-011"]},
+      {"route": "/auth/register", "purpose": "Multi-channel registration form (name, email, phone, password, T&C)", "stories": ["US-015", "US-016", "US-023"]},
+      {"route": "/auth/verify", "purpose": "OTP verification screen (6-digit input, resend, countdown)", "stories": ["US-018", "US-019"]},
+      {"route": "/auth/login", "purpose": "Email/password login with social login buttons", "stories": ["US-020", "US-021"]},
+      {"route": "/auth/reset-password", "purpose": "Password reset request and new password form", "stories": ["US-022"]},
+      {"route": "/notifications", "purpose": "In-app notification center (list, read/unread, badge)", "stories": ["US-010"]}
+    ],
+    "apis_modified": [],
+    "apis_new": [
+      {"endpoint": "/v1/auth/register", "method": "POST", "purpose": "Customer registration", "request_schema": "{name, email, phone, password, t_and_c_version}", "response_schema": "{customer_id, status: pending_verification}", "stories": ["US-015", "US-016", "US-017"]},
+      {"endpoint": "/v1/auth/verify-otp", "method": "POST", "purpose": "OTP verification", "request_schema": "{customer_id, otp_code}", "response_schema": "{verified: boolean, remaining_attempts}", "stories": ["US-018", "US-019"]},
+      {"endpoint": "/v1/auth/resend-otp", "method": "POST", "purpose": "Resend OTP", "request_schema": "{customer_id}", "response_schema": "{sent: boolean, next_resend_at}", "stories": ["US-018"]},
+      {"endpoint": "/v1/auth/login", "method": "POST", "purpose": "Email/password login", "request_schema": "{email, password}", "response_schema": "{access_token, refresh_token, expires_in}", "stories": ["US-020"]},
+      {"endpoint": "/v1/auth/login/social", "method": "POST", "purpose": "Social login (Google/Apple)", "request_schema": "{provider, id_token}", "response_schema": "{access_token, refresh_token, is_new_account}", "stories": ["US-021"]},
+      {"endpoint": "/v1/auth/refresh", "method": "POST", "purpose": "Refresh access token", "request_schema": "{refresh_token}", "response_schema": "{access_token, expires_in}", "stories": ["US-020"]},
+      {"endpoint": "/v1/auth/reset-password/request", "method": "POST", "purpose": "Request password reset link", "request_schema": "{email}", "response_schema": "{message: 'If account exists, reset link sent'}", "stories": ["US-022"]},
+      {"endpoint": "/v1/auth/reset-password/confirm", "method": "POST", "purpose": "Set new password with reset token", "request_schema": "{token, new_password}", "response_schema": "{success: boolean}", "stories": ["US-022"]},
+      {"endpoint": "/v1/notifications", "method": "GET", "purpose": "List customer notifications", "request_schema": "?page=1&limit=20", "response_schema": "{notifications: [{id, title, body, type, read, created_at}], unread_count, total}", "stories": ["US-010"]},
+      {"endpoint": "/v1/notifications/{id}/read", "method": "PATCH", "purpose": "Mark notification as read", "request_schema": "{}", "response_schema": "{success: boolean}", "stories": ["US-010"]},
+      {"endpoint": "/health", "method": "GET", "purpose": "Service health check", "request_schema": "", "response_schema": "{status, version, uptime}", "stories": ["US-002"]},
+      {"endpoint": "/health/ready", "method": "GET", "purpose": "Readiness probe (DB, cache, messaging connected)", "request_schema": "", "response_schema": "{ready: boolean, checks: {db, cache, messaging}}", "stories": ["US-002"]}
+    ],
+    "handlers_modified": [],
+    "handlers_new": [
+      {"handler": "RegisterCustomerCommand", "purpose": "Create customer account in pending state, trigger OTP", "pattern": "Command", "stories": ["US-015"]},
+      {"handler": "VerifyOtpCommand", "purpose": "Validate OTP, activate account", "pattern": "Command", "stories": ["US-018"]},
+      {"handler": "LoginCommand", "purpose": "Authenticate credentials, issue tokens", "pattern": "Command", "stories": ["US-020"]},
+      {"handler": "SocialLoginCommand", "purpose": "Validate social token, create/link account, issue tokens", "pattern": "Command", "stories": ["US-021"]},
+      {"handler": "RequestPasswordResetCommand", "purpose": "Generate reset token, send email", "pattern": "Command", "stories": ["US-022"]},
+      {"handler": "ConfirmPasswordResetCommand", "purpose": "Validate token, update password, invalidate sessions", "pattern": "Command", "stories": ["US-022"]},
+      {"handler": "GetNotificationsQuery", "purpose": "Retrieve paginated notifications for customer", "pattern": "Query", "stories": ["US-010"]},
+      {"handler": "SendNotificationCommand", "purpose": "Consume event, render template, dispatch via push/email", "pattern": "Command", "stories": ["US-009"]},
+      {"handler": "RecordConsentCommand", "purpose": "Store T&C acceptance with version and timestamp", "pattern": "Command", "stories": ["US-023", "US-024"]}
+    ],
+    "tables_modified": [],
+    "tables_new": [
+      {"table": "customers", "columns": ["id: UUID PK", "email: VARCHAR(255) UNIQUE NOT NULL", "phone: VARCHAR(20)", "name: VARCHAR(255)", "password_hash: VARCHAR(255)", "status: ENUM(pending_verification, active, suspended, deleted)", "tier_id: UUID FK NULL", "loyalty_id: VARCHAR(10) UNIQUE", "created_at: TIMESTAMPTZ", "updated_at: TIMESTAMPTZ", "deleted_at: TIMESTAMPTZ NULL"], "purpose": "Core customer identity and account", "stories": ["US-015"]},
+      {"table": "otp_codes", "columns": ["id: UUID PK", "customer_id: UUID FK", "code_hash: VARCHAR(255)", "purpose: ENUM(registration, password_reset, email_change, phone_change)", "expires_at: TIMESTAMPTZ", "used_at: TIMESTAMPTZ NULL", "attempts: INT DEFAULT 0", "created_at: TIMESTAMPTZ"], "purpose": "OTP storage with expiry and attempt tracking", "stories": ["US-018"]},
+      {"table": "refresh_tokens", "columns": ["id: UUID PK", "customer_id: UUID FK", "token_hash: VARCHAR(255)", "device_info: VARCHAR(255)", "expires_at: TIMESTAMPTZ", "revoked_at: TIMESTAMPTZ NULL", "created_at: TIMESTAMPTZ"], "purpose": "Refresh token storage for session management", "stories": ["US-020"]},
+      {"table": "social_accounts", "columns": ["id: UUID PK", "customer_id: UUID FK", "provider: ENUM(google, apple)", "provider_user_id: VARCHAR(255)", "email: VARCHAR(255)", "created_at: TIMESTAMPTZ"], "purpose": "Linked social login accounts", "stories": ["US-021"]},
+      {"table": "consents", "columns": ["id: UUID PK", "customer_id: UUID FK", "type: ENUM(terms_and_conditions, marketing_email, marketing_push)", "version: VARCHAR(20)", "accepted: BOOLEAN", "ip_address: VARCHAR(45)", "accepted_at: TIMESTAMPTZ"], "purpose": "Consent records for GDPR compliance", "stories": ["US-023", "US-024"]},
+      {"table": "notifications", "columns": ["id: UUID PK", "customer_id: UUID FK", "title: VARCHAR(255)", "body: TEXT", "type: ENUM(transactional, promotional, system)", "channel: ENUM(push, email, in_app)", "read_at: TIMESTAMPTZ NULL", "delivered_at: TIMESTAMPTZ NULL", "created_at: TIMESTAMPTZ"], "purpose": "In-app notification center storage", "stories": ["US-010"]},
+      {"table": "push_tokens", "columns": ["id: UUID PK", "customer_id: UUID FK", "platform: ENUM(ios, android, web)", "token: VARCHAR(500)", "active: BOOLEAN DEFAULT TRUE", "created_at: TIMESTAMPTZ", "updated_at: TIMESTAMPTZ"], "purpose": "Device push notification tokens", "stories": ["US-012"]},
+      {"table": "notification_templates", "columns": ["id: UUID PK", "event_type: VARCHAR(100) UNIQUE", "title_template: VARCHAR(255)", "body_template: TEXT", "channels: VARCHAR(100)[]", "active: BOOLEAN DEFAULT TRUE", "updated_at: TIMESTAMPTZ"], "purpose": "Configurable notification templates", "stories": ["US-009"]},
+      {"table": "audit_logs", "columns": ["id: UUID PK", "actor_type: ENUM(customer, staff, system)", "actor_id: UUID", "action: VARCHAR(100)", "entity_type: VARCHAR(50)", "entity_id: UUID", "before_state: JSONB NULL", "after_state: JSONB NULL", "ip_address: VARCHAR(45)", "correlation_id: UUID", "created_at: TIMESTAMPTZ"], "purpose": "Immutable audit trail (append-only, no UPDATE/DELETE)", "stories": ["US-023"]}
+    ],
+    "integrations_affected": [],
+    "infrastructure_new": [
+      {"component": "Kubernetes Cluster + PostgreSQL + Redis + Kafka", "purpose": "Core platform infrastructure provisioned via Terraform IaC", "stories": ["US-001"]},
+      {"component": "API Versioning Middleware", "purpose": "URL-path versioning (/v1/) and standardised error response format", "stories": ["US-003"]},
+      {"component": "Structured Logging Pipeline", "purpose": "JSON logging with correlation_id, Prometheus metrics exporter, dashboards", "stories": ["US-004"]},
+      {"component": "Alerting Rules", "purpose": "SLA breach alerts: latency >2s, error rate >1%, availability drop", "stories": ["US-005"]},
+      {"component": "Design System Component Library", "purpose": "Shared UI components (buttons, forms, cards, modals, nav) — WCAG 2.1 AA", "stories": ["US-006", "US-007"]},
+      {"component": "CI/CD Pipeline", "purpose": "Git → lint → test → SAST → build → deploy staging → approve → deploy prod → rollback", "stories": ["US-008"]},
+      {"component": "Web App Scaffold", "purpose": "React SPA: routing, responsive layout, auth guard, header/footer", "stories": ["US-013"]},
+      {"component": "Error Boundary & Version Check", "purpose": "Global error handler, force-update modal, graceful crash recovery", "stories": ["US-014"]}
+    ],
+    "integrations_new": [
+      {"system": "Email Provider (SendGrid/SES)", "protocol": "REST API", "purpose": "Transactional emails: OTP, password reset, welcome", "stories": ["US-009", "US-018", "US-022"]},
+      {"system": "Firebase Cloud Messaging (FCM)", "protocol": "REST API", "purpose": "Android push notifications", "stories": ["US-009", "US-012"]},
+      {"system": "Apple Push Notification Service (APNs)", "protocol": "HTTP/2", "purpose": "iOS push notifications", "stories": ["US-009", "US-012"]},
+      {"system": "Google OAuth", "protocol": "OAuth 2.0 / OIDC", "purpose": "Social login — Google", "stories": ["US-021"]},
+      {"system": "Apple Sign In", "protocol": "OAuth 2.0 / OIDC", "purpose": "Social login — Apple", "stories": ["US-021"]}
+    ]
+  },
+
+  "architecture_decisions": [
+    {
+      "id": "ADR-01",
+      "title": "PostgreSQL as primary database",
+      "context": "Loyalty program requires ACID transactions for points ledger (strong consistency per NFR-08). Need pgvector extension for future personalisation.",
+      "decision": "Use PostgreSQL as the single relational database for all loyalty services in Sprint 1. Points ledger requires row-level locking for concurrent redemption safety.",
+      "consequences": "Strong consistency guaranteed. Horizontal read scaling via read replicas. Must manage connection pooling (PgBouncer). Schema migrations via versioned migration tool.",
+      "kb_reference": "kb-L0-next-enterprise-architecture §9.1 (Own database, PostgreSQL, ACID)"
+    },
+    {
+      "id": "ADR-02",
+      "title": "JWT + Refresh Token for customer authentication",
+      "context": "Customers access via mobile app (long sessions) and web (shorter sessions). Need stateless auth for horizontal scaling.",
+      "decision": "Short-lived JWT access tokens (15 min) + long-lived refresh tokens (30 days mobile, 7 days web). Refresh tokens stored in DB for revocation capability.",
+      "consequences": "Stateless verification for most requests (no DB hit). Revocation requires checking refresh token on renewal. Token rotation on each refresh prevents replay.",
+      "kb_reference": "kb-L0-next-enterprise-architecture §5.2 (Authentication Patterns)"
+    },
+    {
+      "id": "ADR-03",
+      "title": "Event-driven notification delivery",
+      "context": "Multiple features trigger notifications (points earned, redeemed, expired, tier change). Notification delivery must not block business logic.",
+      "decision": "Business services emit domain events (e.g., points.earned). Notification service consumes events asynchronously, renders templates, dispatches via appropriate channel.",
+      "consequences": "Decoupled: business logic unaffected by notification failures. Retry with backoff on delivery failure. Dead letter queue for undeliverable notifications.",
+      "kb_reference": "kb-L0-next-enterprise-architecture §4.2 (Asynchronous Event-Driven patterns)"
+    },
+    {
+      "id": "ADR-04",
+      "title": "Monorepo with service-per-bounded-context",
+      "context": "Sprint 1 establishes foundation. Team is small. Need fast iteration without premature distribution complexity.",
+      "decision": "Monorepo with clear module boundaries: auth-service, notification-service, loyalty-core (Sprint 2+). Deploy as separate containers from same repo. Shared libraries for common concerns (logging, auth middleware, error handling).",
+      "consequences": "Fast development, shared tooling, atomic commits across services. Must enforce module boundaries via linting. Can extract to separate repos later if team grows.",
+      "kb_reference": "kb-L0-next-enterprise-architecture §2.1 (Microservices architecture)"
+    },
+    {
+      "id": "ADR-05",
+      "title": "Redis for session cache and rate limiting",
+      "context": "Rate limiting (registration, OTP, login) needs shared state across service instances. Balance cache (Sprint 2) needs sub-500ms reads.",
+      "decision": "Redis cluster for: rate limit counters (sliding window), session metadata, and future points balance cache. TTL-based expiry for all keys.",
+      "consequences": "Fast reads for rate limiting without DB load. Must handle Redis unavailability gracefully (fail-open for reads, fail-closed for writes). Cluster mode for HA.",
+      "kb_reference": "kb-L0-next-enterprise-architecture §3.2 (Caching: Redis)"
+    },
+    {
+      "id": "ADR-06",
+      "title": "Kafka for domain events",
+      "context": "Need reliable event delivery for notifications, future analytics, and cross-service communication. Must guarantee at-least-once delivery.",
+      "decision": "Kafka (or managed equivalent: MSK/Confluent/Event Hubs) for all domain events. Topics: customer.registered, notification.send, points.earned (Sprint 2+). Consumer groups per service.",
+      "consequences": "Durable event log enables replay. Partition by customer_id for ordering. Must handle idempotent consumers (deduplication). Schema registry for contract evolution.",
+      "kb_reference": "kb-L0-next-enterprise-architecture §4.2 (Domain Events: Kafka)"
+    },
+    {
+      "id": "ADR-07",
+      "title": "Cross-platform mobile with React Native",
+      "context": "Need iOS + Android app. Small team. Design system must be shared. Barcode scanning and push notifications required.",
+      "decision": "React Native for mobile app. Shared component library between web (React) and mobile (React Native) where possible. Native modules for push tokens and biometric auth.",
+      "consequences": "Single codebase for both platforms. Faster iteration. Some native bridge work for push/biometric. Performance acceptable for loyalty app (not gaming/video).",
+      "kb_reference": "kb-L0-next-enterprise-architecture §3.1 (Frontend — mobile)"
+    }
+  ],
+
+  "risks": [
+    {"risk": "Email deliverability for OTP — emails may land in spam", "impact": "high", "mitigation": "Use dedicated transactional email domain with SPF/DKIM/DMARC. Monitor delivery rates. Provide 'resend' with clear instructions to check spam."},
+    {"risk": "Social login provider outage blocks registration/login", "impact": "medium", "mitigation": "Social login is optional — email/password always available as fallback. Circuit breaker on social provider calls (3 failures → 30s break)."},
+    {"risk": "Rate limiting too aggressive blocks legitimate users", "impact": "medium", "mitigation": "Start with generous limits (5 registrations/IP/hour, 3 OTPs/10min). Monitor false positive rate. Make limits configurable without code deploy."},
+    {"risk": "Push token registration fails silently on some Android devices", "impact": "low", "mitigation": "Retry token registration on app foreground. Fall back to email for notifications if no valid push token."},
+    {"risk": "Database schema changes in Sprint 2 require migration of Sprint 1 data", "impact": "medium", "mitigation": "Design tables with nullable columns for future fields. Use versioned migrations. All Sprint 1 tables designed with Sprint 2-4 needs in mind."}
+  ],
+
+  "dependency_order": [
+    "US-001 (Infrastructure) must complete first — all other stories depend on cluster + DB",
+    "US-008 (CI/CD) should complete early Sprint 1 — enables automated deployment for all subsequent work",
+    "US-006 (Design System Core) and US-001 can run in parallel — no dependency",
+    "US-002 (API Gateway) depends on US-001 — needs cluster to deploy to",
+    "US-004 (Logging) depends on US-001 — needs cluster",
+    "US-009 (Notification Service) depends on US-001 — needs Kafka + email provider",
+    "US-011 (App Shell) depends on US-006 — needs design system components",
+    "US-015 (Registration) depends on US-002 (gateway) + US-006 (design system)",
+    "US-018 (OTP) depends on US-015 — needs account to verify",
+    "US-020 (Login) depends on US-018 — needs verified account",
+    "US-021 (Social Login) depends on US-020 — extends login flow",
+    "US-023 (T&C) depends on US-015 — part of registration flow"
+  ],
+
+  "reasoning": "Sprint 1 establishes the complete technical foundation and customer identity layer. Architecture decisions prioritise simplicity (monorepo, single DB) while maintaining clear boundaries for Sprint 2+ extraction. PostgreSQL chosen for ACID guarantees on the financial ledger. Event-driven notifications decouple business logic from delivery. JWT auth enables stateless horizontal scaling. All tables designed with future sprints in mind (nullable columns for tier_id, loyalty fields). The dependency order ensures infrastructure is ready before application code, and design system is ready before UI screens."
+}

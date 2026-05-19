@@ -1,0 +1,754 @@
+{
+  "epic_id": "EP-06",
+  "epic_title": "Loyalty Tiers, Promotions & Admin Portal",
+  "mode": "greenfield",
+  "total_stories": 18,
+  "total_story_points": 68,
+  "stories": [
+    {
+      "story_id": "US-080",
+      "feature_id": "F-06.1",
+      "title": "Tier Configuration & Auto-Upgrade on Points Threshold",
+      "user_story": "As Clara (loyalty customer), I want to be automatically upgraded to a higher tier when my lifetime points cross the threshold, so that I immediately enjoy better rewards",
+      "acceptance_criteria": [
+        "Given tiers are configured (Bronze 0-999, Silver 1000-4999, Gold 5000-19999, Platinum 20000+), When my lifetime points cross a tier threshold, Then my tier is immediately upgraded and the new tier is reflected on my dashboard within 2 seconds",
+        "Given I am upgraded to a new tier, When the upgrade occurs, Then I receive a push notification: 'Congratulations! You've reached {tier} status!'",
+        "Given my tier is upgraded, When my earn rate is calculated on the next purchase, Then the new tier multiplier is applied (Silver 1.25x, Gold 1.5x, Platinum 2x)",
+        "Given the tier upgrade notification, When read by a screen reader, Then it announces the tier name and new benefits clearly"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-26 \u2014 Loyalty Tier System \u2014 configurable tiers, auto-upgrade, configurable benefits"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (Cloud SQL PostgreSQL)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: tier evaluation logic + multiplier application + notification + real-time display. Immediate upgrade provides instant gratification driving engagement."
+    },
+    {
+      "story_id": "US-081",
+      "feature_id": "F-06.1",
+      "title": "Annual Tier Downgrade Review with Warning",
+      "user_story": "As Nathan (loyalty customer), I want to be warned before a tier downgrade and given time to maintain my status, so that I don't lose benefits unexpectedly",
+      "acceptance_criteria": [
+        "Given the annual review date is approaching, When I haven't maintained my tier threshold in the trailing 12 months, Then I receive a notification 30 days before: 'Your {current_tier} status is at risk. Earn {points_needed} more points by {date} to keep your benefits.'",
+        "Given 7 days remain before downgrade, When I still haven't met the threshold, Then I receive an urgent notification: 'Last chance! {points_needed} points needed by {date} to keep {tier} status.'",
+        "Given the annual review date arrives, When I haven't maintained the threshold, Then my tier is downgraded by one level and I'm notified: 'Your tier has changed to {new_tier}. Keep earning to upgrade again!'",
+        "Given I earn enough points before the review date, When the threshold is met, Then no downgrade occurs and I receive: 'Great news! You've maintained your {tier} status for another year.'"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-080"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-26 \u2014 Loyalty Tier System \u2014 annual downgrade, configurable review date"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: batch job + 30-day/7-day warning logic + downgrade execution + positive path (maintained). Two-stage warning gives customers time to act, reducing churn."
+    },
+    {
+      "story_id": "US-082",
+      "feature_id": "F-06.1",
+      "title": "Tier Progress Display on Dashboard",
+      "user_story": "As Clara (loyalty customer), I want to see my progress toward the next tier on my dashboard, so that I'm motivated to keep earning",
+      "acceptance_criteria": [
+        "Given I am logged in, When I view my dashboard, Then I see a progress bar showing my current lifetime points relative to the next tier threshold with label: '{current_points} / {next_threshold} points to {next_tier}'",
+        "Given I am at the highest tier (Platinum), When I view the progress bar, Then it shows 'Platinum \u2014 You're at the top!' with a full progress bar",
+        "Given the progress bar, When navigated by screen reader, Then it announces current tier, points earned, points needed, and next tier name"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-080"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-26 \u2014 Loyalty Tier System \u2014 tier displayed on dashboard"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a79 Frontend (shared design system)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: progress bar UI + edge case (max tier) + accessibility. Visual progress is a key engagement driver. Accessibility AC for user-facing component."
+    },
+    {
+      "story_id": "US-083",
+      "feature_id": "F-06.2",
+      "title": "Early Access Notification for Qualifying Tier Members",
+      "user_story": "As Clara (loyalty customer) with Gold tier, I want to be notified about exclusive early access to sales, so that I can shop before the general public",
+      "acceptance_criteria": [
+        "Given a promotion is created with early_access: true and qualifying_tier: 'Gold', When the early_access_start time arrives, Then all Gold and Platinum members receive a notification: 'Exclusive early access! As a {tier} member, you can shop the {sale_name} {hours} hours before everyone else.'",
+        "Given I am a Silver or Bronze member, When the early access period is active, Then I do not receive the early access notification",
+        "Given the notification is delivered, When I tap it, Then I am deep-linked to the sale page within the app"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-080"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-12 \u2014 Loyalty Tier-Based Early Access \u2014 qualifying tiers, notification, configurable window"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: scheduled notification + tier filtering + deep link. Tier-based exclusivity drives upgrades. Negative path (non-qualifying) ensures no false notifications."
+    },
+    {
+      "story_id": "US-084",
+      "feature_id": "F-06.2",
+      "title": "Early Access Enforcement \u2014 Tier-Gated Sale Pages",
+      "user_story": "As a platform engineer, I want sale pages to enforce tier-based access during the early access window, so that only qualifying members can shop early",
+      "acceptance_criteria": [
+        "Given a sale has early_access: true and the current time is within the early access window, When a Gold or Platinum member accesses the sale page, Then they see the full sale content and can add items to cart",
+        "Given the early access window is active, When a Bronze or Silver member accesses the sale URL, Then they see: 'This sale opens for all members on {date}. Upgrade to {qualifying_tier} for early access!'",
+        "Given the early access window has ended, When any member accesses the sale page, Then they see the full sale content regardless of tier",
+        "Given the access-denied message, When read by a screen reader, Then it announces the restriction reason and the general access date"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-083"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-12 \u2014 Loyalty Tier-Based Early Access \u2014 access control during window"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: access control middleware + time-window logic + messaging. Enforcement at API level prevents URL sharing circumvention. Accessibility AC for user-facing denial message."
+    },
+    {
+      "story_id": "US-085",
+      "feature_id": "F-06.3",
+      "title": "Create & Activate Promotional Bonus Campaign",
+      "user_story": "As a Marketing Manager (admin), I want to create time-bound promotional campaigns that award bonus points, so that I can drive engagement during key periods without engineering involvement",
+      "acceptance_criteria": [
+        "Given I am in the admin portal campaign section, When I create a campaign with: name, type (multiplier/fixed_bonus/category_bonus), value, start_date, end_date, eligibility_rules, and optional max_budget, Then it is saved in 'draft' status",
+        "Given a draft campaign exists, When I activate it and the start_date arrives, Then it becomes 'active' and eligible transactions begin receiving bonus points",
+        "Given an active multiplier campaign (2x), When a qualifying customer makes a purchase earning 100 base points, Then they receive 200 total points (100 base + 100 bonus) with separate ledger entries",
+        "Given an active fixed_bonus campaign (+50 points), When a qualifying customer makes a purchase, Then they receive their base points plus 50 bonus points as a separate ledger entry with campaign_id"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-24 \u2014 Promotional Bonus Campaigns \u2014 time-bound, eligibility rules, multiplier or fixed bonus"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: campaign CRUD + activation logic + bonus calculation integrated with accrual engine. Separate ledger entries enable campaign ROI analysis."
+    },
+    {
+      "story_id": "US-086",
+      "feature_id": "F-06.3",
+      "title": "Campaign Eligibility Rules & Budget Cap",
+      "user_story": "As a Marketing Manager (admin), I want to set eligibility rules and budget caps on campaigns, so that I can target specific segments and control liability",
+      "acceptance_criteria": [
+        "Given a campaign with eligibility 'tier_minimum: Gold', When a Silver member makes a purchase, Then no bonus is applied and only base points are earned",
+        "Given a campaign with eligibility 'new_members_only' (registered within 30 days), When an existing member makes a purchase, Then no bonus is applied",
+        "Given a campaign with max_budget of 50,000 points, When total bonus awarded reaches 50,000, Then the campaign auto-pauses with status 'budget_exhausted' and no further bonuses are awarded",
+        "Given a campaign is paused or its end_date passes, When a qualifying purchase occurs, Then no bonus is applied"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-085"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-24 \u2014 Promotional Bonus Campaigns \u2014 eligibility rules, budget control"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: eligibility evaluation engine + budget tracking + auto-pause. Budget cap prevents runaway liability. Multiple negative paths ensure non-qualifying transactions are handled correctly."
+    },
+    {
+      "story_id": "US-087",
+      "feature_id": "F-06.3",
+      "title": "Customer-Facing Campaign Banner",
+      "user_story": "As Clara (loyalty customer), I want to see active promotions I'm eligible for on my dashboard, so that I'm motivated to make purchases during campaign periods",
+      "acceptance_criteria": [
+        "Given active campaigns exist that I'm eligible for, When I view my dashboard, Then a promotional banner carousel shows each campaign with: name, benefit description ('Earn 2x points this weekend!'), and end date",
+        "Given no active campaigns exist for my eligibility, When I view my dashboard, Then the promotional banner section is hidden (not an empty state)",
+        "Given the campaign banner, When navigated by screen reader, Then each campaign is announced with its name, benefit, and expiry date"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-085"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-24 \u2014 Promotional Bonus Campaigns \u2014 customer-facing visibility"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a79 Frontend (shared design system)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: banner carousel UI + eligibility filtering + empty state handling. Visibility drives campaign participation. Accessibility AC for user-facing component."
+    },
+    {
+      "story_id": "US-088",
+      "feature_id": "F-06.4",
+      "title": "Admin Portal \u2014 Dashboard & Authentication",
+      "user_story": "As a Marketing Manager (admin), I want a secure admin portal with a dashboard showing key loyalty metrics, so that I can monitor program health at a glance",
+      "acceptance_criteria": [
+        "Given I navigate to the admin portal, When I authenticate via SSO with MFA, Then I am granted access based on my role (admin/marketing/support)",
+        "Given I am authenticated, When the dashboard loads, Then I see: active members count, sign-ups this month, redemption rate %, and total points liability",
+        "Given I am not authenticated or my session has expired, When I access any admin page, Then I am redirected to the SSO login page",
+        "Given the admin portal login, When a user without an admin/marketing/support role attempts access, Then they receive 'Access Denied \u2014 contact your administrator'",
+        "Given any admin action is performed, When it completes, Then it is logged to the system audit trail with actor_id and action details"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-25 \u2014 Admin Portal \u2014 configure rates, manage tiers, create promotions, view analytics"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (Auth: OAuth 2.0)",
+          "enterprise-architecture \u00a75.1 (Cloud IAM)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: SSO + MFA + dashboard metrics + RBAC + audit logging. Restricted because admin portal provides access to all customer data. Security AC for authentication and authorization."
+    },
+    {
+      "story_id": "US-089",
+      "feature_id": "F-06.4",
+      "title": "Admin Portal \u2014 Tier & Rules Configuration",
+      "user_story": "As a Marketing Manager (admin), I want to configure tier thresholds, multipliers, and redemption rules from the admin portal, so that I can adjust the program without engineering deployments",
+      "acceptance_criteria": [
+        "Given I am in the Tier Management section, When I edit a tier's threshold or multiplier and save, Then the change takes effect immediately for all future transactions",
+        "Given I am in the Rules Configuration section, When I update accrual_rate, redemption_rate, min_redemption, or max_discount_percentage, Then the new values are applied to all subsequent transactions",
+        "Given I change a configuration value, When the save completes, Then the before and after values are logged to the audit trail with my admin user ID",
+        "Given I attempt to set an invalid value (e.g., negative multiplier, threshold lower than a lower tier), When I submit, Then inline validation prevents the save with a specific error message"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-088"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-25 \u2014 Admin Portal \u2014 configure rates, manage tiers"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: CRUD UI for tiers + rules config + validation + audit. Restricted because configuration changes affect all customers' financial outcomes. Security AC via audit logging."
+    },
+    {
+      "story_id": "US-090",
+      "feature_id": "F-06.4",
+      "title": "Admin Portal \u2014 Customer Lookup & History",
+      "user_story": "As a Marketing Manager (admin), I want to search for customers and view their full loyalty history, so that I can investigate issues and support escalations",
+      "acceptance_criteria": [
+        "Given I am in the Customer Lookup section, When I search by phone, email, name, or loyalty ID, Then matching customers are displayed with: name, tier, balance, and member since date",
+        "Given I select a customer from results, When their detail page loads, Then I see: full profile, current tier, points balance, lifetime points, and complete transaction history (paginated)",
+        "Given I am viewing a customer, When I click 'Trigger Adjustment', Then I am taken to the manual adjustment form pre-filled with the customer's ID",
+        "Given customer search results contain PII, When displayed, Then email and phone are partially masked (e.g., j***@email.com, ***-***-1234) unless the admin explicitly clicks 'Reveal'"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-088"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-25 \u2014 Admin Portal \u2014 view analytics, customer management"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (data minimization)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: search + detail view + pagination + PII masking. Restricted because full customer data access. Security AC for PII masking follows data minimization principle."
+    },
+    {
+      "story_id": "US-091",
+      "feature_id": "F-06.4",
+      "title": "Admin Portal \u2014 Reports & CSV Export",
+      "user_story": "As a Marketing Manager (admin), I want to export sign-up, transaction, and campaign performance reports as CSV, so that I can analyze data in external tools",
+      "acceptance_criteria": [
+        "Given I am in the Reports section, When I select a report type (sign-ups, transactions, campaign performance) and date range, Then the report is generated and available for download as CSV within 30 seconds for up to 50,000 records",
+        "Given I export a transactions report, When the CSV is generated, Then it includes: date, customer_id (not PII), transaction_type, points, channel, and campaign_id (if applicable)",
+        "Given I am a user with 'marketing' role, When I attempt to export reports containing full PII, Then the export is blocked with: 'PII export requires admin role approval'"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": "UK GDPR Article 25 \u2014 data minimization",
+      "depends_on": [
+        "US-088"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-25 \u2014 Admin Portal \u2014 export reports"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.2 (UK GDPR)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: report generation + CSV export + role-based PII restriction. Restricted because exports could contain sensitive aggregate data. Security AC prevents marketing role from exporting raw PII."
+    },
+    {
+      "story_id": "US-092",
+      "feature_id": "F-06.4",
+      "title": "Admin Portal \u2014 Audit Log Viewer",
+      "user_story": "As a Marketing Manager (admin), I want to view the system audit log from the admin portal, so that I can investigate changes and verify compliance",
+      "acceptance_criteria": [
+        "Given I am in the Audit Log section with 'admin' or 'compliance' role, When I apply filters (customer_id, action type, date range, actor), Then matching audit entries are displayed in a paginated table sorted by timestamp descending",
+        "Given I am a user with 'marketing' role, When I access the Audit Log section, Then I see only my own actions (not full system audit)",
+        "Given an audit entry is displayed, When I expand it, Then I see the full before_state and after_state JSON with syntax highlighting"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": "SOX Section 404",
+      "depends_on": [
+        "US-088"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-25 \u2014 Admin Portal \u2014 view audit logs"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (Cloud Audit Logs)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: read-only viewer + filtering + role-scoped access. Restricted because audit logs contain full operational history. Security AC limits marketing role to own actions only."
+    },
+    {
+      "story_id": "US-093",
+      "feature_id": "F-06.5",
+      "title": "App Sign-Up Bonus Points Award",
+      "user_story": "As Clara (loyalty customer), I want to receive bonus points when I register via the mobile app, so that I'm rewarded for downloading and joining through the app",
+      "acceptance_criteria": [
+        "Given I complete registration via the mobile app (channel: 'app'), When my account becomes active, Then I am immediately credited with the configured bonus points (default: 200) as a ledger entry with type 'bonus' and reason 'app_signup'",
+        "Given I receive the sign-up bonus, When I view my dashboard for the first time, Then a celebration animation plays with message: 'Welcome! You've earned 200 bonus points for joining via the app!'",
+        "Given I receive the sign-up bonus, When a push notification is sent, Then it reads: 'Welcome! You've earned {points} bonus points for joining via the app!'",
+        "Given the celebration animation, When viewed by a user with reduced motion preferences, Then the animation is replaced with a static congratulations card"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-09 \u2014 App Sign-Up Bonus Points \u2014 configurable amount, one-time per customer, credited immediately on app registration"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: event listener + ledger write + celebration UI + notification. Accessibility AC for reduced motion. App-only restriction drives the 15K downloads/month KPI."
+    },
+    {
+      "story_id": "US-094",
+      "feature_id": "F-06.5",
+      "title": "App Sign-Up Bonus \u2014 One-Time Enforcement & Channel Restriction",
+      "user_story": "As a platform engineer, I want the app sign-up bonus to be awarded only once per customer and only for app registrations, so that the bonus cannot be exploited",
+      "acceptance_criteria": [
+        "Given a customer has already received the app_signup bonus (flag set in customer record), When they attempt to trigger it again (e.g., re-install and re-login), Then no additional bonus is awarded",
+        "Given a customer registers via the website (channel: 'web'), When their account becomes active, Then no sign-up bonus is awarded",
+        "Given a customer registers via in-store assisted mode (channel: 'pos'), When their account becomes active, Then no sign-up bonus is awarded",
+        "Given the bonus amount is changed in admin portal from 200 to 300, When the next app registration occurs, Then the new amount (300) is awarded"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-093"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-09 \u2014 App Sign-Up Bonus Points \u2014 one-time per customer, app channel only, configurable amount"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: one-time flag check + channel validation + admin configurability. Negative path story preventing abuse. Multiple channels tested to ensure exclusivity."
+    },
+    {
+      "story_id": "US-095",
+      "feature_id": "F-06.3",
+      "title": "Campaign Performance Dashboard for Admin",
+      "user_story": "As a Marketing Manager (admin), I want to see campaign performance metrics in the admin portal, so that I can evaluate ROI and decide whether to extend or pause campaigns",
+      "acceptance_criteria": [
+        "Given I am in the Campaign Management section, When I view an active campaign, Then I see: total bonus points awarded, number of qualifying transactions, budget remaining (if set), and unique customers reached",
+        "Given a campaign has ended, When I view its performance, Then I see final metrics plus a comparison to the same period without the campaign (baseline transactions)",
+        "Given I am viewing an active campaign, When I click 'Pause', Then the campaign status changes to 'paused' immediately and no further bonuses are awarded"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-085"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-24 \u2014 Promotional Bonus Campaigns \u2014 campaign management and performance visibility"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: metrics aggregation + pause action + baseline comparison. Enables data-driven campaign decisions without engineering involvement."
+    },
+    {
+      "story_id": "US-096",
+      "feature_id": "F-06.4",
+      "title": "Admin Portal \u2014 Unauthorized Access Attempt Handling",
+      "user_story": "As a security engineer, I want unauthorized access attempts to the admin portal to be blocked and logged, so that potential breaches are detected early",
+      "acceptance_criteria": [
+        "Given a user without any admin role attempts to access the admin portal URL, When the request is processed, Then they receive a 403 page with no information about the portal's existence and the attempt is logged with IP, user agent, and timestamp",
+        "Given 5 failed authentication attempts from the same IP within 10 minutes, When the 6th attempt occurs, Then the IP is temporarily blocked for 30 minutes and a security alert is raised",
+        "Given a valid admin user's session token is used from a different IP than the authentication IP, When the request is processed, Then it is flagged for review and the user is prompted to re-authenticate"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-088"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-25 \u2014 Admin Portal",
+          "NFR-07 \u2014 API Rate Limiting and Abuse Prevention"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (security layers)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: brute-force protection + IP blocking + session anomaly detection. Negative path story for security hardening. Restricted because it involves security controls for the admin portal."
+    },
+    {
+      "story_id": "US-097",
+      "feature_id": "F-06.1",
+      "title": "Tier Multiplier Not Applied When Tier Engine Unavailable",
+      "user_story": "As a platform engineer, I want points accrual to proceed with base rate when the tier engine is unavailable, so that customers aren't blocked from earning points during outages",
+      "acceptance_criteria": [
+        "Given the tier service is unavailable or times out (> 2 seconds), When a points accrual is processed, Then base rate (1x) is applied and the transaction is flagged for 'tier_bonus_pending'",
+        "Given flagged transactions exist, When the tier service recovers, Then a reconciliation job calculates and credits the missed tier bonus within 1 hour",
+        "Given a reconciliation bonus is credited, When the customer is notified, Then they receive: 'Bonus points added: {points} tier bonus for your recent purchase.'"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-080"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-26 \u2014 Loyalty Tier System",
+          "NFR-05 \u2014 99.9% Uptime with Failover"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.1 (circuit breaker patterns)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: circuit breaker + flagging + reconciliation job. Negative path ensuring tier service failure doesn't block core accrual. Graceful degradation pattern."
+    }
+  ],
+  "coverage_matrix": [
+    {
+      "feature_id": "F-06.1",
+      "stories": [
+        "US-080",
+        "US-081",
+        "US-082",
+        "US-097"
+      ],
+      "total_points": 16
+    },
+    {
+      "feature_id": "F-06.2",
+      "stories": [
+        "US-083",
+        "US-084"
+      ],
+      "total_points": 6
+    },
+    {
+      "feature_id": "F-06.3",
+      "stories": [
+        "US-085",
+        "US-086",
+        "US-087",
+        "US-095"
+      ],
+      "total_points": 16
+    },
+    {
+      "feature_id": "F-06.4",
+      "stories": [
+        "US-088",
+        "US-089",
+        "US-090",
+        "US-091",
+        "US-092",
+        "US-096"
+      ],
+      "total_points": 24
+    },
+    {
+      "feature_id": "F-06.5",
+      "stories": [
+        "US-093",
+        "US-094"
+      ],
+      "total_points": 6
+    }
+  ],
+  "regression_summary": {
+    "total_regression_criteria": 0,
+    "existing_features_with_regression_tests": [],
+    "recommendation": "Greenfield \u2014 no regression testing needed. All stories are new capabilities."
+  }
+}

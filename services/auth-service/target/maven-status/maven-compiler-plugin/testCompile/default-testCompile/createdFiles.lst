@@ -1,0 +1,3 @@
+uk/co/next/loyalty/auth/application/command/LoginCommandTest.class
+uk/co/next/loyalty/auth/application/command/RegisterCustomerCommandTest.class
+uk/co/next/loyalty/auth/api/controller/AuthControllerContractTest.class

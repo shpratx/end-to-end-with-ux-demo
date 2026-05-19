@@ -1,0 +1,837 @@
+{
+  "document_title": "Unified Loyalty Program for Omnichannel Retail",
+  "source_summary": "A unified loyalty program enabling customers to earn and redeem points across online and in-store channels, with real-time synchronization, mobile app integration, and POS visibility for store staff.",
+
+  "functional_requirements": [
+    {
+      "id": "FR-01",
+      "title": "Points Accrual on Purchase",
+      "description": "System awards loyalty points to a customer's account for every completed purchase at a configurable rate (default: 1 point per $1 spent), regardless of channel (online, mobile app, or in-store POS). Points are credited only after transaction is finalized (not pending/cancelled).",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Customers can earn points for every purchase, both online and in-store, at a standardized rate (e.g., 1 point per $1 spent)",
+        "source_location": "Functional Requirements — FR1, Page 3"
+      },
+      "reasoning": "Core loyalty mechanic. Priority Must-Have based on explicit classification in source. Added configurable rate and transaction finalization condition for implementability."
+    },
+    {
+      "id": "FR-02",
+      "title": "Points Redemption at Checkout",
+      "description": "Customer can select a number of points to redeem during checkout (online or in-store). System calculates discount at configurable rate (default: 100 points = $5). Discount is applied to the order total. Partial redemption is allowed (customer chooses how many points to use).",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Customers can redeem points for discounts at checkout, both online and in-store, with clear rules (e.g., 100 points = $5 discount)",
+        "source_location": "Functional Requirements — FR2, Page 3"
+      },
+      "reasoning": "Core redemption capability. Must-Have per source. Clarified partial redemption and calculation logic for implementation."
+    },
+    {
+      "id": "FR-03",
+      "title": "POS Loyalty Status Display",
+      "description": "Store staff can view a customer's loyalty tier, points balance, and membership status at the POS system during checkout. Lookup completes within 2 seconds. Display includes: tier name, current points, lifetime points earned.",
+      "user_facing": false,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Store staff can view a customer's loyalty status and points balance at POS during checkout",
+        "source_location": "Functional Requirements — FR3, Page 3"
+      },
+      "reasoning": "Enables personalized in-store service. Must-Have per source. Specified data fields for UI implementation."
+    },
+    {
+      "id": "FR-04",
+      "title": "Multi-Channel Loyalty Sign-Up",
+      "description": "Customers can register for the loyalty program via mobile app, website, or in-store (staff-assisted). Registration requires: name, email, phone number, and acceptance of terms. Account is active immediately upon completion.",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Customers can sign up for the loyalty program via the mobile app, website, or in-store",
+        "source_location": "Functional Requirements — FR4, Page 3"
+      },
+      "reasoning": "Must-Have per source. Added minimum registration fields and immediate activation for implementation clarity."
+    },
+    {
+      "id": "FR-05",
+      "title": "Real-Time Points Balance Display",
+      "description": "Points balance is updated within 2 seconds of transaction completion and visible to customers in the mobile app and online account. Display shows: current available balance, pending points (if any), and last transaction summary.",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Points balances are updated in real time and visible to customers in the app and online account",
+        "source_location": "Functional Requirements — FR5, Page 3"
+      },
+      "reasoning": "Must-Have per source. Added specific display elements for UI implementation."
+    },
+    {
+      "id": "FR-06",
+      "title": "Over-Redemption Prevention",
+      "description": "System validates available points balance before processing any redemption. If requested points exceed available balance, the transaction is blocked and a clear error message is displayed explaining the shortfall and current balance.",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "System prevents redemption of more points than the customer has available",
+        "source_location": "Functional Requirements — FR6, Page 3"
+      },
+      "reasoning": "Data integrity safeguard. Must-Have per source."
+    },
+    {
+      "id": "FR-07",
+      "title": "Points Accrual Notification",
+      "description": "Customer receives a push notification within 30 seconds of points being credited, showing: points earned, transaction reference, and new balance.",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Customers receive notifications for successful point accrual and redemption",
+        "source_location": "Functional Requirements — FR7, Page 3"
+      },
+      "reasoning": "Split from redemption notification (FR-07a) for atomic testability. Must-Have per source."
+    },
+    {
+      "id": "FR-07a",
+      "title": "Points Redemption Notification",
+      "description": "Customer receives a push notification upon successful redemption, showing: points redeemed, discount applied, and remaining balance.",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Customers receive notifications for successful point accrual and redemption",
+        "source_location": "Functional Requirements — FR7, Page 3"
+      },
+      "reasoning": "Split from accrual notification for atomic testability. Same source reference."
+    },
+    {
+      "id": "FR-08",
+      "title": "Account Linking (Online + In-Store)",
+      "description": "Customers can link separate in-store and online accounts by verifying ownership of both (via email/phone OTP). Upon linking, points balances are consolidated into a single profile within 1 minute. Transaction history from both accounts is merged.",
+      "user_facing": true,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Customers can link existing in-store and online accounts to consolidate points",
+        "source_location": "Functional Requirements — FR8, Page 4"
+      },
+      "reasoning": "Should-Have per source. Added verification mechanism and history merge for implementation."
+    },
+    {
+      "id": "FR-09",
+      "title": "App Sign-Up Bonus Points",
+      "description": "New users who register for the loyalty program via the mobile app receive a configurable bonus points amount (default: TBD) credited immediately upon registration completion. Bonus is one-time per customer.",
+      "user_facing": true,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Customers receive bonus points for downloading and signing up via the app",
+        "source_location": "Functional Requirements — FR9, Page 4"
+      },
+      "reasoning": "Should-Have per source. Added one-time constraint to prevent abuse."
+    },
+    {
+      "id": "FR-10",
+      "title": "Manual Points Adjustment by Staff",
+      "description": "Authorized store associates can manually add or deduct points from a customer's account. Each adjustment requires: reason selection (from predefined list), free-text notes, and manager approval for adjustments above a configurable threshold. All adjustments are audit-logged with user ID, timestamp, reason, and amount.",
+      "user_facing": false,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Store associates can manually adjust points in case of system errors, with audit logging",
+        "source_location": "Functional Requirements — FR10, Page 4"
+      },
+      "reasoning": "Should-Have per source. Added approval workflow and structured audit fields for implementation."
+    },
+    {
+      "id": "FR-11",
+      "title": "Failed Accrual Notification",
+      "description": "When a purchase fails to accrue points due to a system error, the customer is notified within 5 minutes with: the affected transaction, explanation that points were not awarded, and instructions to contact support or wait for automatic retry.",
+      "user_facing": true,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Customers are notified if a purchase does not earn points due to system error, with instructions for resolution",
+        "source_location": "Functional Requirements — FR11, Page 4"
+      },
+      "reasoning": "Should-Have per source. Added timing and content specifics."
+    },
+    {
+      "id": "FR-12",
+      "title": "Loyalty Tier-Based Early Access",
+      "description": "Customers in qualifying loyalty tiers receive early access to sales and exclusive offers. System sends notification when early access opens. Access window is configurable per promotion (e.g., 24h before general public).",
+      "user_facing": true,
+      "priority": "Nice-to-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Customers can access early sales or exclusive offers based on loyalty tier",
+        "source_location": "Functional Requirements — FR12, Page 4"
+      },
+      "reasoning": "Nice-to-Have per source. Added notification and configurable window."
+    },
+    {
+      "id": "FR-13",
+      "title": "Gamification Badges",
+      "description": "System awards visual badges to customers for reaching configurable milestones (e.g., 1000 points earned, 10 purchases, first redemption). Badges are displayed on customer profile in app and web.",
+      "user_facing": true,
+      "priority": "Nice-to-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Gamification elements such as badges for milestones (e.g., 1000 points earned)",
+        "source_location": "Functional Requirements — FR13, Page 4"
+      },
+      "reasoning": "Nice-to-Have per source."
+    },
+    {
+      "id": "FR-14",
+      "title": "Centralized Loyalty Database with Cross-Channel Sync",
+      "description": "A single source of truth for all loyalty data (points, tiers, transactions) accessible by all channels. Any points change from any channel is reflected across all other channels within 2 seconds. Supports concurrent transactions from multiple channels for the same customer with conflict resolution (last-write-wins with transaction ordering).",
+      "user_facing": false,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Centralized loyalty database for real-time synchronization",
+        "source_location": "Key Decisions, Page 1"
+      },
+      "reasoning": "Architectural requirement. Must-Have. Added conflict resolution strategy for concurrent access."
+    },
+    {
+      "id": "FR-15",
+      "title": "Customer Identification at POS",
+      "description": "Customers can be identified at POS via: (a) phone number lookup, (b) loyalty ID entry, (c) QR code scan from mobile app. At least one method must be supported at launch; all three for full implementation.",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "App-based and POS-based customer identification",
+        "source_location": "Key Decisions, Page 1"
+      },
+      "reasoning": "Must-Have. Enables FR-03. Specified concrete identification methods."
+    },
+    {
+      "id": "FR-16",
+      "title": "User Authentication",
+      "description": "Customers can log in to the mobile app and website using email/password or social login (Google, Apple). Session persists for 30 days on mobile (refresh token). Password reset via email link. Account lockout after 5 failed attempts.",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Implied by multi-channel access to loyalty account (app, website) requiring secure access",
+        "source_location": "Inferred from FR4, FR5, and Security NFR"
+      },
+      "reasoning": "Cannot build a customer-facing app without authentication. Source describes sign-up (FR-04) but not login. Essential for greenfield implementation."
+    },
+    {
+      "id": "FR-17",
+      "title": "Customer Profile Management",
+      "description": "Customers can view and edit their profile (name, email, phone, communication preferences). Customers can view their loyalty tier and membership start date.",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Implied by customer account existence and persona 'Loyal Shopper Lisa' who tracks and redeems points",
+        "source_location": "Inferred from Target Users & Personas, Page 1-2"
+      },
+      "reasoning": "Any user-facing app requires profile management. Needed for communication preferences and data accuracy."
+    },
+    {
+      "id": "FR-18",
+      "title": "Points Transaction History",
+      "description": "Customers can view a chronological history of all points transactions: accruals (with purchase reference), redemptions (with order reference), adjustments, bonuses, and expirations. Supports pagination and date filtering.",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Easily track and redeem points",
+        "source_location": "Target Users — Loyal Shopper Lisa Goals, Page 1"
+      },
+      "reasoning": "Lisa's goal is to 'easily track' points. A transaction ledger is the standard implementation. Essential for transparency and dispute resolution."
+    },
+    {
+      "id": "FR-19",
+      "title": "Loyalty Dashboard (Customer Home)",
+      "description": "Mobile app and website display a loyalty dashboard showing: current points balance, current tier, progress to next tier, recent transactions (last 5), and any active promotions or offers.",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Easily track and redeem points; Receive special offers and early access",
+        "source_location": "Target Users — Loyal Shopper Lisa Goals, Page 1"
+      },
+      "reasoning": "Primary landing screen for the app. Combines balance visibility (FR-05) with engagement elements. Essential UX for any loyalty app."
+    },
+    {
+      "id": "FR-20",
+      "title": "Staff Customer Lookup",
+      "description": "Store staff can search for a customer by phone number, email, name, or loyalty ID from the POS interface. Search returns matching customer(s) with loyalty summary for selection.",
+      "user_facing": false,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Recognize and reward loyal customers; Relies on system prompts for customer info",
+        "source_location": "Target Users — Store Associate Alex, Page 2"
+      },
+      "reasoning": "FR-03 and FR-15 require identifying a customer, but the lookup/search mechanism itself needs to be built. Staff need a way to find the customer record."
+    },
+    {
+      "id": "FR-21",
+      "title": "Redemption Rules Engine",
+      "description": "System enforces configurable redemption rules: minimum points threshold for redemption (default: 100 points), maximum points redeemable per transaction (configurable, default: no limit), and maximum discount percentage per order (configurable, default: 50% of order value).",
+      "user_facing": false,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Points accrual and redemption rules standardized across channels",
+        "source_location": "Key Decisions, Page 1"
+      },
+      "reasoning": "Source mentions standardized rules but doesn't define them. A rules engine is needed to enforce business logic consistently across channels."
+    },
+    {
+      "id": "FR-22",
+      "title": "Points Expiration Policy",
+      "description": "Points expire after a configurable inactivity period (default: 12 months of no earn/redeem activity). System sends warning notifications at 30 days and 7 days before expiration. Expired points are deducted and logged.",
+      "user_facing": true,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Not explicitly stated — inferred as standard loyalty program practice",
+        "source_location": "Inferred; flagged as ASM-07 in initial extraction"
+      },
+      "reasoning": "Most loyalty programs require expiration for financial liability management. Made configurable so business can set to 'never' if desired."
+    },
+    {
+      "id": "FR-23",
+      "title": "Points Reversal on Return/Refund",
+      "description": "When a purchase is returned or refunded, the points earned on that transaction are automatically deducted from the customer's balance. If balance is insufficient (points already redeemed), the negative balance is tracked and offset against future accruals.",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Implied by retail context — returns are standard retail operations",
+        "source_location": "Inferred from retail domain"
+      },
+      "reasoning": "Critical for financial integrity. Without this, customers could earn points, return items, and keep points."
+    },
+    {
+      "id": "FR-24",
+      "title": "Promotional Bonus Campaigns",
+      "description": "Marketing team can create time-bound promotional campaigns that award bonus points (e.g., 2x points on weekends, bonus points on specific categories). Campaigns have: start/end dates, eligibility rules, and multiplier or fixed bonus amount.",
+      "user_facing": true,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "System must support 10x current daily transaction volume to accommodate marketing campaigns",
+        "source_location": "Non-Functional Requirements — Scalability, Page 4"
+      },
+      "reasoning": "Source explicitly mentions marketing campaigns driving volume spikes. Campaigns need to be created and managed."
+    },
+    {
+      "id": "FR-25",
+      "title": "Admin Portal — Program Management",
+      "description": "Back-office portal for marketing/ops teams to: configure points rates, manage tiers, create/edit promotions, view program analytics (sign-ups, redemption rates, active members), and export reports.",
+      "user_facing": false,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Marketing and customer engagement teams [are affected stakeholders]",
+        "source_location": "Impact & Affected Stakeholders, Page 1"
+      },
+      "reasoning": "Marketing teams are listed as stakeholders but have no tooling specified. Greenfield build needs admin capabilities."
+    },
+    {
+      "id": "FR-26",
+      "title": "Loyalty Tier System",
+      "description": "System supports configurable loyalty tiers (e.g., Bronze, Silver, Gold, Platinum) based on lifetime points earned or annual spend. Tier upgrades are automatic when threshold is met. Tier downgrades occur on annual review. Each tier has configurable benefits (earn rate multiplier, exclusive access).",
+      "user_facing": true,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "the customer's loyalty tier and points balance are displayed within 2 seconds",
+        "source_location": "Acceptance Criteria — AC3, Page 6"
+      },
+      "reasoning": "Source references 'loyalty tier' in AC3, AC10, and FR-12 but never defines the tier system itself. Cannot display or use tiers without implementing the tier engine."
+    },
+    {
+      "id": "FR-27",
+      "title": "Terms & Conditions Acceptance",
+      "description": "Customers must accept loyalty program terms and conditions during sign-up. System records consent timestamp and T&C version. When T&C are updated, customers are prompted to re-accept on next login.",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Customer data privacy and compliance requirements",
+        "source_location": "Constraints, Page 4"
+      },
+      "reasoning": "Regulatory requirement for any program collecting personal data. Cannot comply with privacy regulations without explicit consent capture."
+    },
+    {
+      "id": "FR-28",
+      "title": "System Audit Trail",
+      "description": "All state-changing operations (points accrual, redemption, adjustment, account changes, admin actions) are logged with: actor, timestamp, action type, before/after values, and source system. Logs are immutable and retained per data retention policy.",
+      "user_facing": false,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "access to loyalty data is role-based and logged",
+        "source_location": "Non-Functional Requirements — Security, Page 4"
+      },
+      "reasoning": "Source mentions logging for access. Extended to all state changes for compliance, dispute resolution, and debugging."
+    },
+    {
+      "id": "FR-29",
+      "title": "Integration API Layer",
+      "description": "RESTful API layer exposing loyalty operations (earn, redeem, balance inquiry, customer lookup, tier status) for consumption by POS system, e-commerce platform, and mobile app. API is versioned, authenticated (API key + OAuth2), and rate-limited.",
+      "user_facing": false,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Integration with existing online and in-store POS systems",
+        "source_location": "In Scope, Page 4"
+      },
+      "reasoning": "POS and e-commerce integration requires a well-defined API. Essential for greenfield architecture."
+    },
+    {
+      "id": "FR-30",
+      "title": "Notification Preferences Management",
+      "description": "Customers can opt in/out of notification categories: transactional (points earned/redeemed), promotional (campaigns, offers), and system (expiration warnings, account changes). Transactional notifications are on by default; promotional requires opt-in.",
+      "user_facing": true,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Responds to personalized offers",
+        "source_location": "Target Users — Loyal Shopper Lisa Behavior Patterns, Page 2"
+      },
+      "reasoning": "Communication consent management is required for regulatory compliance and user experience."
+    }
+  ],
+
+  "non_functional_requirements": [
+    {
+      "id": "NFR-01",
+      "category": "Performance",
+      "title": "Transaction Processing Latency",
+      "description": "Points accrual and redemption transactions must complete within 2 seconds, 95th percentile. Balance queries must respond within 500ms, 99th percentile.",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "Points accrual and redemption transactions must complete within 2 seconds 95% of the time",
+        "source_location": "Non-Functional Requirements — Performance, Page 4"
+      },
+      "reasoning": "Explicit target from source. Added balance query target (500ms) as it's a more frequent operation."
+    },
+    {
+      "id": "NFR-02",
+      "category": "Security",
+      "title": "Data Encryption",
+      "description": "All customer data encrypted in transit (TLS 1.2+) and at rest (AES-256). PII fields (email, phone, name) encrypted at application level. Access to loyalty data is role-based (RBAC) with all access logged.",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "All customer data must be encrypted in transit and at rest; access to loyalty data is role-based and logged",
+        "source_location": "Non-Functional Requirements — Security, Page 4"
+      },
+      "reasoning": "Must-Have per source. Added specific encryption standards for implementation."
+    },
+    {
+      "id": "NFR-03",
+      "category": "Scalability",
+      "title": "10x Transaction Volume Capacity",
+      "description": "System must support 10x current daily transaction volume without degradation. Architecture must support horizontal scaling. Auto-scaling triggered at 70% capacity threshold.",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "System must support 10x current daily transaction volume to accommodate marketing campaigns and growth",
+        "source_location": "Non-Functional Requirements — Scalability, Page 4"
+      },
+      "reasoning": "Must-Have per source. Added scaling mechanism for implementation guidance."
+    },
+    {
+      "id": "NFR-04",
+      "category": "Accessibility",
+      "title": "WCAG 2.1 AA Compliance",
+      "description": "All customer-facing loyalty features must meet WCAG 2.1 AA standards across web and mobile (iOS/Android). Includes: screen reader support, keyboard navigation, colour contrast ratios, and touch target sizes.",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "Loyalty program features must meet WCAG 2.1 AA standards across web and mobile platforms",
+        "source_location": "Non-Functional Requirements — Accessibility, Page 4"
+      },
+      "reasoning": "Must-Have per source."
+    },
+    {
+      "id": "NFR-05",
+      "category": "Availability",
+      "title": "99.9% Uptime with Failover",
+      "description": "Loyalty services must maintain 99.9% uptime (max 8.76 hours downtime/year). Automatic failover to secondary region. RTO: 1 hour. RPO: 5 minutes.",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "99.9% uptime for loyalty services; automatic failover and data recovery within 1 hour in case of outage",
+        "source_location": "Non-Functional Requirements — Reliability, Page 4"
+      },
+      "reasoning": "Must-Have per source. Added RPO (5 min) as source only specified RTO."
+    },
+    {
+      "id": "NFR-06",
+      "category": "Observability",
+      "title": "Monitoring, Logging, and Alerting",
+      "description": "System must provide: structured application logs (retained 90 days), real-time metrics dashboards (transaction rates, error rates, latency percentiles), and automated alerting on SLA breaches.",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "24/7 monitoring",
+        "source_location": "Risks — System downtime mitigation, Page 6"
+      },
+      "reasoning": "Source mentions 24/7 monitoring as risk mitigation. Essential for production operations."
+    },
+    {
+      "id": "NFR-07",
+      "category": "Security",
+      "title": "API Rate Limiting and Abuse Prevention",
+      "description": "All API endpoints must enforce rate limiting (configurable per client/endpoint). Default: 1000 requests/minute per API key. Brute-force protection on authentication endpoints.",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "Implied by security requirements and 10x scalability target",
+        "source_location": "Inferred from NFR-02 and NFR-03"
+      },
+      "reasoning": "Essential for protecting the system from abuse and ensuring fair resource allocation."
+    },
+    {
+      "id": "NFR-08",
+      "category": "Performance",
+      "title": "Data Consistency Model",
+      "description": "Points balance must be strongly consistent (no double-spend). Read-after-write consistency for balance queries. Transaction history may be eventually consistent (max 5 second delay).",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "System prevents redemption of more points than the customer has available; Points balances are updated in real time",
+        "source_location": "Functional Requirements — FR5, FR6, Page 3"
+      },
+      "reasoning": "FR-06 (over-redemption prevention) requires strong consistency on balance. Critical architectural decision."
+    },
+    {
+      "id": "NFR-09",
+      "category": "Usability",
+      "title": "Mobile App Performance",
+      "description": "Mobile app cold start time under 3 seconds on 4G connection. Screen transitions under 300ms. Offline graceful degradation: show cached balance with 'last updated' timestamp when offline.",
+      "priority": "Should-Have",
+      "citation": {
+        "source_reference": "Uses mobile app for browsing and purchases",
+        "source_location": "Target Users — Loyal Shopper Lisa Behavior Patterns, Page 2"
+      },
+      "reasoning": "Mobile is a primary channel. App performance directly impacts adoption."
+    }
+  ],
+
+  "constraints": [
+    {
+      "id": "CON-01",
+      "type": "Technology",
+      "description": "Must integrate with existing legacy in-store POS system (vendor, version, and API capabilities TBD)",
+      "citation": {
+        "source_reference": "Legacy POS system integration complexity",
+        "source_location": "Constraints, Page 4"
+      },
+      "reasoning": "Fixed constraint — POS exists and cannot be replaced."
+    },
+    {
+      "id": "CON-02",
+      "type": "Regulatory",
+      "description": "Must comply with applicable customer data privacy regulations (specific regulations TBD — see GAP-02)",
+      "citation": {
+        "source_reference": "Customer data privacy and compliance requirements",
+        "source_location": "Constraints, Page 4"
+      },
+      "reasoning": "Fixed regulatory constraint."
+    },
+    {
+      "id": "CON-03",
+      "type": "Organisational",
+      "description": "Limited engineering resources available for initial rollout — phased delivery required",
+      "citation": {
+        "source_reference": "Limited engineering resources for initial rollout",
+        "source_location": "Constraints, Page 4"
+      },
+      "reasoning": "Organisational constraint affecting scope and phasing."
+    },
+    {
+      "id": "CON-04",
+      "type": "Technology",
+      "description": "Must integrate with existing e-commerce platform (platform TBD)",
+      "citation": {
+        "source_reference": "Integration with legacy POS and e-commerce systems",
+        "source_location": "Dependencies, Page 5"
+      },
+      "reasoning": "Fixed constraint — existing e-commerce system is a given."
+    },
+    {
+      "id": "CON-05",
+      "type": "Organisational",
+      "description": "No physical loyalty cards — digital-only identification",
+      "citation": {
+        "source_reference": "Physical loyalty cards",
+        "source_location": "Out of Scope, Page 4"
+      },
+      "reasoning": "Explicit scope exclusion."
+    },
+    {
+      "id": "CON-06",
+      "type": "Organisational",
+      "description": "No third-party partner rewards in initial scope",
+      "citation": {
+        "source_reference": "Third-party partner rewards",
+        "source_location": "Out of Scope, Page 4"
+      },
+      "reasoning": "Explicit scope exclusion."
+    },
+    {
+      "id": "CON-07",
+      "type": "Organisational",
+      "description": "English language only — no i18n/l10n",
+      "citation": {
+        "source_reference": "Internationalization/localization beyond English",
+        "source_location": "Out of Scope, Page 4"
+      },
+      "reasoning": "Explicit scope exclusion."
+    }
+  ],
+
+  "assumptions": [
+    {
+      "id": "ASM-01",
+      "description": "A customer data platform (CDP) or unified customer profile system will be built as part of this project (greenfield)",
+      "needs_confirmation": true,
+      "reasoning": "Source lists 'Customer data platform for unified profiles' as a dependency. Since greenfield, assuming it's part of scope."
+    },
+    {
+      "id": "ASM-02",
+      "description": "The mobile app is a new build (greenfield) — native iOS and Android or cross-platform (React Native/Flutter)",
+      "needs_confirmation": true,
+      "reasoning": "Source mentions app downloads baseline of 5,000/month suggesting an existing app, but greenfield assumption means new build."
+    },
+    {
+      "id": "ASM-03",
+      "description": "Points accrual rate (1 point per $1) and redemption rate (100 points = $5) are initial defaults, configurable by admin without code changes",
+      "needs_confirmation": true,
+      "reasoning": "Source uses 'e.g.' prefix suggesting illustrative values. Building as configurable parameters."
+    },
+    {
+      "id": "ASM-04",
+      "description": "Loyalty tiers will follow a standard model: 3-4 tiers based on annual spend or lifetime points, with automatic upgrade and annual downgrade review",
+      "needs_confirmation": true,
+      "reasoning": "Source references tiers but never defines them. Assuming standard retail tier model."
+    },
+    {
+      "id": "ASM-05",
+      "description": "Push notifications are the primary channel for mobile; email for web-only users. SMS is out of scope for initial launch.",
+      "needs_confirmation": true,
+      "reasoning": "Source says 'notifications' without specifying channel. Push is lowest cost for app-based programs."
+    },
+    {
+      "id": "ASM-06",
+      "description": "Bonus points for app sign-up is a configurable amount set by marketing team via admin portal",
+      "needs_confirmation": true,
+      "reasoning": "Source mentions bonus but not amount. Making configurable."
+    },
+    {
+      "id": "ASM-07",
+      "description": "Points expire after 12 months of account inactivity. Policy is configurable and can be set to 'never expire'.",
+      "needs_confirmation": true,
+      "reasoning": "Source never mentions expiration. Industry standard is 12-24 months. Building as configurable."
+    },
+    {
+      "id": "ASM-08",
+      "description": "The website is a new build (greenfield) — responsive web application",
+      "needs_confirmation": true,
+      "reasoning": "Source mentions website but doesn't specify if existing. Greenfield assumption means building from scratch."
+    },
+    {
+      "id": "ASM-09",
+      "description": "Store staff access the loyalty system through an integration with their existing POS interface, not a separate application",
+      "needs_confirmation": true,
+      "reasoning": "Source says staff use POS. Assuming loyalty features are embedded in POS workflow via API."
+    },
+    {
+      "id": "ASM-10",
+      "description": "The system will be deployed on cloud infrastructure (AWS/Azure/GCP) with managed services",
+      "needs_confirmation": true,
+      "reasoning": "Source mentions 'scalable cloud infrastructure' in risk mitigation but doesn't specify provider."
+    }
+  ],
+
+  "gaps": [
+    {
+      "id": "GAP-01",
+      "description": "No authentication method or identity provider specified",
+      "impact": "Cannot design login flow, session management, token strategy, or secure API access",
+      "suggested_question": "What authentication methods should be supported? (email/password, social login, biometric?) Should we use an identity provider (Auth0, Cognito, Keycloak)?",
+      "reasoning": "Fundamental to any user-facing system. Source describes sign-up but not login."
+    },
+    {
+      "id": "GAP-02",
+      "description": "No specific data privacy regulations named",
+      "impact": "Cannot determine consent requirements, data subject rights, breach notification timelines",
+      "suggested_question": "Which data privacy regulations apply? (GDPR, CCPA, UK DPA 2018?) In which jurisdictions will the program operate?",
+      "reasoning": "Different regulations have materially different technical requirements."
+    },
+    {
+      "id": "GAP-03",
+      "description": "No data retention or deletion policy",
+      "impact": "Cannot design data lifecycle, archival strategy, or right-to-deletion flows",
+      "suggested_question": "How long should loyalty data be retained after account closure? What happens to points history on deletion?",
+      "reasoning": "Required for regulatory compliance and storage cost management."
+    },
+    {
+      "id": "GAP-04",
+      "description": "Loyalty tier definitions not provided",
+      "impact": "Cannot implement tier engine, tier-based UI, or early access features (FR-12)",
+      "suggested_question": "What are the tier names, qualification thresholds, evaluation period, and specific benefits per tier?",
+      "reasoning": "Source references tiers in multiple places but never defines the model."
+    },
+    {
+      "id": "GAP-05",
+      "description": "No offline/degraded mode behaviour specified",
+      "impact": "Cannot design resilience for POS connectivity loss or mobile app offline scenarios",
+      "suggested_question": "How should the system behave when POS loses connectivity? Should points accrual be queued locally?",
+      "reasoning": "Retail environments commonly experience connectivity issues."
+    },
+    {
+      "id": "GAP-06",
+      "description": "No fraud prevention or velocity controls specified",
+      "impact": "System vulnerable to points manipulation, duplicate accruals, and redemption fraud",
+      "suggested_question": "What fraud controls are needed? (velocity limits, duplicate detection, minimum purchase for accrual, suspicious activity alerts?)",
+      "reasoning": "Loyalty programs are high-value fraud targets."
+    },
+    {
+      "id": "GAP-07",
+      "description": "Legacy POS system technical details unknown",
+      "impact": "Cannot design integration layer or estimate integration effort",
+      "suggested_question": "What POS system is in use? (vendor, version, API capabilities — REST/SOAP/file-based?) Does it support real-time webhooks?",
+      "reasoning": "Source identifies POS integration as highest risk."
+    },
+    {
+      "id": "GAP-08",
+      "description": "E-commerce platform technical details unknown",
+      "impact": "Cannot design checkout integration for online points redemption",
+      "suggested_question": "What e-commerce platform is in use? (Shopify, Magento, custom?) What webhook/API capabilities does it have?",
+      "reasoning": "Online channel integration approach depends entirely on platform capabilities."
+    },
+    {
+      "id": "GAP-09",
+      "description": "No returns/refund points policy defined",
+      "impact": "Cannot handle points reversal on returned items — major financial integrity risk",
+      "suggested_question": "When a customer returns an item, should earned points be reversed? What if points were already redeemed? Time limit for reversal?",
+      "reasoning": "Returns are daily in retail. Without a policy, the points ledger becomes inaccurate."
+    },
+    {
+      "id": "GAP-10",
+      "description": "No current transaction volume baseline provided",
+      "impact": "Cannot size infrastructure — NFR-03 requires 10x capacity but 10x of what is unknown",
+      "suggested_question": "What is the current average daily transaction count? What is peak (e.g., Black Friday)? Split between online and in-store?",
+      "reasoning": "Essential for infrastructure sizing and performance testing targets."
+    },
+    {
+      "id": "GAP-11",
+      "description": "No mobile app technology preference specified",
+      "impact": "Cannot determine team composition, development timeline, or code sharing strategy",
+      "suggested_question": "Is there a preference for native (Swift/Kotlin) or cross-platform (React Native, Flutter)?",
+      "reasoning": "Technology choice significantly affects timeline, cost, and team requirements."
+    },
+    {
+      "id": "GAP-12",
+      "description": "No deployment/hosting environment specified",
+      "impact": "Cannot design infrastructure architecture, CI/CD pipeline, or estimate hosting costs",
+      "suggested_question": "Which cloud provider (AWS/Azure/GCP)? Are there existing cloud accounts and DevOps practices?",
+      "reasoning": "Greenfield needs infrastructure decisions."
+    },
+    {
+      "id": "GAP-13",
+      "description": "No budget or timeline constraints beyond 'limited resources'",
+      "impact": "Cannot determine MVP scope, phasing strategy, or team size",
+      "suggested_question": "What is the target launch date? Budget envelope? How many engineers available? Is phased rollout acceptable?",
+      "reasoning": "Critical for planning."
+    },
+    {
+      "id": "GAP-14",
+      "description": "No testing strategy or environments specified",
+      "impact": "Cannot plan QA approach, load testing, or UAT process",
+      "suggested_question": "What testing environments are needed? Is there an existing QA team? What load testing targets should be validated?",
+      "reasoning": "NFR-01 and NFR-03 require load testing validation before launch."
+    }
+  ],
+
+  "requirement_count": {
+    "functional": 30,
+    "non_functional": 9,
+    "constraints": 7,
+    "assumptions": 10,
+    "gaps": 14
+  },
+
+  "baseline_summary": {
+    "mode": "greenfield",
+    "baseline_kb_version": null,
+    "new_requirements": 30,
+    "enhancement_requirements": 0,
+    "existing_requirements": 0,
+    "regression_risks": []
+  }
+}

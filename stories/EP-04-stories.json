@@ -1,0 +1,878 @@
+{
+  "epic_id": "EP-04",
+  "epic_title": "Points Redemption & Customer Profile",
+  "mode": "greenfield",
+  "total_stories": 21,
+  "total_story_points": 67,
+  "stories": [
+    {
+      "story_id": "US-044",
+      "feature_id": "F-04.1",
+      "title": "Points Redemption at Online Checkout",
+      "user_story": "As Clara, a loyalty customer, I want to redeem my points for a discount during online checkout, so that I can use my earned rewards to save money",
+      "acceptance_criteria": [
+        "Given I am at checkout with items in my cart, When I select 'Use points' and enter the number of points to redeem, Then the system calculates the discount (points \u00d7 redemption_rate, default 100 points = \u00a35) and displays '{points} points = \u00a3{discount} off'",
+        "Given I confirm the redemption, When the transaction processes, Then points are atomically deducted from my balance and a ledger entry is created with {type: 'redeem', points: -N, order_id, channel: 'online'}",
+        "Given the discount exceeds my order total, When I attempt to redeem, Then the system caps the discount at the order total and adjusts points used accordingly",
+        "Given the redemption screen, When navigated via screen reader, Then the points input, discount preview, and confirmation button are all properly labelled and announced"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-02 \u2014 Points Redemption at Checkout \u2014 configurable rate, partial redemption, applied to order total"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (Cloud SQL PostgreSQL for transactional data \u2014 ACID)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: redemption logic + atomic deduction + discount calculation + cap logic + UI. Accessibility AC for user-facing checkout screen."
+    },
+    {
+      "story_id": "US-045",
+      "feature_id": "F-04.1",
+      "title": "Points Redemption at POS",
+      "user_story": "As Sana, a store associate, I want to process a points redemption at the POS after the customer confirms, so that in-store customers can use their loyalty rewards",
+      "acceptance_criteria": [
+        "Given a customer is identified at POS, When I initiate a redemption with their verbal confirmation, Then the API processes POST /v1/points/redeem with {customer_id, points_to_redeem, order_id, order_total, channel: 'in-store'}",
+        "Given the redemption succeeds, When the response is returned, Then it includes {success: true, discount_applied, remaining_balance, transaction_id} within 2 seconds",
+        "Given the customer has insufficient points, When I attempt the redemption, Then the API returns an error with their available balance and maximum redeemable amount"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-044"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-02 \u2014 Points Redemption at Checkout \u2014 partial redemption, applied to order total"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.2 (external integration protocols)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: reuses redemption engine from US-044 via API, POS-specific flow. Staff-initiated with verbal confirmation for in-store channel."
+    },
+    {
+      "story_id": "US-046",
+      "feature_id": "F-04.1",
+      "title": "Redemption Preset Amounts",
+      "user_story": "As Nathan, a loyalty customer, I want to choose from preset redemption amounts, so that I can quickly redeem without calculating exact points",
+      "acceptance_criteria": [
+        "Given I am on the redemption screen, When it loads, Then I see preset options (100, 250, 500, 'Use all') alongside a custom input field",
+        "Given I select a preset, When chosen, Then the discount preview updates immediately showing the equivalent monetary value",
+        "Given I select 'Use all', When my balance is 347 points, Then it pre-fills 347 and shows the corresponding discount"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-044"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-02 \u2014 Points Redemption at Checkout \u2014 partial redemption"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: UI presets + dynamic calculation. Reduces friction for common redemption amounts."
+    },
+    {
+      "story_id": "US-047",
+      "feature_id": "F-04.2",
+      "title": "Over-Redemption Prevention",
+      "user_story": "As Clara, a loyalty customer, I want the system to prevent me from redeeming more points than I have, so that my balance never goes negative from redemptions",
+      "acceptance_criteria": [
+        "Given my available balance is 200 points, When I attempt to redeem 300 points, Then the system rejects with: 'You have 200 points available. Maximum you can redeem: 200 points (\u00a310).'",
+        "Given two redemption requests arrive simultaneously for the same customer, When processed concurrently, Then database row-level locking ensures only one succeeds if combined amount exceeds balance",
+        "Given the over-redemption check, When the balance is verified, Then it uses the real-time database value (not cached) to prevent race conditions"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-044"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-06 \u2014 Over-Redemption Prevention \u2014 block if exceeds balance, show error",
+          "NFR-08 \u2014 Data Consistency"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (PostgreSQL row-level locking for consistency)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: row-level locking + concurrent request handling + real-time balance check. Critical financial integrity \u2014 prevents double-spend."
+    },
+    {
+      "story_id": "US-048",
+      "feature_id": "F-04.2",
+      "title": "Redemption Rules Engine \u2014 Minimum and Maximum Limits",
+      "user_story": "As Clara, a loyalty customer, I want clear feedback when my redemption doesn't meet the minimum threshold or exceeds the maximum discount, so that I understand the program rules",
+      "acceptance_criteria": [
+        "Given the minimum redemption threshold is 100 points, When I attempt to redeem 50 points, Then the system rejects with: 'Minimum redemption is 100 points. You selected 50.'",
+        "Given the maximum discount is 50% of order total, When I attempt to redeem points exceeding that cap, Then the system rejects with: 'Maximum discount is 50% of order total (\u00a3{max_amount}). Please reduce points.'",
+        "Given all redemption rules are configurable, When a rule value is changed via admin, Then it takes effect on the next redemption attempt without code deployment"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-047"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-21 \u2014 Redemption Rules Engine \u2014 min threshold, max per transaction, max discount percentage"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: three validation rules + configurable values + clear error messages. Separated from over-redemption because these are business rules vs. balance integrity."
+    },
+    {
+      "story_id": "US-049",
+      "feature_id": "F-04.2",
+      "title": "Redemption Validation \u2014 Negative Path Scenarios",
+      "user_story": "As Nathan, a loyalty customer, I want the system to handle edge cases gracefully during redemption, so that I'm never charged incorrectly",
+      "acceptance_criteria": [
+        "Given my account is in 'suspended' or 'inactive' state, When I attempt to redeem, Then the system rejects with 'Your account is not eligible for redemption. Please contact support.'",
+        "Given a redemption request with points_to_redeem = 0, When submitted, Then it is rejected with 'Please enter a valid number of points to redeem'",
+        "Given the redemption service is experiencing high latency, When a request times out after 5 seconds, Then the customer sees 'Unable to process redemption right now. Please try again.' and no points are deducted"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-047"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-06 \u2014 Over-Redemption Prevention",
+          "FR-21 \u2014 Redemption Rules Engine"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: negative path story covering edge cases \u2014 inactive accounts, zero input, timeouts. Ensures no silent failures or incorrect deductions."
+    },
+    {
+      "story_id": "US-050",
+      "feature_id": "F-04.3",
+      "title": "Redemption Notification",
+      "user_story": "As Clara, a loyalty customer, I want to receive a notification when I redeem points, so that I have confirmation of my redemption and know my remaining balance",
+      "acceptance_criteria": [
+        "Given a 'points.redeemed' event is emitted, When the notification service processes it, Then a push notification is delivered within 30 seconds: 'You redeemed {points} points for \u00a3{discount} off your purchase! Remaining balance: {balance} points.'",
+        "Given the notification is sent, When it is delivered, Then it is also stored in the in-app notification center",
+        "Given I have disabled transactional notifications, When points are redeemed, Then no push is sent but the notification is stored in-app",
+        "Given the notification contains my balance, When transmitted, Then it is encrypted in transit and balance values are not logged in plain text"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-044"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-07a \u2014 Points Redemption Notification \u2014 points redeemed, discount applied, remaining balance"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.1 (Pub/Sub async events)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: event consumption + notification delivery + preference check + in-app storage. Security AC for Confidential data."
+    },
+    {
+      "story_id": "US-051",
+      "feature_id": "F-04.4",
+      "title": "Customer Profile View",
+      "user_story": "As Clara, a loyalty customer, I want to view my profile showing my personal details and loyalty status, so that I can see my membership information at a glance",
+      "acceptance_criteria": [
+        "Given I am logged in, When I navigate to my profile, Then I see: my name, email (with verified badge), phone (with verified badge), member since date, loyalty tier with badge, and lifetime points earned",
+        "Given my profile screen, When navigated via screen reader, Then all fields are announced with their labels and values, and verified badges are announced as 'verified'",
+        "Given the profile API, When a request is made with an expired or invalid token, Then it returns 401 Unauthorized and no profile data is exposed"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-17 \u2014 Customer Profile Management \u2014 view/edit profile, view tier and membership date"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.2 (UK GDPR)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: profile screen + data display + verified badges. Accessibility AC for user-facing. Security AC for auth check."
+    },
+    {
+      "story_id": "US-052",
+      "feature_id": "F-04.4",
+      "title": "Customer Profile Edit with Re-verification",
+      "user_story": "As Nathan, a loyalty customer, I want to update my name, email, or phone number, so that my profile stays current",
+      "acceptance_criteria": [
+        "Given I edit my name, When I save, Then the change is applied immediately without re-verification",
+        "Given I change my email address, When I submit the new email, Then an OTP is sent to the new email and the change only applies after successful OTP verification",
+        "Given I change my phone number, When I submit the new phone, Then an OTP is sent to the new phone and the change only applies after successful OTP verification",
+        "Given I enter an email already associated with another account, When I submit, Then it is rejected with 'This email is already in use by another account'"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-051"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-17 \u2014 Customer Profile Management \u2014 view/edit profile"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (security layers)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: edit form + OTP re-verification for email/phone + duplicate check. Re-verification prevents account takeover via email/phone change."
+    },
+    {
+      "story_id": "US-053",
+      "feature_id": "F-04.4",
+      "title": "Account Deletion (Right to Erasure)",
+      "user_story": "As Clara, a loyalty customer, I want to delete my account, so that my personal data is removed in compliance with my privacy rights",
+      "acceptance_criteria": [
+        "Given I tap 'Delete my account', When the confirmation modal appears, Then it clearly states the consequences: 'This will permanently remove your personal data and forfeit {balance} points. This cannot be undone.'",
+        "Given I confirm deletion, When processed, Then my PII is anonymized (name \u2192 'Deleted User', email \u2192 hashed, phone \u2192 null) but ledger entries are retained for audit with anonymized customer reference",
+        "Given my account is deleted, When I attempt to log in with my old credentials, Then I receive 'Account not found' with an option to register a new account"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": "UK GDPR Article 17 \u2014 Right to Erasure",
+      "depends_on": [
+        "US-051"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-17 \u2014 Customer Profile Management"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.2 (UK GDPR \u2014 right to erasure)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: confirmation flow + soft-delete with anonymization + login prevention. Regulatory requirement \u2014 GDPR right to erasure. Ledger retained for financial audit."
+    },
+    {
+      "story_id": "US-054",
+      "feature_id": "F-04.5",
+      "title": "Loyalty Dashboard \u2014 Points Balance Card & Tier Progress",
+      "user_story": "As Clara, a loyalty customer, I want my home screen to show my points balance and progress toward the next tier, so that I'm motivated to keep earning",
+      "acceptance_criteria": [
+        "Given I am logged in, When I view the home screen, Then I see a points balance card showing: current points (large), monetary equivalent, and my tier badge",
+        "Given I have a tier above me, When the dashboard loads, Then I see a progress bar showing 'X more points to {next_tier}' with visual fill indicating progress percentage",
+        "Given I am on the highest tier, When the dashboard loads, Then the progress section shows 'You've reached our highest tier!' instead of a progress bar",
+        "Given the dashboard, When navigated via screen reader, Then the balance, tier, and progress are announced in a logical reading order"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-19 \u2014 Loyalty Dashboard \u2014 balance, tier, progress, recent transactions, active promotions"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a79 Frontend (React SPA, shared design system)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: balance card + tier badge + progress bar + edge case (max tier) + responsive layout. Primary engagement surface. Accessibility AC for user-facing."
+    },
+    {
+      "story_id": "US-055",
+      "feature_id": "F-04.5",
+      "title": "Loyalty Dashboard \u2014 Recent Transactions & Quick Actions",
+      "user_story": "As Nathan, a loyalty customer, I want to see my recent transactions and quick action buttons on the dashboard, so that I can quickly access key features",
+      "acceptance_criteria": [
+        "Given I am on the home screen, When it loads, Then I see the last 5 transactions with date, type icon, and points amount, with a 'View all' link to full history",
+        "Given the dashboard, When I see quick action buttons, Then 'View QR Code', 'Transaction History', and 'Redeem Points' are displayed as tappable cards",
+        "Given a section is still loading, When the dashboard renders, Then that section shows a skeleton loading state independently of other sections"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-054"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-19 \u2014 Loyalty Dashboard \u2014 recent transactions, active promotions"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: recent transactions widget + quick actions + independent skeleton loading. Separated from balance card to keep stories focused."
+    },
+    {
+      "story_id": "US-056",
+      "feature_id": "F-04.5",
+      "title": "Dashboard Pull-to-Refresh",
+      "user_story": "As Clara, a loyalty customer on mobile, I want to pull down to refresh my dashboard, so that I can see the latest data on demand",
+      "acceptance_criteria": [
+        "Given I am on the mobile dashboard, When I pull down, Then all sections refresh with a loading indicator and display updated data",
+        "Given the refresh fails due to network error, When it completes, Then I see a toast: 'Unable to refresh. Please check your connection.' and the previous data remains visible"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-054"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-19 \u2014 Loyalty Dashboard",
+          "NFR-09 \u2014 Mobile App Performance"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: pull-to-refresh gesture + error handling. Standard mobile UX pattern for data freshness."
+    },
+    {
+      "story_id": "US-057",
+      "feature_id": "F-04.6",
+      "title": "Staff Customer Search",
+      "user_story": "As Sana, a store associate, I want to search for customers by phone, email, name, or loyalty ID, so that I can look up their loyalty information to assist them",
+      "acceptance_criteria": [
+        "Given I am authenticated with 'loyalty_staff' role, When I search by phone number (exact match), Then matching customers are returned with name, tier, points balance, and member since",
+        "Given I search by name, When I enter a partial name, Then fuzzy matching returns relevant results ranked by relevance",
+        "Given search results are displayed, When I view them, Then email and phone are partially masked (e.g., j***@email.com) to minimize PII exposure",
+        "Given I am not authenticated with a staff role, When I attempt to access the staff search API, Then I receive 403 Forbidden"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-20 \u2014 Staff Customer Lookup \u2014 search by phone, email, name, loyalty ID from POS"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (RBAC \u2014 role-based access)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: multi-field search + fuzzy matching + PII masking + RBAC authorization. Security AC for role-based access control."
+    },
+    {
+      "story_id": "US-058",
+      "feature_id": "F-04.6",
+      "title": "Staff Customer Search \u2014 Rate Limiting & Negative Paths",
+      "user_story": "As a platform engineer, I want staff search to be rate-limited and handle edge cases, so that the system is protected from abuse and enumeration attacks",
+      "acceptance_criteria": [
+        "Given a staff user makes more than 60 searches per minute, When the next search is attempted, Then it receives 429 Too Many Requests with Retry-After header",
+        "Given a search query returns no results, When displayed, Then the staff sees 'No customers found matching your search' with suggestion to check spelling or try a different field",
+        "Given a search query is empty or less than 2 characters, When submitted, Then it is rejected with 'Please enter at least 2 characters to search'"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-057"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-20 \u2014 Staff Customer Lookup",
+          "NFR-07 \u2014 API Rate Limiting and Abuse Prevention"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: rate limiting + input validation + empty state. Negative path story to cover abuse prevention and edge cases."
+    },
+    {
+      "story_id": "US-059",
+      "feature_id": "F-04.7",
+      "title": "Notification Preferences \u2014 Toggle Controls",
+      "user_story": "As Clara, a loyalty customer, I want to control which notifications I receive, so that I only get messages I find useful",
+      "acceptance_criteria": [
+        "Given I navigate to notification preferences, When the screen loads, Then I see toggle switches for: Transactional (default ON), Promotional (default OFF), and System (default ON)",
+        "Given I toggle a preference, When I change it, Then the change is saved immediately and a confirmation toast appears: 'Preferences updated'",
+        "Given the Transactional toggle, When I attempt to disable it, Then it remains on with a tooltip: 'Transaction notifications cannot be fully disabled \u2014 they keep you informed about balance changes'",
+        "Given the preferences screen, When navigated via screen reader, Then each toggle is announced with its category name, description, and current state (on/off)"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": "UK GDPR \u2014 consent for marketing communications",
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-30 \u2014 Notification Preferences Management \u2014 opt in/out by category, transactional on by default, promotional requires opt-in"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.2 (UK GDPR \u2014 consent for marketing communications)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: toggle UI + immediate save + transactional lock + toast feedback. Promotional opt-in required by GDPR. Accessibility AC for user-facing."
+    },
+    {
+      "story_id": "US-060",
+      "feature_id": "F-04.7",
+      "title": "Email Notification Preference",
+      "user_story": "As Nathan, a loyalty customer, I want to opt in to receiving email copies of my notifications, so that I have a record in my inbox",
+      "acceptance_criteria": [
+        "Given I am on the notification preferences screen, When I see the email preference toggle (default OFF), Then I can enable it to receive email copies of notifications",
+        "Given I enable email notifications, When a push notification is triggered, Then an email copy is also sent to my registered email address"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-059"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-30 \u2014 Notification Preferences Management"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: toggle + email delivery integration. Simple extension of preference system."
+    },
+    {
+      "story_id": "US-061",
+      "feature_id": "F-04.7",
+      "title": "Notification Preferences API",
+      "user_story": "As a backend developer, I want a preferences API that stores and retrieves customer notification settings, so that all notification services respect customer choices",
+      "acceptance_criteria": [
+        "Given a GET request to /v1/customers/{id}/preferences, When called with valid auth, Then it returns the current preference state for all categories",
+        "Given a PUT request with updated preferences, When processed, Then the preferences are persisted and subsequent notification deliveries respect the new settings",
+        "Given a request to update another customer's preferences, When the authenticated customer_id doesn't match, Then it returns 403 Forbidden"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-059"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-30 \u2014 Notification Preferences Management"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (RESTful APIs)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: CRUD API + authorization check. Security AC ensures customers can only modify their own preferences."
+    },
+    {
+      "story_id": "US-062",
+      "feature_id": "F-04.1",
+      "title": "Redemption Failure Handling",
+      "user_story": "As Nathan, a loyalty customer, I want clear feedback when a redemption fails, so that I know my points are safe and can try again",
+      "acceptance_criteria": [
+        "Given the redemption service is unavailable, When I attempt to redeem, Then I see 'Unable to process your redemption right now. Your points are safe \u2014 please try again in a few minutes.' and no points are deducted",
+        "Given a redemption request times out, When the system detects the timeout, Then it verifies no deduction occurred before showing the error (no phantom deductions)",
+        "Given a network error during redemption on mobile, When the request fails, Then the app shows an error state with a 'Retry' button"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-044"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-02 \u2014 Points Redemption at Checkout",
+          "NFR-08 \u2014 Data Consistency"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: negative path story covering service unavailability, timeouts, and network errors. Critical that no phantom deductions occur on failure."
+    },
+    {
+      "story_id": "US-063",
+      "feature_id": "F-04.5",
+      "title": "Dashboard \u2014 Empty State for New Members",
+      "user_story": "As Nathan, a newly registered loyalty customer, I want a welcoming dashboard even before I've made any purchases, so that I understand what to do next",
+      "acceptance_criteria": [
+        "Given I am a new member with 0 points and no transactions, When I view the dashboard, Then I see a welcome message: 'Welcome to Dunelm Rewards! Make your first purchase to start earning points.' with a visual guide",
+        "Given the empty dashboard, When the recent transactions section loads, Then it shows 'No transactions yet' with a prompt to shop"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-054"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-19 \u2014 Loyalty Dashboard"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: empty state UI + onboarding guidance. Important for new member experience \u2014 first impression drives engagement."
+    },
+    {
+      "story_id": "US-064",
+      "feature_id": "F-04.6",
+      "title": "Staff Customer Lookup \u2014 Full Loyalty Summary",
+      "user_story": "As Sana, a store associate, I want to view a customer's full loyalty summary after selecting them from search results, so that I can provide personalized service",
+      "acceptance_criteria": [
+        "Given I select a customer from search results, When the detail view loads, Then I see: full name, tier with badge, points balance, monetary equivalent, member since date, and last 3 transactions",
+        "Given the customer detail view, When loaded, Then it completes within 2 seconds",
+        "Given the detail view contains customer data, When accessed, Then all access is logged to the audit trail with my staff_id and the customer_id viewed"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-057"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-20 \u2014 Staff Customer Lookup"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (audit logging)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: detail view + performance SLA + audit logging. Audit trail ensures staff access to customer data is tracked for compliance."
+    }
+  ],
+  "coverage_matrix": [
+    {
+      "feature_id": "F-04.1",
+      "stories": [
+        "US-044",
+        "US-045",
+        "US-046",
+        "US-062"
+      ],
+      "total_points": 13
+    },
+    {
+      "feature_id": "F-04.2",
+      "stories": [
+        "US-047",
+        "US-048",
+        "US-049"
+      ],
+      "total_points": 11
+    },
+    {
+      "feature_id": "F-04.3",
+      "stories": [
+        "US-050"
+      ],
+      "total_points": 3
+    },
+    {
+      "feature_id": "F-04.4",
+      "stories": [
+        "US-051",
+        "US-052",
+        "US-053"
+      ],
+      "total_points": 11
+    },
+    {
+      "feature_id": "F-04.5",
+      "stories": [
+        "US-054",
+        "US-055",
+        "US-056",
+        "US-063"
+      ],
+      "total_points": 12
+    },
+    {
+      "feature_id": "F-04.6",
+      "stories": [
+        "US-057",
+        "US-058",
+        "US-064"
+      ],
+      "total_points": 10
+    },
+    {
+      "feature_id": "F-04.7",
+      "stories": [
+        "US-059",
+        "US-060",
+        "US-061"
+      ],
+      "total_points": 7
+    }
+  ],
+  "regression_summary": {
+    "total_regression_criteria": 0,
+    "existing_features_with_regression_tests": [],
+    "recommendation": "Greenfield \u2014 no regression testing needed. All stories are new capabilities."
+  }
+}

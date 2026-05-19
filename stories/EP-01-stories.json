@@ -1,0 +1,629 @@
+{
+  "epic_id": "EP-01",
+  "epic_title": "Platform Foundation & Design System",
+  "mode": "greenfield",
+  "total_stories": 14,
+  "total_story_points": 54,
+  "stories": [
+    {
+      "story_id": "US-001",
+      "feature_id": "F-01.1",
+      "title": "Cloud Infrastructure Provisioning",
+      "user_story": "As a platform engineer, I want the cloud infrastructure provisioned via IaC, so that all environments are reproducible and the team can deploy services from Sprint 1",
+      "acceptance_criteria": [
+        "Given the Terraform configuration is applied, When provisioning completes, Then a Kubernetes cluster with 3+ nodes is running and accessible via kubectl",
+        "Given the database provisioning script runs, When it completes, Then PostgreSQL is available with customers, points_ledger, and tiers tables created and encrypted at rest (AES-256)",
+        "Given the cache provisioning, When Redis cluster is deployed, Then it is accessible from within the cluster with failover configured",
+        "Given the event streaming setup, When Kafka/Pub-Sub is provisioned, Then topics for points.earned, points.redeemed, and points.expired are created"
+      ],
+      "story_points": 8,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-14 \u2014 Centralized Loyalty Database with Cross-Channel Sync",
+          "NFR-02 \u2014 Data Encryption",
+          "NFR-05 \u2014 99.9% Uptime with Failover"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (Cloud SQL PostgreSQL)",
+          "enterprise-architecture \u00a73.3 (Terraform IaC)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "8 points due to breadth of infrastructure components. Single story because all infra must be provisioned together for other stories to proceed. Data sensitivity Restricted because infrastructure config contains connection strings and secrets."
+    },
+    {
+      "story_id": "US-002",
+      "feature_id": "F-01.2",
+      "title": "API Gateway Setup with Authentication & Rate Limiting",
+      "user_story": "As a backend developer, I want an API gateway with authentication and rate limiting configured, so that all services have a secure, consistent entry point",
+      "acceptance_criteria": [
+        "Given a request without a valid OAuth2 token or API key, When it hits any protected endpoint, Then it receives 401 Unauthorized with no data leakage in the response body",
+        "Given a client exceeding 1000 requests per minute, When the next request arrives, Then it receives 429 Too Many Requests with a Retry-After header",
+        "Given a valid authenticated request, When it is processed, Then the request and response are logged with correlation_id, timestamp, method, path, status_code, and latency (excluding request body for Confidential endpoints)",
+        "Given the gateway is running, When GET /health is called, Then it returns 200 with service status within 100ms"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-001"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-29 \u2014 Integration API Layer",
+          "NFR-07 \u2014 API Rate Limiting and Abuse Prevention"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (RESTful APIs, Apigee)",
+          "enterprise-architecture \u00a75.1 (API gateway auth)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: gateway config + auth middleware + rate limiter + logging. Depends on US-001 because gateway needs the cluster to deploy to."
+    },
+    {
+      "story_id": "US-003",
+      "feature_id": "F-01.2",
+      "title": "API Versioning & Standardized Error Responses",
+      "user_story": "As an integration developer, I want versioned API endpoints with standardized error responses, so that I can build reliable integrations without breaking changes",
+      "acceptance_criteria": [
+        "Given any API endpoint, When called with /v1/ prefix, Then it routes to the current version of the service",
+        "Given any API error occurs, When the response is returned, Then it follows the format: {error_code, message, details, trace_id} with appropriate HTTP status code",
+        "Given a request to a non-existent endpoint, When processed, Then it returns 404 with the standard error format (not a raw framework error page)"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-002"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-29 \u2014 Integration API Layer"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.1 (REST APIs)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: routing config + error middleware. Small but important for consistency across all future endpoints."
+    },
+    {
+      "story_id": "US-004",
+      "feature_id": "F-01.3",
+      "title": "Structured Logging & Metrics Collection",
+      "user_story": "As a platform engineer, I want structured logging and metrics collection deployed, so that all services are observable from day one",
+      "acceptance_criteria": [
+        "Given any service emits a log, When it is captured, Then it is in JSON format with fields: timestamp, level, service, correlation_id, message, and is retained for 90 days",
+        "Given the metrics endpoint is scraped, When Prometheus/CloudWatch collects data, Then transaction_count, error_count, and latency_histogram metrics are available",
+        "Given a service is running, When its dashboard is viewed, Then it shows request rate, error rate, and p95 latency in real time"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-001"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-06 \u2014 Monitoring, Logging, and Alerting"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.3 (Cloud Monitoring, Prometheus, Cloud Logging)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: logging middleware + metrics exporter + dashboard setup. Foundational for all subsequent debugging and SLA monitoring."
+    },
+    {
+      "story_id": "US-005",
+      "feature_id": "F-01.3",
+      "title": "Automated Alerting on SLA Breaches",
+      "user_story": "As an on-call engineer, I want automated alerts when SLA thresholds are breached, so that I can respond to incidents before customers are impacted",
+      "acceptance_criteria": [
+        "Given p95 latency exceeds 2 seconds for 1 minute, When the alert evaluates, Then a warning alert is fired to the on-call channel",
+        "Given error rate exceeds 1% for 2 minutes, When the alert evaluates, Then a critical alert is fired with affected service name and error details",
+        "Given service availability drops below 99.9% in a rolling 1-hour window, When the alert evaluates, Then a critical alert is fired to the incident channel"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-004"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-06 \u2014 Monitoring, Logging, and Alerting"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.3 (Cloud Monitoring)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: alert rule configuration. Depends on US-004 because metrics must exist before alerts can evaluate them."
+    },
+    {
+      "story_id": "US-006",
+      "feature_id": "F-01.4",
+      "title": "Design System Core Components",
+      "user_story": "As a frontend developer, I want a shared component library with core UI components, so that I can build consistent, accessible screens without recreating common patterns",
+      "acceptance_criteria": [
+        "Given the component library is imported, When I use a Button component, Then it renders in primary/secondary/ghost variants with minimum 44px touch target and 4.5:1 contrast ratio",
+        "Given a form input component, When rendered with an error state, Then it shows inline validation message, red border, and aria-invalid attribute for screen readers",
+        "Given any interactive component, When navigated via keyboard (Tab/Enter/Space), Then focus is visible with a 2px outline and logical tab order is maintained",
+        "Given the component library, When used on a 320px viewport, Then all components reflow correctly without horizontal scrolling"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Public",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-04 \u2014 WCAG 2.1 AA Compliance"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a79 (shared design system component library, WCAG 2.1 AA)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: multiple component types with accessibility baked in. No dependency because design system can be built in parallel with infrastructure."
+    },
+    {
+      "story_id": "US-007",
+      "feature_id": "F-01.4",
+      "title": "Design System Extended Components (Cards, Modals, Navigation)",
+      "user_story": "As a frontend developer, I want card, modal, navigation, and loading state components, so that I can build the loyalty dashboard and transaction screens",
+      "acceptance_criteria": [
+        "Given a loyalty card component, When rendered with points balance and tier, Then it displays the data with tier-specific badge color and is readable by screen readers",
+        "Given a confirmation modal, When triggered, Then it traps focus within the modal, is dismissible via Escape key, and returns focus to the trigger element on close",
+        "Given a skeleton loading component, When a section is loading, Then it shows animated placeholder shapes matching the expected content layout"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Public",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-006"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-04 \u2014 WCAG 2.1 AA Compliance"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a79 (shared design system)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: builds on core components (US-006). These are the loyalty-specific components needed for dashboard and history screens."
+    },
+    {
+      "story_id": "US-008",
+      "feature_id": "F-01.5",
+      "title": "CI/CD Pipeline with Security Scanning",
+      "user_story": "As a developer, I want an automated CI/CD pipeline that builds, tests, scans, and deploys my code, so that I can ship changes safely and frequently",
+      "acceptance_criteria": [
+        "Given code is pushed to a feature branch, When the pipeline runs, Then it executes: lint, unit tests (fail if coverage < 80%), SAST scan (fail on critical/high), and builds a Docker image",
+        "Given a merge to main branch, When the pipeline completes, Then the image is automatically deployed to the staging environment",
+        "Given a staging deployment, When a developer approves promotion, Then the image is deployed to production with a smoke test suite running post-deploy",
+        "Given a failed production deployment, When rollback is triggered, Then the previous version is restored within 5 minutes"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-001"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-05 \u2014 99.9% Uptime with Failover"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.3 (GitHub, Cloud Build \u2192 Cloud Deploy \u2192 GKE, Artifact Registry)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: multi-stage pipeline with security gates. Critical path \u2014 without this, no code reaches any environment. Rollback capability supports NFR-05."
+    },
+    {
+      "story_id": "US-009",
+      "feature_id": "F-01.6",
+      "title": "Push Notification Service Integration",
+      "user_story": "As a backend developer, I want a centralized notification service that delivers push notifications via FCM and APNs, so that all features can send notifications without duplicating delivery logic",
+      "acceptance_criteria": [
+        "Given a 'points.earned' event is published, When the notification service consumes it, Then a push notification is delivered to the customer's registered device within 30 seconds",
+        "Given push delivery fails, When the service retries, Then it attempts 3 retries with exponential backoff (1s, 5s, 30s) before marking as failed",
+        "Given a customer has no registered push token, When a notification is triggered, Then it falls back to email delivery via the configured email provider",
+        "Given notification content, When rendered, Then variables ({points}, {balance}, {tier}) are substituted from the event payload using the stored template"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-001"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-07 \u2014 Points Accrual Notification",
+          "FR-07a \u2014 Points Redemption Notification"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.1 (Pub/Sub for async communication)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: FCM/APNs integration + template engine + retry logic + fallback. Confidential because notifications contain points balance (PII-adjacent financial data). Security AC: PII not logged in notification payloads."
+    },
+    {
+      "story_id": "US-010",
+      "feature_id": "F-01.6",
+      "title": "In-App Notification Center Storage",
+      "user_story": "As a loyalty customer, I want all my notifications stored in an in-app notification center, so that I can review past notifications even if I missed the push",
+      "acceptance_criteria": [
+        "Given a notification is sent, When it is delivered, Then it is also persisted to the notification_center table with: id, customer_id, title, body, type, read_status, created_at",
+        "Given I open the notification center, When the list loads, Then notifications are shown newest-first with unread count badge on the nav icon",
+        "Given I tap a notification, When it opens, Then it is marked as read and the unread count decrements",
+        "Given the notification center screen, When navigated via screen reader, Then each notification is announced with title, time, and read/unread status"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-009"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-07 \u2014 Points Accrual Notification"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: storage + list UI + read tracking. Depends on notification service (US-009) because it stores what the service delivers. Accessibility AC for screen reader per Rule 22."
+    },
+    {
+      "story_id": "US-011",
+      "feature_id": "F-01.7",
+      "title": "Mobile App Shell with Navigation",
+      "user_story": "As a loyalty customer, I want a mobile app with clear navigation, so that I can easily access my loyalty dashboard, history, QR code, and profile",
+      "acceptance_criteria": [
+        "Given I launch the app, When it loads, Then it displays within 3 seconds on a 4G connection with a splash screen during initialization",
+        "Given the app is loaded, When I see the bottom navigation, Then it shows 4 tabs: Home, History, QR Code, Profile \u2014 with icons and labels",
+        "Given I tap a tab, When the screen transitions, Then it completes within 300ms with no visible jank",
+        "Given the app receives a deep link (loyalty://history), When opened, Then it navigates directly to the transaction history screen",
+        "Given the bottom navigation, When navigated via VoiceOver/TalkBack, Then each tab is announced with its label and selected state"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Public",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-006"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-09 \u2014 Mobile App Performance"
+        ],
+        "domain_kb_sections": [
+          "kb-L0-global-project-context \u2014 Mobile App channel, non-linear customer journeys"
+        ],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.1 (Native mobile)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: app shell + navigation + deep linking + splash screen. Depends on design system (US-006) for tab bar component. 3-second cold start from NFR-09."
+    },
+    {
+      "story_id": "US-012",
+      "feature_id": "F-01.7",
+      "title": "Push Token Registration & Network Detection",
+      "user_story": "As a loyalty customer, I want the app to register for push notifications and detect my network status, so that I receive timely alerts and see appropriate offline indicators",
+      "acceptance_criteria": [
+        "Given I launch the app for the first time, When the permission dialog appears, Then it explains why notifications are needed ('Get instant updates on your points and rewards')",
+        "Given I grant notification permission, When the token is obtained, Then it is sent to the server and associated with my customer_id",
+        "Given the device loses network connectivity, When I'm using the app, Then a subtle offline banner appears at the top: 'You're offline \u2014 some features may be limited'",
+        "Given the device regains connectivity, When the network is restored, Then the offline banner disappears and data refreshes silently"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-011"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-09 \u2014 Mobile App Performance"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: push permission flow + token registration + network listener. Depends on app shell (US-011). Enables all future notification features."
+    },
+    {
+      "story_id": "US-013",
+      "feature_id": "F-01.7",
+      "title": "Web App Scaffold with Responsive Layout",
+      "user_story": "As a loyalty customer using the website, I want a responsive web application with consistent navigation, so that I can manage my loyalty account from any device",
+      "acceptance_criteria": [
+        "Given I visit the loyalty web app, When the page loads, Then it renders with header (logo, nav links, profile icon), main content area, and footer",
+        "Given I'm on a mobile viewport (< 768px), When the layout renders, Then navigation collapses to a hamburger menu and content is single-column",
+        "Given I'm not authenticated, When I access any protected route, Then I'm redirected to the login page with a return URL preserved",
+        "Given the web app, When navigated via keyboard only, Then all interactive elements are reachable and focus order is logical"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Public",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-006"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-04 \u2014 WCAG 2.1 AA Compliance",
+          "NFR-09 \u2014 Mobile App Performance"
+        ],
+        "domain_kb_sections": [
+          "kb-L0-global-project-context \u2014 Website channel, responsive design"
+        ],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a79 Frontend (React SPA)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: SPA scaffold + routing + responsive layout + auth guard. Depends on design system for shared components."
+    },
+    {
+      "story_id": "US-014",
+      "feature_id": "F-01.7",
+      "title": "Global Error Boundary & Version Check",
+      "user_story": "As a loyalty customer, I want the app to handle errors gracefully and prompt me to update when needed, so that I never see a crash screen or use an outdated version",
+      "acceptance_criteria": [
+        "Given an unhandled error occurs in the app, When the error boundary catches it, Then a friendly error screen is shown ('Something went wrong \u2014 tap to retry') and the error is reported to monitoring",
+        "Given a critical app update is available, When I launch the app, Then a non-dismissible modal prompts me to update with a link to the app store",
+        "Given a non-critical update is available, When I launch the app, Then a dismissible banner suggests updating but allows me to continue"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Public",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-011"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-09 \u2014 Mobile App Performance"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: error boundary + version check API call. Prevents poor UX from unhandled crashes. Force update ensures security patches reach all users."
+    }
+  ],
+  "coverage_matrix": [
+    {
+      "feature_id": "F-01.1",
+      "stories": [
+        "US-001"
+      ],
+      "total_points": 8
+    },
+    {
+      "feature_id": "F-01.2",
+      "stories": [
+        "US-002",
+        "US-003"
+      ],
+      "total_points": 7
+    },
+    {
+      "feature_id": "F-01.3",
+      "stories": [
+        "US-004",
+        "US-005"
+      ],
+      "total_points": 5
+    },
+    {
+      "feature_id": "F-01.4",
+      "stories": [
+        "US-006",
+        "US-007"
+      ],
+      "total_points": 8
+    },
+    {
+      "feature_id": "F-01.5",
+      "stories": [
+        "US-008"
+      ],
+      "total_points": 5
+    },
+    {
+      "feature_id": "F-01.6",
+      "stories": [
+        "US-009",
+        "US-010"
+      ],
+      "total_points": 8
+    },
+    {
+      "feature_id": "F-01.7",
+      "stories": [
+        "US-011",
+        "US-012",
+        "US-013",
+        "US-014"
+      ],
+      "total_points": 13
+    }
+  ],
+  "regression_summary": {
+    "total_regression_criteria": 0,
+    "existing_features_with_regression_tests": [],
+    "recommendation": "Greenfield \u2014 no regression testing needed. All stories are new capabilities."
+  }
+}

@@ -1,0 +1,814 @@
+{
+  "epic_id": "EP-03",
+  "epic_title": "Points Earning & Balance Management",
+  "mode": "greenfield",
+  "total_stories": 19,
+  "total_story_points": 67,
+  "stories": [
+    {
+      "story_id": "US-025",
+      "feature_id": "F-03.1",
+      "title": "Points Accrual on Purchase Transaction",
+      "user_story": "As Clara, a loyalty customer, I want to earn points automatically when I make a purchase, so that my loyalty balance grows with every transaction",
+      "acceptance_criteria": [
+        "Given a completed purchase transaction is received via API, When the accrual engine processes it, Then points are calculated as transaction_amount \u00d7 accrual_rate (default 1 point per \u00a31) rounded down to nearest integer and a ledger entry is created",
+        "Given the ledger entry is created, When the balance is updated, Then the customer's cached balance is updated atomically and a 'points.earned' event is emitted to the event bus",
+        "Given a transaction with amount \u00a30 or negative, When submitted to the accrual engine, Then it is rejected with error 'invalid_transaction_amount' and no ledger entry is created",
+        "Given the accrual engine processes a transaction, When end-to-end processing completes, Then it finishes within 2 seconds",
+        "Given the points ledger contains customer financial data, When any accrual is processed, Then all data is encrypted at rest and access is restricted to authorized services only"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-01 \u2014 Points Accrual on Purchase \u2014 configurable rate, all channels, only after finalization",
+          "NFR-08 \u2014 Data Consistency \u2014 strongly consistent balance"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.1 (Pub/Sub events for async communication)",
+          "enterprise-architecture \u00a73.2 (Cloud SQL PostgreSQL for transactional data)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: core accrual logic + atomic balance update + event emission + validation. This is the heart of the loyalty engine. Security AC included due to Confidential data sensitivity."
+    },
+    {
+      "story_id": "US-026",
+      "feature_id": "F-03.1",
+      "title": "Idempotent Transaction Processing",
+      "user_story": "As Clara, a loyalty customer, I want the system to prevent duplicate points from being awarded for the same purchase, so that my balance is always accurate",
+      "acceptance_criteria": [
+        "Given a transaction with a transaction_id that has already been processed, When it is submitted again, Then the system rejects it with error 'duplicate_transaction' and returns the original ledger entry reference",
+        "Given two identical transactions arrive simultaneously, When processed concurrently, Then only one ledger entry is created due to unique constraint on transaction_id",
+        "Given a transaction for a customer_id that does not exist, When submitted, Then it is queued to a retry queue with reason 'customer_not_found' for later processing"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-025"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-01 \u2014 Points Accrual on Purchase \u2014 only after finalization",
+          "NFR-08 \u2014 Data Consistency"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (PostgreSQL unique constraints)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: idempotency check + concurrent handling + retry queue. Critical fraud prevention \u2014 without this, replayed webhooks could double-credit customers."
+    },
+    {
+      "story_id": "US-027",
+      "feature_id": "F-03.2",
+      "title": "Real-Time Points Balance Display",
+      "user_story": "As Clara, a loyalty customer, I want to see my current points balance and its monetary equivalent on my dashboard, so that I know how much I've earned and what it's worth",
+      "acceptance_criteria": [
+        "Given I am logged in, When I view my dashboard, Then I see my current available points balance displayed prominently with the equivalent monetary value (e.g., '500 points = \u00a325')",
+        "Given a points transaction occurs on my account, When the balance changes, Then my displayed balance updates within 2 seconds via WebSocket push without requiring a page refresh",
+        "Given the cache is unavailable, When I request my balance, Then the system falls back to calculating from the ledger (sum of all transactions) and returns the correct balance",
+        "Given the balance display, When navigated via screen reader, Then the balance and monetary equivalent are announced clearly (e.g., 'Your balance is 500 points, equivalent to 25 pounds')"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-025"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-05 \u2014 Real-Time Points Balance Display \u2014 updated within 2 seconds, visible in app and online account"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (Memorystore Redis for caching)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: WebSocket integration + Redis cache + fallback logic + UI component. Accessibility AC for user-facing screen. Security AC implicit via Confidential sensitivity."
+    },
+    {
+      "story_id": "US-028",
+      "feature_id": "F-03.2",
+      "title": "Offline Balance Display on Mobile",
+      "user_story": "As Nathan, a loyalty customer, I want to see my last known points balance when I'm offline, so that I have an idea of my balance even without connectivity",
+      "acceptance_criteria": [
+        "Given I have previously loaded my balance while online, When I open the app without network connectivity, Then I see my cached balance with a 'Last updated: {timestamp}' label",
+        "Given I am offline and viewing cached balance, When network connectivity is restored, Then the balance refreshes silently and the 'Last updated' label is removed"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-027"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-05 \u2014 Real-Time Points Balance Display",
+          "NFR-09 \u2014 Mobile App Performance \u2014 offline graceful degradation"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: local storage persistence + connectivity detection. Ensures mobile users always have some balance visibility per NFR-09."
+    },
+    {
+      "story_id": "US-029",
+      "feature_id": "F-03.3",
+      "title": "Push Notification on Points Earned",
+      "user_story": "As Clara, a loyalty customer, I want to receive a push notification when I earn points, so that I get instant confirmation of my loyalty reward",
+      "acceptance_criteria": [
+        "Given a 'points.earned' event is emitted, When the notification service processes it, Then a push notification is delivered to my device within 30 seconds with content: 'You earned {points} points on your {channel} purchase! New balance: {balance} points.'",
+        "Given push delivery fails, When the service retries, Then it attempts 3 retries with exponential backoff before falling back to email",
+        "Given I have disabled transactional notifications in my preferences, When points are earned, Then no push notification is sent but the notification is still stored in the in-app center",
+        "Given the notification contains my points balance, When stored or transmitted, Then it is encrypted in transit and the balance is not logged in plain text in service logs"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-025"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-07 \u2014 Points Accrual Notification \u2014 push notification within 30 seconds showing points earned, transaction reference, new balance"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.1 (Pub/Sub for async events)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: event consumption + notification delivery + preference check + retry logic. Security AC for Confidential data in notifications."
+    },
+    {
+      "story_id": "US-030",
+      "feature_id": "F-03.3",
+      "title": "In-App Notification for Points Earned",
+      "user_story": "As Nathan, a loyalty customer, I want earn notifications stored in my notification center, so that I can review them later if I missed the push",
+      "acceptance_criteria": [
+        "Given a points earned notification is generated, When it is delivered, Then it is also persisted in the in-app notification center with title, body, timestamp, and unread status",
+        "Given I open the notification center, When I view earn notifications, Then they show the points earned, channel, and new balance in a readable format",
+        "Given the notification center list, When navigated via screen reader, Then each notification is announced with its title, time ago, and read/unread status"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-029"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-07 \u2014 Points Accrual Notification"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: storage + list display. Accessibility AC for user-facing notification center. Separated from push delivery because it's a distinct UI concern."
+    },
+    {
+      "story_id": "US-031",
+      "feature_id": "F-03.4",
+      "title": "Customer Identification via Phone Number at POS",
+      "user_story": "As Sana, a store associate, I want to look up a customer by phone number at the POS, so that I can link their purchase to their loyalty account",
+      "acceptance_criteria": [
+        "Given I enter a customer's phone number at the POS, When I submit the lookup, Then the API returns the customer's name, tier, points balance, and member_since date within 2 seconds",
+        "Given I enter a phone number that doesn't match any customer, When the lookup completes, Then I see a 'Customer not found' message with an option to register them",
+        "Given the lookup API, When more than 30 requests are made from my POS terminal in one minute, Then subsequent requests receive 429 Too Many Requests",
+        "Given the lookup returns customer data, When displayed to staff, Then email and phone are partially masked (e.g., j***@email.com, ***1234)"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-15 \u2014 Customer Identification at POS \u2014 phone number, loyalty ID, QR code scan from app"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.2 (external integration protocols)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: API endpoint + phone lookup + rate limiting + PII masking. Security AC for rate limiting to prevent enumeration attacks on phone numbers."
+    },
+    {
+      "story_id": "US-032",
+      "feature_id": "F-03.4",
+      "title": "Customer Identification via Loyalty ID at POS",
+      "user_story": "As Sana, a store associate, I want to look up a customer by their loyalty ID, so that I can quickly identify them when they provide their membership number",
+      "acceptance_criteria": [
+        "Given I enter a 10-digit loyalty ID at the POS, When I submit the lookup, Then the API returns the customer's loyalty summary (name, tier, balance, member_since) within 2 seconds",
+        "Given I enter a loyalty ID that doesn't exist, When the lookup completes, Then I see 'Invalid loyalty ID \u2014 please check and try again'",
+        "Given I enter a value that is not 10 digits, When I attempt to submit, Then the input is rejected with inline validation 'Loyalty ID must be exactly 10 digits'"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-031"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-15 \u2014 Customer Identification at POS \u2014 phone number, loyalty ID, QR code scan from app"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: reuses lookup infrastructure from US-031 with different identifier. Input validation prevents unnecessary API calls."
+    },
+    {
+      "story_id": "US-033",
+      "feature_id": "F-03.4",
+      "title": "Customer Identification via QR Code at POS",
+      "user_story": "As Clara, a loyalty customer, I want to show a QR code on my app for the store associate to scan, so that I can be identified quickly without sharing personal details",
+      "acceptance_criteria": [
+        "Given I am logged in to the app, When I open the 'My QR Code' screen, Then a QR code is displayed containing my encrypted customer_id that refreshes every 60 seconds",
+        "Given Sana scans my QR code at the POS, When the system decodes it, Then it returns my loyalty summary within 2 seconds",
+        "Given a QR code that has expired (older than 60 seconds), When scanned, Then the system rejects it with 'QR code expired \u2014 please ask customer to refresh'",
+        "Given the QR code screen, When accessed via screen reader, Then it announces 'Your loyalty QR code \u2014 show this to the store associate to earn points'"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-031"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-15 \u2014 Customer Identification at POS \u2014 QR code scan from app"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (encryption)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: QR generation + encryption + 60s refresh + POS decode + expiry validation. Dynamic QR prevents screenshot replay attacks. Accessibility AC for user-facing screen."
+    },
+    {
+      "story_id": "US-034",
+      "feature_id": "F-03.5",
+      "title": "Points Transaction History List",
+      "user_story": "As Clara, a loyalty customer, I want to see a chronological list of all my points transactions, so that I can track how I've earned and spent my points",
+      "acceptance_criteria": [
+        "Given I navigate to transaction history, When the screen loads, Then I see a list of transactions showing: date/time, type (earned/redeemed/adjusted/expired), points amount (+/-), running balance, reference (order ID), and channel icon",
+        "Given I have more than 20 transactions, When I scroll to the bottom of the list, Then the next page loads automatically (infinite scroll) with a loading indicator",
+        "Given I have no transactions, When I view the history screen, Then I see an empty state: 'No transactions yet \u2014 make a purchase to start earning!'",
+        "Given the transaction history screen, When navigated via screen reader, Then each transaction row is announced with type, points, date, and channel"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-025"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-18 \u2014 Points Transaction History \u2014 chronological, accruals with purchase reference, pagination and date filtering"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a79 Frontend (React SPA patterns)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: paginated list + multiple data fields + empty state + infinite scroll. Accessibility AC for user-facing screen."
+    },
+    {
+      "story_id": "US-035",
+      "feature_id": "F-03.5",
+      "title": "Transaction History Filtering",
+      "user_story": "As Nathan, a loyalty customer, I want to filter my transaction history by date range and type, so that I can find specific transactions quickly",
+      "acceptance_criteria": [
+        "Given I am on the transaction history screen, When I select a date range filter, Then only transactions within that range are displayed",
+        "Given I select a transaction type filter (e.g., 'Earned only'), When applied, Then only transactions of that type are shown with the filter visually indicated",
+        "Given I have filters applied, When I clear all filters, Then the full transaction list is restored to newest-first default"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-034"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-18 \u2014 Points Transaction History \u2014 pagination and date filtering"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: date picker + type dropdown + filter state management + API query params. Separated from list story to keep each focused."
+    },
+    {
+      "story_id": "US-036",
+      "feature_id": "F-03.6",
+      "title": "Points Reversal on Full Refund",
+      "user_story": "As Clara, a loyalty customer, I want points to be automatically deducted when I return a purchase, so that the loyalty system stays fair and accurate",
+      "acceptance_criteria": [
+        "Given a full refund event is received for an order, When the original transaction is found in the ledger, Then the full points earned are reversed with a ledger entry {type: 'reversal', points: -N, reference_id: original_order_id, reason: 'return'}",
+        "Given the reversal is processed, When my balance is updated, Then I receive a notification: 'Points adjusted: {points} points deducted due to return of order {order_id}. New balance: {balance}.'",
+        "Given a refund event for a transaction older than 90 days, When submitted, Then it is rejected with 'reversal_time_limit_exceeded' and no points are deducted",
+        "Given the reversal involves financial ledger data, When processed, Then the operation is logged to the audit trail with before/after balance states"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-025"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-23 \u2014 Points Reversal on Return/Refund \u2014 auto-deduct on return, track negative balance, offset against future accruals"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (PostgreSQL ACID transactions)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: lookup original transaction + calculate reversal + ledger entry + notification + time limit check. Critical financial integrity feature."
+    },
+    {
+      "story_id": "US-037",
+      "feature_id": "F-03.6",
+      "title": "Points Reversal on Partial Refund",
+      "user_story": "As Nathan, a loyalty customer, I want only the proportional points deducted when I do a partial return, so that I keep points for items I didn't return",
+      "acceptance_criteria": [
+        "Given a partial refund event is received, When the refund amount is less than the original order total, Then points reversed are calculated proportionally: original_points \u00d7 (refund_amount / original_order_total) rounded down",
+        "Given the partial reversal is processed, When my balance is updated, Then the notification shows the partial deduction amount and new balance"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-036"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-23 \u2014 Points Reversal on Return/Refund"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: proportional calculation logic + integration with reversal engine. Separated from full refund because the calculation logic is distinct."
+    },
+    {
+      "story_id": "US-038",
+      "feature_id": "F-03.6",
+      "title": "Negative Balance Handling on Reversal",
+      "user_story": "As Clara, a loyalty customer who has already spent my points, I want returns to be processed even if my balance would go negative, so that I'm not blocked from returning items",
+      "acceptance_criteria": [
+        "Given my current balance is less than the reversal amount, When a return is processed, Then my balance is set to 0 and a 'negative_balance' deficit record is created tracking the shortfall",
+        "Given I have a negative balance deficit, When I earn new points on a future purchase, Then the deficit is offset first before crediting my visible balance",
+        "Given I have a deficit of 50 points and earn 30 points, When the accrual processes, Then my visible balance remains 0 and the deficit reduces to 20 points"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-036"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-23 \u2014 Points Reversal on Return/Refund \u2014 track negative balance, offset against future accruals"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: negative balance tracking + deficit offset logic on future accruals. Prevents blocking returns while maintaining financial integrity."
+    },
+    {
+      "story_id": "US-039",
+      "feature_id": "F-03.7",
+      "title": "E-commerce Webhook Receiver",
+      "user_story": "As a platform engineer, I want a webhook receiver that ingests purchase and refund events from the e-commerce platform, so that online transactions flow into the loyalty system automatically",
+      "acceptance_criteria": [
+        "Given the e-commerce platform sends an order.completed webhook, When received, Then the webhook signature is validated (HMAC-SHA256) and the payload is parsed to extract customer_email, order_id, total_amount, and channel",
+        "Given a valid webhook payload, When the customer_email is mapped to a loyalty customer_id, Then the transaction is forwarded to the points accrual engine",
+        "Given a webhook with an invalid or missing HMAC signature, When received, Then it is rejected with 403 Forbidden and the attempt is logged as a security event",
+        "Given a webhook for a customer_email not found in the loyalty system, When received, Then it is placed in the dead letter queue for manual review with reason 'customer_not_found'"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-025"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-01 \u2014 Points Accrual on Purchase \u2014 regardless of channel"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.2 (external integration protocols)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: webhook receiver + HMAC validation + payload parsing + customer mapping + DLQ. Security AC for signature validation to prevent spoofed events."
+    },
+    {
+      "story_id": "US-040",
+      "feature_id": "F-03.7",
+      "title": "POS Event Adapter",
+      "user_story": "As a platform engineer, I want a POS event adapter that receives in-store transaction events, so that in-store purchases earn loyalty points",
+      "acceptance_criteria": [
+        "Given the POS system sends a transaction event via REST API, When received, Then it is validated, parsed, and forwarded to the points accrual engine with channel set to 'in-store'",
+        "Given the POS system uses file-based polling (legacy fallback), When new transaction files are detected, Then they are parsed and processed within 5 minutes of file creation",
+        "Given the loyalty engine is temporarily unavailable, When events arrive, Then they are queued and retried with exponential backoff until successfully processed"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-025"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-01 \u2014 Points Accrual on Purchase \u2014 regardless of channel",
+          "FR-23 \u2014 Points Reversal on Return/Refund"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.2 (external integration protocols)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: REST receiver + file polling fallback + queue + retry logic. File-based fallback addresses legacy POS systems per CON-01."
+    },
+    {
+      "story_id": "US-041",
+      "feature_id": "F-03.7",
+      "title": "Dead Letter Queue and Event Deduplication",
+      "user_story": "As a platform engineer, I want unprocessable events stored in a dead letter queue and duplicate events rejected, so that no events are lost and none are processed twice",
+      "acceptance_criteria": [
+        "Given an event cannot be processed after 3 retry attempts, When the final retry fails, Then it is moved to the dead letter queue with: event_payload, failure_reason, retry_count, last_attempt_timestamp",
+        "Given an event with the same order_id + event_type combination arrives, When checked against processed events, Then it is rejected as duplicate and not forwarded to the accrual engine",
+        "Given events in the DLQ, When a support engineer queries them, Then they can view, retry, or dismiss events via the admin API"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-039",
+        "US-040"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-01 \u2014 Points Accrual on Purchase",
+          "NFR-05 \u2014 99.9% Uptime"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.1 (Pub/Sub)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: DLQ storage + deduplication check + admin retry API. Ensures no events are silently lost and prevents double-crediting."
+    },
+    {
+      "story_id": "US-042",
+      "feature_id": "F-03.1",
+      "title": "Configurable Accrual Rate",
+      "user_story": "As a loyalty program manager, I want the points accrual rate to be configurable without code changes, so that I can adjust the earn rate based on business needs",
+      "acceptance_criteria": [
+        "Given the accrual rate is configured to 2 points per \u00a31, When a \u00a350 purchase is processed, Then 100 points are awarded",
+        "Given the accrual rate is changed, When the next transaction arrives, Then it uses the new rate immediately without requiring a deployment",
+        "Given an invalid rate value (0 or negative) is set, When the configuration is saved, Then it is rejected with a validation error and the previous rate remains active"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-025"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-01 \u2014 Points Accrual on Purchase \u2014 configurable rate"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: config read + validation + hot-reload. Enables business agility without engineering involvement."
+    },
+    {
+      "story_id": "US-043",
+      "feature_id": "F-03.5",
+      "title": "Transaction History API",
+      "user_story": "As a backend developer, I want a paginated transaction history API, so that both mobile and web clients can retrieve customer transaction data efficiently",
+      "acceptance_criteria": [
+        "Given a GET request to /v1/customers/{id}/transactions, When called with page=1&limit=20, Then it returns the 20 most recent transactions with pagination metadata (total_count, has_next_page)",
+        "Given filter parameters type=earn&from=2026-01-01&to=2026-06-30, When applied, Then only matching transactions are returned",
+        "Given a request for another customer's transactions, When the authenticated customer_id doesn't match the requested id, Then it returns 403 Forbidden"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-025"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-18 \u2014 Points Transaction History \u2014 pagination and date filtering"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (RESTful APIs)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: paginated query + filtering + authorization check. Security AC ensures customers can only access their own data."
+    }
+  ],
+  "coverage_matrix": [
+    {
+      "feature_id": "F-03.1",
+      "stories": [
+        "US-025",
+        "US-026",
+        "US-042"
+      ],
+      "total_points": 10
+    },
+    {
+      "feature_id": "F-03.2",
+      "stories": [
+        "US-027",
+        "US-028"
+      ],
+      "total_points": 7
+    },
+    {
+      "feature_id": "F-03.3",
+      "stories": [
+        "US-029",
+        "US-030"
+      ],
+      "total_points": 5
+    },
+    {
+      "feature_id": "F-03.4",
+      "stories": [
+        "US-031",
+        "US-032",
+        "US-033"
+      ],
+      "total_points": 10
+    },
+    {
+      "feature_id": "F-03.5",
+      "stories": [
+        "US-034",
+        "US-035",
+        "US-043"
+      ],
+      "total_points": 11
+    },
+    {
+      "feature_id": "F-03.6",
+      "stories": [
+        "US-036",
+        "US-037",
+        "US-038"
+      ],
+      "total_points": 11
+    },
+    {
+      "feature_id": "F-03.7",
+      "stories": [
+        "US-039",
+        "US-040",
+        "US-041"
+      ],
+      "total_points": 13
+    }
+  ],
+  "regression_summary": {
+    "total_regression_criteria": 0,
+    "existing_features_with_regression_tests": [],
+    "recommendation": "Greenfield \u2014 no regression testing needed. All stories are new capabilities."
+  }
+}

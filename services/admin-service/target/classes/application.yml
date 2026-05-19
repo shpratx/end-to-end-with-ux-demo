@@ -1,0 +1,23 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: admin-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/next_loyalty
+    username: ${DB_USERNAME:loyalty}
+    password: ${DB_PASSWORD:loyalty}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

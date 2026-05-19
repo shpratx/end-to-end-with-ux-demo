@@ -1,0 +1,797 @@
+openapi: 3.0.3
+info:
+  title: Next Loyalty API — Points
+  version: 1.0.0
+  description: Points endpoints for the Next Loyalty Program API.
+servers:
+- url: https://loyalty.next.co.uk/api/v1
+  description: Production
+- url: https://staging.loyalty.next.co.uk/api/v1
+  description: Staging
+- url: http://localhost:3000/api/v1
+  description: Local Development
+paths:
+  /points/earn:
+    post:
+      operationId: earnPoints
+      summary: Earn points on purchase
+      description: Credit points to a customer based on a purchase transaction. Idempotent
+        by transaction reference. Requires API key (POS/e-commerce system).
+      tags:
+      - Points
+      security:
+      - apiKeyAuth: []
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - customerId
+              - transactionAmount
+              - referenceId
+              - channel
+              properties:
+                customerId:
+                  type: string
+                  format: uuid
+                transactionAmount:
+                  type: number
+                  format: double
+                  minimum: 0.01
+                  example: 75.5
+                referenceId:
+                  type: string
+                  description: Order or transaction ID from source system
+                  example: ORD-2026-001234
+                channel:
+                  type: string
+                  enum:
+                  - online
+                  - in_store
+                  - app
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      sku:
+                        type: string
+                      category:
+                        type: string
+                      amount:
+                        type: number
+                        format: double
+      responses:
+        '201':
+          description: Points earned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactionId:
+                    type: string
+                    format: uuid
+                  pointsEarned:
+                    type: integer
+                    example: 76
+                  bonusPoints:
+                    type: integer
+                    example: 0
+                  newBalance:
+                    type: integer
+                    example: 1576
+                  campaignApplied:
+                    type: string
+                    nullable: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /points/redeem:
+    post:
+      operationId: redeemPoints
+      summary: Redeem points at checkout
+      description: Deduct points and apply discount to an order. Validates balance,
+        minimum threshold, and max discount rules. Atomic operation with row-level
+        locking.
+      tags:
+      - Points
+      security:
+      - bearerAuth: []
+      - apiKeyAuth: []
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - pointsToRedeem
+              - orderId
+              - orderTotal
+              - channel
+              properties:
+                pointsToRedeem:
+                  type: integer
+                  minimum: 1
+                  example: 500
+                orderId:
+                  type: string
+                  example: ORD-2026-005678
+                orderTotal:
+                  type: number
+                  format: double
+                  example: 120.0
+                channel:
+                  type: string
+                  enum:
+                  - online
+                  - in_store
+                  - app
+      responses:
+        '200':
+          description: Points redeemed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  transactionId:
+                    type: string
+                    format: uuid
+                  pointsRedeemed:
+                    type: integer
+                    example: 500
+                  discountApplied:
+                    type: number
+                    format: double
+                    example: 25.0
+                  remainingBalance:
+                    type: integer
+                    example: 1076
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /points/balance:
+    get:
+      operationId: getPointsBalance
+      summary: Get points balance
+      description: Retrieve the authenticated customer's current points balance with
+        monetary equivalent and tier multiplier.
+      tags:
+      - Points
+      responses:
+        '200':
+          description: Points balance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PointsBalance'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /points/transactions:
+    get:
+      operationId: getPointsTransactions
+      summary: Get points transaction history
+      description: Paginated list of all points transactions for the authenticated
+        customer. Filterable by type and date range.
+      tags:
+      - Points
+      parameters:
+      - $ref: '#/components/parameters/PageNumber'
+      - $ref: '#/components/parameters/PageSize'
+      - name: type
+        in: query
+        schema:
+          type: string
+          enum:
+          - earn
+          - redeem
+          - adjustment
+          - bonus
+          - expired
+          - reversal
+      - name: fromDate
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: toDate
+        in: query
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Transaction list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Transaction'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token (15-minute expiry)
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for POS terminals and e-commerce integrations
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Unique key to ensure idempotent processing of write operations
+    PageNumber:
+      name: pageNumber
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Page number for pagination
+    PageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: Number of items per page
+  schemas:
+    Customer:
+      type: object
+      properties:
+        customerId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Jane Smith
+        email:
+          type: string
+          format: email
+          example: jane.smith@example.com
+        emailVerified:
+          type: boolean
+          example: true
+        phone:
+          type: string
+          example: '+447700900123'
+        phoneVerified:
+          type: boolean
+          example: true
+        loyaltyId:
+          type: string
+          example: '1234567890'
+        status:
+          type: string
+          enum:
+          - pending_verification
+          - active
+          - suspended
+          - deleted
+        tier:
+          type: string
+          example: Gold
+        lifetimePoints:
+          type: integer
+          example: 5200
+        memberSince:
+          type: string
+          format: date
+          example: '2026-01-15'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        customerId: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        name: Jane Smith
+        email: jane.smith@example.com
+        emailVerified: true
+        phone: '+447700900123'
+        phoneVerified: true
+        loyaltyId: '1234567890'
+        status: active
+        tier: Gold
+        lifetimePoints: 5200
+        memberSince: '2026-01-15'
+        createdAt: '2026-01-15T10:30:00Z'
+        updatedAt: '2026-05-18T09:15:00Z'
+    PointsBalance:
+      type: object
+      properties:
+        availablePoints:
+          type: integer
+          example: 2500
+        monetaryEquivalent:
+          type: number
+          format: double
+          description: Value in GBP based on current redemption rate
+          example: 125.0
+        pendingPoints:
+          type: integer
+          description: Points from transactions still processing
+          example: 0
+        tierMultiplier:
+          type: number
+          format: double
+          example: 1.5
+        lastUpdated:
+          type: string
+          format: date-time
+      example:
+        availablePoints: 2500
+        monetaryEquivalent: 125.0
+        pendingPoints: 0
+        tierMultiplier: 1.5
+        lastUpdated: '2026-05-18T11:45:00Z'
+    Transaction:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - earn
+          - redeem
+          - adjustment
+          - bonus
+          - expired
+          - reversal
+        points:
+          type: integer
+          description: Positive for credits, negative for debits
+          example: 76
+        runningBalance:
+          type: integer
+          example: 2576
+        referenceId:
+          type: string
+          description: Order ID, adjustment ID, or campaign ID
+          example: ORD-2026-001234
+        channel:
+          type: string
+          enum:
+          - online
+          - in_store
+          - app
+          - system
+        description:
+          type: string
+          example: Purchase at Next Oxford Street
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        transactionId: f1e2d3c4-b5a6-7890-fedc-ba0987654321
+        type: earn
+        points: 76
+        runningBalance: 2576
+        referenceId: ORD-2026-001234
+        channel: online
+        description: Online purchase
+        createdAt: '2026-05-18T14:30:00Z'
+    Tier:
+      type: object
+      properties:
+        tierId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Gold
+        threshold:
+          type: integer
+          description: Lifetime points required to reach this tier
+          example: 5000
+        earnRateMultiplier:
+          type: number
+          format: double
+          example: 1.5
+        badgeColor:
+          type: string
+          example: '#FFD700'
+        benefits:
+          type: array
+          items:
+            type: string
+          example:
+          - 1.5x points on all purchases
+          - Early access to sales (24 hours)
+          - Free delivery on all orders
+      example:
+        tierId: c3d4e5f6-a7b8-9012-cdef-345678901234
+        name: Gold
+        threshold: 5000
+        earnRateMultiplier: 1.5
+        badgeColor: '#FFD700'
+        benefits:
+        - 1.5x points on all purchases
+        - Early access to sales (24 hours)
+        - Free delivery on all orders
+    Notification:
+      type: object
+      properties:
+        notificationId:
+          type: string
+          format: uuid
+        title:
+          type: string
+          example: Points Earned!
+        body:
+          type: string
+          example: 'You earned 76 points on your online purchase! New balance: 2,576
+            points.'
+        type:
+          type: string
+          enum:
+          - transactional
+          - promotional
+          - system
+        read:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        notificationId: d4e5f6a7-b8c9-0123-def4-567890123456
+        title: Points Earned!
+        body: 'You earned 76 points on your online purchase! New balance: 2,576 points.'
+        type: transactional
+        read: false
+        createdAt: '2026-05-18T14:30:05Z'
+    Campaign:
+      type: object
+      properties:
+        campaignId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Summer Double Points
+        type:
+          type: string
+          enum:
+          - multiplier
+          - fixed_bonus
+          - category_bonus
+        value:
+          type: number
+          format: double
+          example: 2.0
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        eligibility:
+          type: string
+          enum:
+          - all_customers
+          - tier_minimum
+          - new_members_only
+        minimumTier:
+          type: string
+          nullable: true
+        applicableCategories:
+          type: array
+          items:
+            type: string
+          nullable: true
+        maxBudget:
+          type: integer
+          nullable: true
+        budgetUsed:
+          type: integer
+          example: 45000
+        status:
+          type: string
+          enum:
+          - draft
+          - active
+          - paused
+          - completed
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        campaignId: e5f6a7b8-c9d0-1234-ef56-789012345678
+        name: Summer Double Points
+        type: multiplier
+        value: 2.0
+        startDate: '2026-06-01T00:00:00Z'
+        endDate: '2026-06-30T23:59:59Z'
+        eligibility: all_customers
+        minimumTier: null
+        applicableCategories: null
+        maxBudget: 500000
+        budgetUsed: 45000
+        status: active
+        createdAt: '2026-05-15T09:00:00Z'
+    AuditEntry:
+      type: object
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+        actorType:
+          type: string
+          enum:
+          - customer
+          - staff
+          - system
+        actorId:
+          type: string
+          format: uuid
+        action:
+          type: string
+          example: points_earned
+        entityType:
+          type: string
+          example: points_ledger
+        entityId:
+          type: string
+          format: uuid
+        beforeState:
+          type: object
+          nullable: true
+        afterState:
+          type: object
+          nullable: true
+        sourceSystem:
+          type: string
+          enum:
+          - app
+          - web
+          - pos
+          - admin
+          - system
+        ipAddress:
+          type: string
+          example: 192.168.1.100
+        correlationId:
+          type: string
+          format: uuid
+    PaginationMeta:
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          example: 1
+        pageSize:
+          type: integer
+          example: 20
+        totalItems:
+          type: integer
+          example: 156
+        totalPages:
+          type: integer
+          example: 8
+        hasNextPage:
+          type: boolean
+          example: true
+        hasPreviousPage:
+          type: boolean
+          example: false
+    ProblemDetails:
+      type: object
+      description: RFC 7807 Problem Details for HTTP APIs
+      properties:
+        type:
+          type: string
+          format: uri
+          description: URI reference identifying the problem type
+          example: https://loyalty.next.co.uk/problems/validation-error
+        title:
+          type: string
+          description: Short human-readable summary
+          example: Validation Error
+        status:
+          type: integer
+          description: HTTP status code
+          example: 422
+        detail:
+          type: string
+          description: Human-readable explanation specific to this occurrence
+          example: The 'email' field must be a valid email address
+        instance:
+          type: string
+          format: uri
+          description: URI reference identifying the specific occurrence
+          example: /api/v1/auth/register
+        traceId:
+          type: string
+          description: Correlation ID for distributed tracing
+          example: abc123def456
+        errors:
+          type: array
+          description: Detailed field-level validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: email
+              message:
+                type: string
+                example: Must be a valid email address
+              code:
+                type: string
+                example: INVALID_FORMAT
+      example:
+        type: https://loyalty.next.co.uk/problems/validation-error
+        title: Validation Error
+        status: 422
+        detail: One or more fields failed validation
+        instance: /api/v1/auth/register
+        traceId: abc123def456
+        errors:
+        - field: email
+          message: Must be a valid email address
+          code: INVALID_FORMAT
+    AuthTokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+          description: Access token expiry in seconds
+          example: 900
+        tokenType:
+          type: string
+          example: Bearer
+  responses:
+    BadRequest:
+      description: Bad Request — malformed request syntax or invalid parameters
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            type: https://loyalty.next.co.uk/problems/bad-request
+            title: Bad Request
+            status: 400
+            detail: Request body is malformed or missing required fields
+            traceId: trace-001
+    Unauthorized:
+      description: Unauthorized — missing or invalid authentication credentials
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            type: https://loyalty.next.co.uk/problems/unauthorized
+            title: Unauthorized
+            status: 401
+            detail: Access token is missing, expired, or invalid
+            traceId: trace-002
+    Forbidden:
+      description: Forbidden — authenticated but insufficient permissions
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            type: https://loyalty.next.co.uk/problems/forbidden
+            title: Forbidden
+            status: 403
+            detail: You do not have permission to perform this action
+            traceId: trace-003
+    NotFound:
+      description: Not Found — requested resource does not exist
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            type: https://loyalty.next.co.uk/problems/not-found
+            title: Not Found
+            status: 404
+            detail: The requested resource was not found
+            traceId: trace-004
+    UnprocessableEntity:
+      description: Unprocessable Entity — request understood but validation failed
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            type: https://loyalty.next.co.uk/problems/validation-error
+            title: Validation Error
+            status: 422
+            detail: One or more fields failed validation
+            traceId: trace-005
+            errors:
+            - field: email
+              message: Email already registered
+              code: DUPLICATE
+    InternalServerError:
+      description: Internal Server Error — unexpected server-side failure
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            type: https://loyalty.next.co.uk/problems/internal-error
+            title: Internal Server Error
+            status: 500
+            detail: An unexpected error occurred. Please try again later.
+            traceId: trace-006

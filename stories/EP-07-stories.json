@@ -1,0 +1,556 @@
+{
+  "epic_id": "EP-07",
+  "epic_title": "Account Linking, Expiration & Gamification",
+  "mode": "greenfield",
+  "total_stories": 13,
+  "total_story_points": 52,
+  "stories": [
+    {
+      "story_id": "US-098",
+      "feature_id": "F-07.1",
+      "title": "Account Linking Initiation & OTP Verification",
+      "user_story": "As Clara (loyalty customer), I want to link my separate online and in-store accounts by verifying ownership via OTP, so that my points are consolidated into a single account",
+      "acceptance_criteria": [
+        "Given Clara is on the Profile screen, When she taps 'Link Accounts', Then a form is displayed requesting the email or phone number of the secondary account",
+        "Given Clara enters a valid email/phone of an existing account, When she submits, Then an OTP is sent to that email/phone and she is navigated to the OTP entry screen within 5 seconds",
+        "Given Clara enters the correct OTP within 5 minutes, When she submits, Then the system initiates the account merge process and displays a progress indicator",
+        "Given the 'Link Accounts' button, When navigated via VoiceOver/TalkBack, Then it is announced with its label and purpose ('Link another loyalty account to combine your points')",
+        "Given Clara enters an email/phone not associated with any account, When she submits, Then she sees an error: 'No account found with this email/phone. Please check and try again.'"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-08 \u2014 Account Linking \u2014 verify ownership via OTP, consolidate points within 1 minute"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (PostgreSQL transactions for atomic merge)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points due to OTP flow complexity, secondary account lookup, and validation logic. Accessibility AC required for user-facing screen. Security AC implicit via OTP verification preventing unauthorized linking. Confidential because it involves PII (email/phone) of another account."
+    },
+    {
+      "story_id": "US-099",
+      "feature_id": "F-07.1",
+      "title": "Account Merge Execution & Balance Consolidation",
+      "user_story": "As Clara (loyalty customer), I want my points balances, transaction histories, and tier status merged atomically when I link accounts, so that I don't lose any points or history",
+      "acceptance_criteria": [
+        "Given OTP verification succeeds, When the merge executes, Then both accounts' points balances are summed and the combined balance is reflected on Clara's primary account within 1 minute",
+        "Given both accounts have transaction histories, When the merge completes, Then all transactions from both accounts appear in a single chronological history on the primary account",
+        "Given the secondary account has a higher tier than the primary, When the merge completes, Then the primary account retains the higher tier",
+        "Given the merge completes successfully, When Clara views her dashboard, Then she sees a notification: 'Accounts linked! Your combined balance is {total} points.'"
+      ],
+      "story_points": 8,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-098"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-08 \u2014 Account Linking \u2014 consolidate points within 1 minute, merge transaction history"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (PostgreSQL transactions for atomic merge)",
+          "enterprise-architecture \u00a75.1 (Cloud Audit Logs)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "8 points: atomic database merge of ledger entries, tier resolution, notification preferences consolidation, and audit logging. This is the most complex single operation in the system \u2014 must be transactional to prevent partial merges (NFR-08)."
+    },
+    {
+      "story_id": "US-100",
+      "feature_id": "F-07.1",
+      "title": "Account Linking \u2014 Negative Paths & Edge Cases",
+      "user_story": "As Clara (loyalty customer), I want the system to prevent account linking when unsafe conditions exist, so that I don't encounter data corruption or unauthorized merges",
+      "acceptance_criteria": [
+        "Given the secondary account has an active redemption in progress, When Clara attempts to link, Then the system blocks the merge and displays: 'The other account has a pending transaction. Please try again after it completes.'",
+        "Given the secondary account has a negative balance from returns, When the merge executes, Then the negative balance is carried forward and offset against the primary account's balance",
+        "Given Clara has already linked an account previously, When she attempts to link the same secondary account again, Then the system rejects with: 'This account has already been merged.'",
+        "Given the OTP has expired (after 5 minutes), When Clara enters it, Then she sees: 'Code expired. Please request a new one.' and can resend"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-099"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-08 \u2014 Account Linking \u2014 verify ownership via OTP, consolidate points within 1 minute"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (PostgreSQL transactions for atomic merge)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: multiple edge cases requiring distinct validation logic. Negative balance carry-forward is a financial integrity concern. Blocking during active redemption prevents race conditions. This is the required negative-path story for F-07.1."
+    },
+    {
+      "story_id": "US-101",
+      "feature_id": "F-07.2",
+      "title": "Points Expiration Warning Notifications",
+      "user_story": "As Nathan (loyalty customer), I want to receive warning notifications before my points expire, so that I have time to make a purchase or redemption to keep them",
+      "acceptance_criteria": [
+        "Given Nathan has been inactive for 11 months (30 days before expiration threshold), When the daily expiration job runs, Then he receives a push notification: 'Your {points} points will expire on {date} if you don't make a purchase or redemption.'",
+        "Given Nathan has been inactive for 11 months and 23 days (7 days before expiration), When the daily expiration job runs, Then he receives an urgent notification: 'Last chance! {points} points expiring in 7 days.'",
+        "Given Nathan makes a purchase after receiving the 30-day warning, When the earn transaction is processed, Then his inactivity timer resets and no further expiration warnings are sent",
+        "Given Nathan has push notifications disabled, When an expiration warning is triggered, Then it falls back to email delivery"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-22 \u2014 Points Expiration Policy \u2014 30-day and 7-day warnings, configurable inactivity period"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.1 (Pub/Sub for async events)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: daily batch job logic, inactivity calculation, two-stage notification triggers, and activity reset logic. Confidential because notifications contain points balance. Timer reset on activity is critical to prevent false expirations."
+    },
+    {
+      "story_id": "US-102",
+      "feature_id": "F-07.2",
+      "title": "Points Expiration Execution",
+      "user_story": "As a Platform Engineer, I want a daily batch job that expires points for inactive customers after the configured threshold, so that the loyalty program liability is managed per business rules",
+      "acceptance_criteria": [
+        "Given Nathan has been inactive for 12 months (configurable threshold), When the daily expiration job runs on the expiration date, Then a ledger entry is created: {type: 'expired', points: -balance} and his balance is set to 0",
+        "Given points are expired, When Nathan views his transaction history, Then the expiration entry is visible with an 'expired' badge and reason: 'Expired due to 12 months of inactivity'",
+        "Given the admin has configured expiration_months to 0 (never expire), When the daily job runs, Then no customers' points are expired regardless of inactivity period",
+        "Given Nathan's points are expired, When he receives the notification, Then it reads: 'Your {points} points have expired due to 12 months of inactivity. Make a purchase to start earning again!'"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-101"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-22 \u2014 Points Expiration Policy \u2014 deduct and log expired points, configurable inactivity period"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (Cloud SQL PostgreSQL for transactional data)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: batch processing logic, ledger entry creation, balance zeroing, configurable threshold from admin, and notification dispatch. Depends on US-093 because warnings must be sent before expiration executes."
+    },
+    {
+      "story_id": "US-103",
+      "feature_id": "F-07.2",
+      "title": "Points Expiration \u2014 Negative Paths",
+      "user_story": "As Nathan (loyalty customer), I want the expiration system to handle edge cases correctly, so that my points are not unfairly expired",
+      "acceptance_criteria": [
+        "Given Nathan has a pending redemption at the time of expiration, When the daily job runs, Then his points are NOT expired and the job retries the next day after the redemption completes",
+        "Given Nathan's account was merged (via account linking) within the inactivity period, When the expiration job evaluates his account, Then the inactivity timer uses the most recent activity from either merged account",
+        "Given the expiration batch job fails mid-execution, When it is retried, Then it resumes from where it left off without double-expiring any customer's points (idempotent)"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-102"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-22 \u2014 Points Expiration Policy \u2014 configurable inactivity period, deduct and log expired points"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (PostgreSQL transactions for atomic operations)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: edge case handling for concurrent operations and idempotency. Pending redemption blocking prevents data inconsistency. Merged account activity consideration ensures fairness. This is the required negative-path story for F-07.2."
+    },
+    {
+      "story_id": "US-104",
+      "feature_id": "F-07.3",
+      "title": "Badge Definition & Award Engine",
+      "user_story": "As a Platform Engineer, I want a configurable badge engine that automatically awards badges when customers hit milestones, so that gamification runs without manual intervention",
+      "acceptance_criteria": [
+        "Given a badge 'First Purchase' is configured with trigger_type: 'transaction_count' and trigger_value: 1, When Clara completes her first earn transaction, Then the badge is awarded to her profile",
+        "Given Clara already has the 'First Purchase' badge, When she makes another purchase, Then the badge is NOT awarded again (one-time only per badge per customer)",
+        "Given a new badge is created via admin, When the badge engine evaluates on the next transaction, Then it checks the new badge's trigger against all qualifying customers",
+        "Given the badge award succeeds, When the event is processed, Then a push notification is sent: 'Badge unlocked: {name}! {description}' with the badge icon"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Public",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-13 \u2014 Gamification Badges \u2014 configurable milestones, displayed on profile"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.1 (Pub/Sub for async events)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: trigger evaluation engine, multiple trigger types (points_threshold, transaction_count, event), deduplication logic, and notification integration. Public data sensitivity because badges contain no PII."
+    },
+    {
+      "story_id": "US-105",
+      "feature_id": "F-07.3",
+      "title": "Badge Display on Customer Profile",
+      "user_story": "As Clara (loyalty customer), I want to see my earned badges and locked badges with progress on my profile, so that I feel motivated to unlock more",
+      "acceptance_criteria": [
+        "Given Clara has earned 3 badges, When she navigates to 'My Badges' section on her profile, Then earned badges are displayed in full color with name, icon, and date earned",
+        "Given there are badges Clara hasn't earned yet, When she views the badges grid, Then locked badges appear greyed out with a progress indicator (e.g., '7/10 purchases')",
+        "Given the badges grid, When navigated via screen reader, Then each badge is announced with: name, earned/locked status, and progress if locked",
+        "Given Clara is on a 320px mobile viewport, When the badges grid renders, Then it reflows to a 2-column layout without horizontal scrolling"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Public",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-104"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-13 \u2014 Gamification Badges \u2014 displayed on profile"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a79 (shared design system component library, WCAG 2.1 AA)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: UI grid component, earned/locked states, progress calculation, and responsive layout. Accessibility AC required for user-facing screen. Depends on US-096 because badges must be awardable before they can be displayed."
+    },
+    {
+      "story_id": "US-106",
+      "feature_id": "F-07.3",
+      "title": "Default Badge Set Configuration",
+      "user_story": "As a Platform Engineer, I want the system seeded with a default set of badges covering key milestones, so that gamification is active from launch without manual setup",
+      "acceptance_criteria": [
+        "Given the system is deployed, When the badge seed script runs, Then the following badges exist: 'First Purchase' (1 earn), 'Century Club' (100 points), 'Points Master' (1000 points), 'Loyal Regular' (10 purchases), 'Redeemer' (1 redemption), 'App Pioneer' (app sign-up event), 'Linked Up' (account linked event)",
+        "Given each badge, When viewed in admin, Then it has: name, icon_url, description, trigger_type, trigger_value, and rarity (common/rare/epic) configured",
+        "Given the seed script has already run, When it runs again, Then it does not create duplicate badges (idempotent)"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Public",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-104"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-13 \u2014 Gamification Badges \u2014 configurable milestones"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: seed data script with idempotency check. Low complexity but necessary for launch readiness. Depends on US-096 because the badge schema must exist before seeding."
+    },
+    {
+      "story_id": "US-107",
+      "feature_id": "F-07.3",
+      "title": "Badge Notification & Celebration UX",
+      "user_story": "As Clara (loyalty customer), I want a celebratory experience when I unlock a badge, so that I feel rewarded and motivated to earn more",
+      "acceptance_criteria": [
+        "Given Clara unlocks a badge, When she next opens the app, Then a celebration modal appears with the badge icon, name, description, and a confetti animation",
+        "Given the celebration modal is displayed, When Clara taps 'View All Badges' or dismisses, Then she is navigated to the badges grid or the modal closes respectively",
+        "Given the celebration modal, When navigated via screen reader, Then the badge name and description are announced, and the modal is dismissible via Escape key with focus returned to the trigger element"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Public",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-105"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-13 \u2014 Gamification Badges \u2014 configurable milestones, displayed on profile"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a79 (shared design system component library, WCAG 2.1 AA)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: modal component with animation and accessibility. Celebration UX drives engagement and makes badges feel rewarding. Accessibility AC ensures screen reader users get equivalent experience."
+    },
+    {
+      "story_id": "US-108",
+      "feature_id": "F-07.3",
+      "title": "Gamification Badges \u2014 Negative Paths",
+      "user_story": "As Clara (loyalty customer), I want the badge system to handle edge cases gracefully, so that I don't receive incorrect badges or miss earned ones",
+      "acceptance_criteria": [
+        "Given Clara's points are reversed due to a return, When her lifetime points drop below a badge threshold she previously crossed, Then the badge is NOT revoked (badges are permanent once earned)",
+        "Given the badge engine encounters an error while evaluating Clara's transaction, When the error occurs, Then the transaction still completes successfully and badge evaluation is retried asynchronously",
+        "Given Clara links two accounts where both had earned the same badge, When the merge completes, Then the badge appears only once on the merged profile with the earliest earned date"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Public",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-104"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-13 \u2014 Gamification Badges \u2014 configurable milestones"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.1 (Pub/Sub for async retry)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: edge case handling for reversals, error resilience, and merge deduplication. Badges being permanent once earned is a deliberate design choice to maintain trust. This is the required negative-path story for F-07.3."
+    },
+    {
+      "story_id": "US-109",
+      "feature_id": "F-07.2",
+      "title": "Expiration Dashboard Indicator & History Display",
+      "user_story": "As Nathan (loyalty customer), I want to see upcoming expiration dates and expired points in my dashboard and history, so that I'm always aware of my points status",
+      "acceptance_criteria": [
+        "Given Nathan has points approaching expiration (within 30 days), When he views his dashboard, Then a warning banner is displayed: 'Your points expire on {date} \u2014 make a purchase to keep them!'",
+        "Given Nathan's points have expired, When he views his transaction history, Then the expiration entry shows with an 'Expired' badge, the points amount in red, and the reason",
+        "Given the expiration warning banner, When navigated via screen reader, Then it is announced as an alert with the expiration date and action suggestion"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-102"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-22 \u2014 Points Expiration Policy \u2014 30-day and 7-day warnings"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a79 (shared design system component library, WCAG 2.1 AA)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: dashboard banner component, history entry styling, and accessibility. Provides in-app visibility complementing push notifications. Accessibility AC required for user-facing warning."
+    },
+    {
+      "story_id": "US-110",
+      "feature_id": "F-07.1",
+      "title": "Account Linking Audit Trail & Security Logging",
+      "user_story": "As a Platform Engineer, I want all account linking operations fully logged in the audit trail, so that merges can be investigated and reversed if needed",
+      "acceptance_criteria": [
+        "Given an account merge completes, When the audit log is written, Then it contains: initiator_customer_id, secondary_customer_id, before_state (both accounts' balances, tiers, transaction counts), after_state (merged account state), timestamp, and correlation_id",
+        "Given an account linking attempt fails (OTP expired, blocked by active redemption), When the failure occurs, Then it is logged with: reason, initiator_id, target_email_hash (not plaintext), and timestamp",
+        "Given a security review is needed, When an admin queries the audit API with customer_id and action='account_linked', Then all linking events for that customer are returned with full before/after state"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-099"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-08 \u2014 Account Linking",
+          "FR-28 \u2014 System Audit Trail \u2014 all state changes logged with actor, timestamp, action, before/after"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (Cloud Audit Logs)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: structured audit logging with before/after snapshots. Restricted data sensitivity because audit logs contain full account state including PII references. Security AC: target email is hashed in failure logs to prevent PII leakage in audit queries."
+    }
+  ],
+  "coverage_matrix": [
+    {
+      "feature_id": "F-07.1",
+      "stories": [
+        "US-098",
+        "US-099",
+        "US-100",
+        "US-110"
+      ],
+      "total_points": 21
+    },
+    {
+      "feature_id": "F-07.2",
+      "stories": [
+        "US-101",
+        "US-102",
+        "US-103",
+        "US-109"
+      ],
+      "total_points": 16
+    },
+    {
+      "feature_id": "F-07.3",
+      "stories": [
+        "US-104",
+        "US-105",
+        "US-106",
+        "US-107",
+        "US-108"
+      ],
+      "total_points": 15
+    }
+  ],
+  "regression_summary": {
+    "total_regression_criteria": 0,
+    "existing_features_with_regression_tests": [],
+    "recommendation": "Greenfield \u2014 no regression testing needed. All stories are new capabilities."
+  }
+}

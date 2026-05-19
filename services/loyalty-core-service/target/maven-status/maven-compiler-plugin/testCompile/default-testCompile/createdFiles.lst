@@ -1,0 +1,3 @@
+uk/co/next/loyalty/application/command/EarnPointsCommandTest.class
+uk/co/next/loyalty/application/command/RedeemPointsCommandTest.class
+uk/co/next/loyalty/api/controller/WebhookControllerContractTest.class

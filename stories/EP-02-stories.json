@@ -1,0 +1,447 @@
+{
+  "epic_id": "EP-02",
+  "epic_title": "Customer Registration & Authentication",
+  "mode": "greenfield",
+  "total_stories": 10,
+  "total_story_points": 25,
+  "stories": [
+    {
+      "story_id": "US-015",
+      "feature_id": "F-02.1",
+      "title": "Customer Registration Form (Happy Path)",
+      "user_story": "As a new customer, I want to register for the loyalty program with my name, email, and phone number, so that I can start earning points on my purchases",
+      "acceptance_criteria": [
+        "Given I'm on the registration screen, When I enter valid name, email (RFC 5322), phone (E.164), and password (12+ chars, uppercase, lowercase, number, special), Then the Submit button becomes enabled",
+        "Given I submit valid registration data, When the account is created, Then I receive a success message and am redirected to the OTP verification screen",
+        "Given my email is already registered, When I attempt to register, Then I see 'An account with this email already exists \u2014 try logging in' without revealing whether the account is active",
+        "Given the registration form, When navigated via screen reader, Then each field is announced with its label, required status, and any validation error"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-002"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-04 \u2014 Multi-Channel Loyalty Sign-Up"
+        ],
+        "domain_kb_sections": [
+          "persona-cards \u2014 Clara (Cash/Debit Shopper), Nathan (nextpay Account Holder)"
+        ],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (security layers)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: form + validation + API call + error handling. Duplicate check doesn't reveal account existence (security). Accessibility AC per Rule 22. Security: no PII in error messages."
+    },
+    {
+      "story_id": "US-016",
+      "feature_id": "F-02.1",
+      "title": "Registration Validation & Rate Limiting (Negative Path)",
+      "user_story": "As a security-conscious platform, I want registration attempts validated and rate-limited, so that bots and abuse are prevented",
+      "acceptance_criteria": [
+        "Given an invalid email format, When I blur the email field, Then inline error shows 'Please enter a valid email address' immediately",
+        "Given a password with fewer than 12 characters, When I type, Then the strength meter shows 'Weak' in red and the requirement checklist shows unmet criteria",
+        "Given 5 registration attempts from the same IP in 1 hour, When the 6th attempt is made, Then it is blocked with 'Too many attempts \u2014 please try again later'",
+        "Given the registration API receives a request, When processing, Then PII (email, phone) is not written to application logs"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-015"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-04 \u2014 Multi-Channel Loyalty Sign-Up",
+          "NFR-07 \u2014 API Rate Limiting"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (rate limiting, input validation)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: validation rules + rate limiter. Negative path story per Rule 21. Security AC: PII not logged per Rule 23."
+    },
+    {
+      "story_id": "US-017",
+      "feature_id": "F-02.1",
+      "title": "In-Store Assisted Registration",
+      "user_story": "As a store associate, I want to register a customer for the loyalty program at the POS, so that walk-in customers can join without needing the app",
+      "acceptance_criteria": [
+        "Given I'm authenticated as a store associate, When I access the registration API with staff token, Then I can create a customer account on their behalf",
+        "Given I enter the customer's details, When registration completes, Then the customer receives a verification email/SMS to activate their account",
+        "Given the staff registration endpoint, When called without a valid staff role token, Then it returns 403 Forbidden"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-015"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-04 \u2014 Multi-Channel Loyalty Sign-Up (mobile app, website, or in-store)"
+        ],
+        "domain_kb_sections": [
+          "persona-cards \u2014 Sana (Store Associate)"
+        ],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: staff-facing API endpoint + authorization check. Supports the in-store channel per FR-04. Store associate persona (Sana) needs this capability."
+    },
+    {
+      "story_id": "US-018",
+      "feature_id": "F-02.2",
+      "title": "OTP Verification",
+      "user_story": "As a new customer, I want to verify my email via a one-time code, so that my account is activated and secured",
+      "acceptance_criteria": [
+        "Given I've registered, When I check my email, Then I receive a 6-digit OTP within 30 seconds",
+        "Given I enter the correct OTP within 5 minutes, When I submit, Then my account status changes to 'active' and I'm redirected to the login screen",
+        "Given the OTP has expired (> 5 minutes), When I enter it, Then I see 'Code expired \u2014 request a new one' with a resend button",
+        "Given I've requested 3 OTPs in 10 minutes, When I request a 4th, Then I see 'Too many attempts \u2014 try again in 10 minutes'"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-015"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-04 \u2014 Multi-Channel Loyalty Sign-Up"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (security)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: OTP generation + email delivery + verification logic + rate limiting. 5-minute expiry balances security with usability."
+    },
+    {
+      "story_id": "US-019",
+      "feature_id": "F-02.2",
+      "title": "OTP Failure Handling",
+      "user_story": "As a new customer, I want clear feedback when my OTP verification fails, so that I know what went wrong and how to fix it",
+      "acceptance_criteria": [
+        "Given I enter an incorrect OTP, When I submit, Then I see 'Invalid code \u2014 {remaining} attempts remaining' and the input field is cleared",
+        "Given I've failed OTP verification 5 times, When the 5th failure occurs, Then my verification is blocked for 30 minutes and I'm notified via email",
+        "Given the resend countdown is active (60 seconds), When I look at the resend button, Then it shows a countdown timer and is disabled until it reaches zero"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-018"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-04 \u2014 Multi-Channel Loyalty Sign-Up"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: error states + lockout logic. Negative path story per Rule 21. Lockout notification prevents confusion."
+    },
+    {
+      "story_id": "US-020",
+      "feature_id": "F-02.3",
+      "title": "Email/Password Login",
+      "user_story": "As a returning customer, I want to log in with my email and password, so that I can access my loyalty account securely",
+      "acceptance_criteria": [
+        "Given I enter valid credentials, When I submit, Then I receive a JWT access token (15-min expiry) and refresh token (30-day on mobile, 7-day on web) and am redirected to the dashboard",
+        "Given I enter incorrect credentials, When I submit, Then I see 'Invalid email or password' (not specifying which is wrong) and the attempt is logged",
+        "Given 5 consecutive failed login attempts, When the 5th fails, Then the account is locked for 30 minutes and I see 'Account locked \u2014 try again at {time}'",
+        "Given my session token expires, When I make an API call, Then the refresh token is used to obtain a new access token transparently"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-018"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-16 \u2014 User Authentication"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (Auth: OAuth 2.0 / OpenID Connect)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: login form + JWT issuance + refresh flow + lockout. Restricted because handles credentials. Generic error message prevents account enumeration."
+    },
+    {
+      "story_id": "US-021",
+      "feature_id": "F-02.3",
+      "title": "Social Login (Google & Apple)",
+      "user_story": "As a new or returning customer, I want to log in with my Google or Apple account, so that I can access the loyalty program without creating another password",
+      "acceptance_criteria": [
+        "Given I'm on the login screen, When I tap 'Continue with Google', Then the Google OAuth consent screen appears and upon approval, I'm logged in with my account linked",
+        "Given I'm on the login screen, When I tap 'Sign in with Apple', Then the Apple Sign In flow appears with option to hide email, and upon approval, I'm logged in",
+        "Given I've previously registered with email/password, When I log in via social with the same email, Then the accounts are linked and both login methods work"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-020"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-16 \u2014 User Authentication (social login Google, Apple)"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (OAuth 2.0 / OpenID Connect)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: two OAuth provider integrations + account linking logic. Restricted because handles auth tokens. Account linking prevents duplicate accounts."
+    },
+    {
+      "story_id": "US-022",
+      "feature_id": "F-02.3",
+      "title": "Password Reset Flow",
+      "user_story": "As a customer who forgot my password, I want to reset it via email, so that I can regain access to my loyalty account",
+      "acceptance_criteria": [
+        "Given I tap 'Forgot password', When I enter my registered email, Then I receive a reset link within 30 seconds (valid for 1 hour)",
+        "Given I click the reset link, When I set a new password meeting strength requirements, Then my password is updated and all existing sessions are invalidated",
+        "Given I enter an unregistered email, When I submit, Then I see the same success message ('If an account exists, you'll receive a reset link') to prevent enumeration",
+        "Given the reset link has expired (> 1 hour), When I click it, Then I see 'This link has expired \u2014 request a new one'"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-020"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-16 \u2014 User Authentication (password reset via email link)"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (security)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: reset request + email delivery + token validation + password update + session invalidation. Same-message-regardless prevents account enumeration."
+    },
+    {
+      "story_id": "US-023",
+      "feature_id": "F-02.4",
+      "title": "Terms & Conditions Acceptance During Registration",
+      "user_story": "As a new customer, I want to review and accept the loyalty program terms before completing registration, so that I understand the program rules and my data rights",
+      "acceptance_criteria": [
+        "Given I'm on the registration form, When I view the T&C section, Then I see a scrollable T&C text with an unchecked 'I accept the Terms & Conditions' checkbox",
+        "Given the T&C checkbox is unchecked, When I try to submit, Then the form shows 'You must accept the Terms & Conditions to continue'",
+        "Given I check the box and submit, When registration completes, Then the system records: customer_id, t&c_version (e.g., 'v1.2'), acceptance_timestamp, and IP address",
+        "Given the T&C link, When tapped, Then the full terms open in a modal/new screen that is scrollable and accessible via screen reader"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": "UK GDPR Article 7 (conditions for consent)",
+      "depends_on": [
+        "US-015"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-27 \u2014 Terms & Conditions Acceptance"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.2 (UK GDPR / DPA 2018)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: checkbox + validation + consent recording. Unchecked by default per GDPR (no pre-ticked boxes). Regulatory linkage: GDPR Art. 7 consent conditions."
+    },
+    {
+      "story_id": "US-024",
+      "feature_id": "F-02.4",
+      "title": "T&C Re-Acceptance on Version Update",
+      "user_story": "As a returning customer, I want to be prompted to accept updated terms when they change, so that I'm always informed of current program rules",
+      "acceptance_criteria": [
+        "Given the T&C version has been updated since my last acceptance, When I log in, Then a modal displays the updated T&C requiring re-acceptance before I can proceed",
+        "Given the re-acceptance modal is shown, When I decline, Then I'm logged out with a message: 'You must accept the updated terms to continue using the loyalty program'",
+        "Given I accept the updated T&C, When recorded, Then the new version and timestamp replace my previous consent record in the audit trail"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": "UK GDPR Article 7 (re-consent on material changes)",
+      "depends_on": [
+        "US-023"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-27 \u2014 Terms & Conditions Acceptance (re-accept on update)"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.2 (UK GDPR)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: version check on login + modal + consent update. Blocking modal ensures no one uses the program under outdated terms."
+    }
+  ],
+  "coverage_matrix": [
+    {
+      "feature_id": "F-02.1",
+      "stories": [
+        "US-015",
+        "US-016",
+        "US-017"
+      ],
+      "total_points": 7
+    },
+    {
+      "feature_id": "F-02.2",
+      "stories": [
+        "US-018",
+        "US-019"
+      ],
+      "total_points": 5
+    },
+    {
+      "feature_id": "F-02.3",
+      "stories": [
+        "US-020",
+        "US-021",
+        "US-022"
+      ],
+      "total_points": 9
+    },
+    {
+      "feature_id": "F-02.4",
+      "stories": [
+        "US-023",
+        "US-024"
+      ],
+      "total_points": 4
+    }
+  ],
+  "regression_summary": {
+    "total_regression_criteria": 0,
+    "existing_features_with_regression_tests": [],
+    "recommendation": "Greenfield \u2014 no regression testing needed."
+  }
+}

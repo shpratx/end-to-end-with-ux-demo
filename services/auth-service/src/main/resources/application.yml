@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/loyalty_auth
+    username: ${DB_USERNAME:loyalty}
+    password: ${DB_PASSWORD:loyalty}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-me-in-production-must-be-at-least-256-bits-long-secret-key}
+    access-token-expiry: 900
+    refresh-token-expiry-mobile: 2592000
+    refresh-token-expiry-web: 604800
+  encryption:
+    key: ${PII_ENCRYPTION_KEY:0123456789abcdef0123456789abcdef}
+  otp:
+    length: 6
+    expiry-seconds: 300
+    max-attempts: 5
+    max-resends: 3
+    resend-window-seconds: 600
+  rate-limit:
+    registration: 5
+    login: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized

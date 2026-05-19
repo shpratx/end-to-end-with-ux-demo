@@ -1,0 +1,606 @@
+{
+  "epic_id": "EP-08",
+  "epic_title": "Resilience, Security Hardening & Cross-Cutting Concerns",
+  "mode": "greenfield",
+  "total_stories": 14,
+  "total_story_points": 65,
+  "stories": [
+    {
+      "story_id": "US-111",
+      "feature_id": "F-08.1",
+      "title": "Database Replication & Automated Failover",
+      "user_story": "As a Platform Engineer, I want synchronous database replication with automated failover, so that the system recovers from primary database failure within the 1-hour RTO target",
+      "acceptance_criteria": [
+        "Given the primary PostgreSQL instance is running, When replication is configured, Then a synchronous standby replica exists in a separate availability zone with replication lag < 30 seconds",
+        "Given the primary database health check fails for 30 consecutive seconds, When the failover triggers, Then the standby is promoted to primary and all services reconnect within 5 minutes",
+        "Given replication lag exceeds 30 seconds, When the monitoring system detects it, Then a critical alert is fired to the on-call channel with the current lag value",
+        "Given the failover configuration, When accessed by unauthorized users, Then it is protected by IAM policies requiring 'infrastructure-admin' role (no customer or staff access)"
+      ],
+      "story_points": 8,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-05 \u2014 99.9% Uptime with Failover \u2014 RTO 1 hour, RPO 5 minutes, automatic failover"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (multi-AZ, failover)",
+          "enterprise-architecture \u00a73.2 (Cloud SQL PostgreSQL)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "8 points: synchronous replication setup, health check configuration, automated promotion logic, service reconnection, and alerting. Restricted because DR configuration exposes infrastructure topology and connection strings. Security AC ensures only infrastructure admins can modify failover config."
+    },
+    {
+      "story_id": "US-112",
+      "feature_id": "F-08.1",
+      "title": "Backup Strategy & Point-in-Time Recovery",
+      "user_story": "As a Platform Engineer, I want daily backups with point-in-time recovery capability, so that data can be restored to any point within the RPO target of 5 minutes",
+      "acceptance_criteria": [
+        "Given the backup schedule is configured, When midnight UTC arrives daily, Then a full database backup is created and stored in a separate region with AES-256 encryption",
+        "Given backups are retained, When a backup is older than 30 days, Then it is automatically deleted per the retention policy",
+        "Given a data corruption incident, When a platform engineer initiates point-in-time recovery, Then the database can be restored to any point within the last 30 days with 5-minute granularity",
+        "Given backup storage, When accessed, Then it requires 'infrastructure-admin' role and all access is logged to the audit trail"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-111"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-05 \u2014 99.9% Uptime with Failover \u2014 RPO 5 minutes"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (multi-AZ, failover)",
+          "enterprise-architecture \u00a73.3 (Cloud Storage)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: backup automation, cross-region storage, retention policy, PITR configuration, and access control. Restricted because backups contain all customer data. Security AC for access control on backup storage."
+    },
+    {
+      "story_id": "US-113",
+      "feature_id": "F-08.1",
+      "title": "DR Failover Drill & Runbook",
+      "user_story": "As a Platform Engineer, I want a documented DR runbook and quarterly failover drill process, so that the team can execute recovery confidently during real incidents",
+      "acceptance_criteria": [
+        "Given the DR runbook is created, When reviewed, Then it contains step-by-step procedures for: database failover, Redis failover, Kubernetes pod recovery, and DNS cutover with estimated time for each step",
+        "Given a quarterly DR drill is scheduled, When executed in staging, Then the full failover completes within the 1-hour RTO target and data loss is verified to be within 5-minute RPO",
+        "Given the DR drill completes, When results are documented, Then a report is generated with: actual RTO achieved, actual RPO achieved, issues encountered, and remediation actions"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-111",
+        "US-112"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-05 \u2014 99.9% Uptime with Failover \u2014 RTO 1 hour, RPO 5 minutes"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (multi-AZ, failover)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: documentation and drill execution. Lower complexity than infrastructure setup but critical for operational readiness. Restricted because runbook contains infrastructure access procedures. Quarterly drills per DORA Art. 11 best practice."
+    },
+    {
+      "story_id": "US-114",
+      "feature_id": "F-08.2",
+      "title": "Load Test Suite \u2014 Baseline & Peak Capacity",
+      "user_story": "As a Platform Engineer, I want automated load tests validating baseline and 10x peak capacity, so that I can confirm the system meets NFR-01 and NFR-03 before production launch",
+      "acceptance_criteria": [
+        "Given the baseline load test runs at expected volume, When all scenarios complete, Then all API endpoints respond within 2 seconds at p95 latency with zero errors",
+        "Given the peak load test runs at 10x expected volume, When all scenarios complete, Then the system remains responsive with p95 < 5 seconds and error rate < 0.1%",
+        "Given the load test includes concurrent redemption for the same customer (race condition test), When 50 simultaneous redemption requests are sent, Then exactly one succeeds and the rest receive 409 Conflict with no over-redemption",
+        "Given load test results, When the report is generated, Then it includes: p50/p95/p99 latency per endpoint, error rate, throughput (TPS), and pass/fail against NFR targets"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-01 \u2014 Transaction Processing Latency \u2014 2s p95",
+          "NFR-03 \u2014 10x Transaction Volume Capacity"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (GKE auto-scaling)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: test script development for multiple scenarios, infrastructure for load generation, and reporting. Race condition test specifically validates NFR-08 under load. Internal sensitivity because test results reveal system capacity limits."
+    },
+    {
+      "story_id": "US-115",
+      "feature_id": "F-08.2",
+      "title": "Soak Test & Auto-Scaling Validation",
+      "user_story": "As a Platform Engineer, I want soak and spike tests that validate auto-scaling and long-running stability, so that I can confirm the system handles sustained load without degradation",
+      "acceptance_criteria": [
+        "Given the soak test runs at 5x volume for 4 hours, When it completes, Then memory usage remains stable (no leaks \u2014 growth < 5% over duration) and latency does not degrade",
+        "Given a sudden 20x traffic spike lasting 5 minutes, When the spike occurs, Then the system gracefully degrades (may queue requests) but loses no data and recovers within 2 minutes after spike ends",
+        "Given auto-scaling is configured, When load increases from baseline to 10x, Then Kubernetes scales from 3 to 15 pods within 2 minutes and latency stabilizes"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-114"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-03 \u2014 10x Transaction Volume Capacity",
+          "NFR-05 \u2014 99.9% Uptime with Failover"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (GKE auto-scaling, Horizontal Pod Autoscaler)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: long-running test infrastructure, memory profiling, auto-scaling validation, and spike recovery measurement. Depends on US-106 because baseline must pass before soak/spike tests are meaningful."
+    },
+    {
+      "story_id": "US-116",
+      "feature_id": "F-08.3",
+      "title": "Fraud Detection \u2014 Velocity Limits & Duplicate Detection",
+      "user_story": "As a Platform Engineer, I want velocity limits and duplicate detection rules to prevent points fraud, so that the loyalty program is protected from abuse",
+      "acceptance_criteria": [
+        "Given a customer has 10 earn transactions in the current hour, When an 11th earn request arrives, Then it is blocked with a 429 response and an alert is raised to the fraud queue",
+        "Given a customer has 5 redemptions in the current day, When a 6th redemption request arrives, Then it is blocked with: 'Daily redemption limit reached. Please try again tomorrow.'",
+        "Given a transaction with the same order_id was processed within the last 24 hours, When a duplicate arrives, Then it is rejected with 409 Conflict and logged as a duplicate attempt",
+        "Given a fraud rule triggers, When the event is logged, Then the audit trail entry includes: rule_id, customer_id, transaction_details, action_taken (block/alert/throttle), and timestamp"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-07 \u2014 API Rate Limiting and Abuse Prevention \u2014 configurable rate limiting, brute-force protection"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (security layers)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: sliding window rate limiting, per-customer velocity tracking, duplicate detection with 24h window, and audit logging. Restricted because fraud rules are security-sensitive \u2014 exposing them enables circumvention. Security AC via audit trail logging."
+    },
+    {
+      "story_id": "US-117",
+      "feature_id": "F-08.3",
+      "title": "Fraud Detection \u2014 Suspicious Pattern Alerts",
+      "user_story": "As a Platform Engineer, I want the system to detect and alert on suspicious transaction patterns, so that potential fraud is flagged for review before significant damage occurs",
+      "acceptance_criteria": [
+        "Given a customer earns more than 10,000 points in a single day, When the threshold is crossed, Then an alert is raised to the fraud review queue with customer details and transaction list",
+        "Given a customer redeems points within 5 minutes of a large earn (>1000 points), When the redemption is processed, Then it is flagged for review (allowed but marked as suspicious)",
+        "Given a customer authenticates from more than 5 distinct devices in 24 hours, When the 6th device is detected, Then an alert is raised and the customer receives a security notification: 'New device detected on your account'",
+        "Given a new account (< 24 hours old) attempts a redemption, When the request arrives, Then it is blocked with: 'Redemption is available 24 hours after registration. You can earn points immediately!'"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-116"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-07 \u2014 API Rate Limiting and Abuse Prevention"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (security layers)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: pattern detection logic, device fingerprinting, time-window analysis, and new-account restriction. Restricted because detection thresholds are security-sensitive. 24-hour redemption restriction prevents sign-up-and-drain attacks."
+    },
+    {
+      "story_id": "US-118",
+      "feature_id": "F-08.3",
+      "title": "Fraud Admin Dashboard & Rule Configuration",
+      "user_story": "As a Platform Engineer, I want an admin interface to review fraud alerts, mark false positives, and configure fraud rules, so that the fraud system can be tuned without code deployments",
+      "acceptance_criteria": [
+        "Given fraud alerts exist in the queue, When an admin views the fraud dashboard, Then alerts are listed with: customer_id, rule triggered, transaction details, timestamp, and status (pending/reviewed/false_positive)",
+        "Given an admin reviews an alert, When they mark it as 'false positive', Then the alert is closed and the customer's fraud score is not affected",
+        "Given an admin accesses the rule configuration, When they modify a velocity limit (e.g., change from 10 to 15 earn transactions/hour), Then the change takes effect within 1 minute without service restart",
+        "Given the fraud admin dashboard, When accessed, Then it requires 'loyalty_admin' role with MFA and all access is logged to the audit trail"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-116",
+        "US-117"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-07 \u2014 API Rate Limiting and Abuse Prevention \u2014 configurable rate limiting"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (Identity: Cloud IAM, RBAC)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: admin UI for alert queue, false positive workflow, dynamic rule configuration, and hot-reload of rules. Restricted because it provides access to fraud detection internals. Security AC: MFA + admin role + audit logging."
+    },
+    {
+      "story_id": "US-119",
+      "feature_id": "F-08.3",
+      "title": "Fraud Prevention \u2014 Negative Paths",
+      "user_story": "As Nathan (loyalty customer), I want the fraud system to not block my legitimate transactions unfairly, so that I can use the loyalty program without friction",
+      "acceptance_criteria": [
+        "Given Nathan is blocked by a velocity limit, When he views the error, Then the message explains the limit without revealing the exact threshold: 'Too many transactions in a short period. Please try again later.'",
+        "Given Nathan's legitimate transaction is flagged as suspicious, When it is reviewed and marked as false positive, Then his future transactions with similar patterns are not automatically blocked",
+        "Given the fraud detection service is unavailable, When a transaction arrives, Then it is processed normally (fail-open for availability) and queued for retrospective fraud analysis"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-116"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-07 \u2014 API Rate Limiting and Abuse Prevention",
+          "NFR-05 \u2014 99.9% Uptime with Failover"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (security layers)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: error message design (no threshold leakage), false-positive learning, and fail-open circuit breaker. Fail-open ensures fraud service outage doesn't block all transactions (availability over security for non-critical path). This is the required negative-path story for F-08.3."
+    },
+    {
+      "story_id": "US-120",
+      "feature_id": "F-08.4",
+      "title": "Offline Mode \u2014 Cached Balance & Transaction History",
+      "user_story": "As Clara (loyalty customer), I want to see my cached points balance and recent transactions when offline, so that I can still check my loyalty status without internet",
+      "acceptance_criteria": [
+        "Given Clara's device loses network connectivity, When she opens the app, Then her last-known points balance is displayed with a 'Last updated: {timestamp}' indicator and a subtle offline badge",
+        "Given Clara is offline, When she navigates to transaction history, Then the last 20 cached transactions are displayed with a note: 'Showing cached data \u2014 connect to internet for latest'",
+        "Given Clara is offline, When she views her QR code, Then it continues to generate from cached customer_id (refreshing the dynamic code locally) for POS scanning",
+        "Given the offline indicator, When navigated via screen reader, Then it announces: 'You are offline. Showing data from {timestamp}. Some features are limited.'"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-09 \u2014 Mobile App Performance \u2014 offline graceful degradation, show cached balance with last updated timestamp"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.1 (Native mobile \u2014 Swift iOS, Kotlin Android)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: local storage caching strategy, network detection, QR code offline generation, and UI state management. Confidential because cached data contains points balance. QR code working offline is critical for in-store identification. Accessibility AC for offline indicator."
+    },
+    {
+      "story_id": "US-121",
+      "feature_id": "F-08.4",
+      "title": "Offline Mode \u2014 Disabled Actions & Reconnection",
+      "user_story": "As Clara (loyalty customer), I want write actions disabled when offline and data silently refreshed on reconnection, so that I don't encounter errors and always see current data",
+      "acceptance_criteria": [
+        "Given Clara is offline, When she views the redemption button, Then it is greyed out with tooltip: 'Requires internet connection'",
+        "Given Clara is offline, When she attempts to edit her profile, Then the edit button is disabled with: 'Profile editing requires an internet connection'",
+        "Given Clara's device regains connectivity, When the network is restored, Then the offline badge disappears, balance and history refresh silently, and a toast appears if balance changed: 'Balance updated: {new_balance} points'",
+        "Given Clara attempts any action requiring network while offline, When she taps the disabled control, Then a non-intrusive message appears: 'This action requires an internet connection. Please try again when connected.'"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-120"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-09 \u2014 Mobile App Performance \u2014 offline graceful degradation"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: UI state toggling for offline/online, reconnection detection, silent refresh, and change notification toast. Redemption disabled offline because it requires real-time balance validation (NFR-08). Depends on US-112 for the caching infrastructure."
+    },
+    {
+      "story_id": "US-122",
+      "feature_id": "F-08.4",
+      "title": "Offline Mode \u2014 Negative Paths",
+      "user_story": "As Clara (loyalty customer), I want the app to handle intermittent connectivity and stale cache gracefully, so that I don't see incorrect data or experience crashes",
+      "acceptance_criteria": [
+        "Given Clara's connection is intermittent (flapping), When connectivity toggles rapidly, Then the offline indicator does not flicker (debounced with 5-second threshold before showing/hiding)",
+        "Given Clara's cached data is older than 24 hours, When she opens the app offline, Then a prominent warning appears: 'Data may be outdated \u2014 last updated over 24 hours ago'",
+        "Given the local cache is corrupted or empty (fresh install), When Clara opens the app offline, Then she sees a friendly empty state: 'Connect to the internet to load your loyalty data' instead of a crash"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-120"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-09 \u2014 Mobile App Performance \u2014 offline graceful degradation"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: debounce logic, stale cache detection, and empty cache handling. Debouncing prevents UI jitter on unstable connections. 24-hour staleness warning prevents users from acting on very outdated data. This is the required negative-path story for F-08.4."
+    },
+    {
+      "story_id": "US-123",
+      "feature_id": "F-08.2",
+      "title": "Performance Optimization & Caching Tuning",
+      "user_story": "As a Platform Engineer, I want performance bottlenecks identified and resolved based on load test results, so that all endpoints meet their latency budgets under production load",
+      "acceptance_criteria": [
+        "Given load test results identify endpoints exceeding latency budgets, When optimization is applied, Then balance query responds in < 500ms at p99, accrual in < 2s at p95, and redemption in < 2s at p95",
+        "Given Redis cache is tuned, When balance queries hit the cache, Then cache hit rate exceeds 95% for read operations under normal load",
+        "Given database query optimization is applied, When slow queries are identified (> 500ms), Then they are optimized with appropriate indexes and the slow query count drops to zero under baseline load"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-114"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-01 \u2014 Transaction Processing Latency \u2014 2s p95",
+          "NFR-03 \u2014 10x Transaction Volume Capacity"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (Memorystore Redis for caching)",
+          "enterprise-architecture \u00a73.2 (Cloud SQL PostgreSQL)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: profiling, index optimization, cache tuning, and re-validation. Depends on US-106 because load test results identify what needs optimization. Internal sensitivity because performance data reveals system architecture details."
+    },
+    {
+      "story_id": "US-124",
+      "feature_id": "F-08.1",
+      "title": "Redis & Kubernetes Multi-AZ Failover",
+      "user_story": "As a Platform Engineer, I want Redis cluster failover and multi-AZ Kubernetes deployment configured, so that no single availability zone failure causes a service outage",
+      "acceptance_criteria": [
+        "Given Redis is deployed in cluster mode, When the primary Redis node fails, Then a replica is promoted within 30 seconds and cache operations resume without application errors",
+        "Given Kubernetes pods are deployed, When they are scheduled, Then they are distributed across at least 2 availability zones with anti-affinity rules preventing all replicas in one AZ",
+        "Given a full AZ outage, When one zone becomes unavailable, Then the remaining zone(s) handle all traffic with degraded but functional performance (latency may increase up to 2x but no errors)"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-111"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "NFR-05 \u2014 99.9% Uptime with Failover \u2014 automatic failover"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (multi-AZ, failover)",
+          "enterprise-architecture \u00a73.2 (Memorystore Redis)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: Redis sentinel/cluster configuration, Kubernetes pod anti-affinity rules, and AZ failure simulation. Restricted because it exposes infrastructure topology. Complements US-103 (database failover) to provide full-stack resilience."
+    }
+  ],
+  "coverage_matrix": [
+    {
+      "feature_id": "F-08.1",
+      "stories": [
+        "US-111",
+        "US-112",
+        "US-113",
+        "US-124"
+      ],
+      "total_points": 21
+    },
+    {
+      "feature_id": "F-08.2",
+      "stories": [
+        "US-114",
+        "US-115",
+        "US-123"
+      ],
+      "total_points": 15
+    },
+    {
+      "feature_id": "F-08.3",
+      "stories": [
+        "US-116",
+        "US-117",
+        "US-118",
+        "US-119"
+      ],
+      "total_points": 18
+    },
+    {
+      "feature_id": "F-08.4",
+      "stories": [
+        "US-120",
+        "US-121",
+        "US-122"
+      ],
+      "total_points": 11
+    }
+  ],
+  "regression_summary": {
+    "total_regression_criteria": 0,
+    "existing_features_with_regression_tests": [],
+    "recommendation": "Greenfield \u2014 no regression testing needed. All stories are new capabilities."
+  }
+}

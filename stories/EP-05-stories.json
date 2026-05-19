@@ -1,0 +1,645 @@
+{
+  "epic_id": "EP-05",
+  "epic_title": "POS Integration & Store Operations",
+  "mode": "greenfield",
+  "total_stories": 15,
+  "total_story_points": 57,
+  "stories": [
+    {
+      "story_id": "US-065",
+      "feature_id": "F-05.1",
+      "title": "POS Loyalty Summary Display on Customer Identification",
+      "user_story": "As Sana (store associate), I want to see a customer's loyalty summary when I identify them at POS, so that I can personalize their checkout experience",
+      "acceptance_criteria": [
+        "Given a customer is identified via phone, loyalty ID, or QR scan, When the lookup completes, Then the POS displays: customer name, tier badge with color, current points balance, monetary equivalent, member since date, and lifetime points earned within 2 seconds",
+        "Given the loyalty summary is displayed, When I view the last transactions section, Then the 3 most recent transactions are shown with date, type, and points amount",
+        "Given a customer is identified, When the API response includes tier benefits, Then a personalization hint is displayed (e.g., 'Gold member \u2014 eligible for 10% bonus')",
+        "Given the POS loyalty panel, When accessed via keyboard navigation, Then all elements are reachable and the panel is announced by screen readers with appropriate labels"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-03 \u2014 POS Loyalty Status Display \u2014 tier, balance, membership status within 2 seconds"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.2 (external integration protocols)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: API integration + UI panel + personalization hints. 2-second SLA from NFR-01. Confidential because it displays customer PII and financial data. Accessibility AC included for user-facing POS screen."
+    },
+    {
+      "story_id": "US-066",
+      "feature_id": "F-05.1",
+      "title": "POS Display \u2014 Customer Not Found Handling",
+      "user_story": "As Sana (store associate), I want clear guidance when a customer is not found in the loyalty system, so that I can offer them registration instead of a dead end",
+      "acceptance_criteria": [
+        "Given a lookup is performed with a phone/loyalty ID/QR that matches no customer, When the API returns 404, Then the POS displays 'Not a loyalty member' with a prominent 'Register Customer' action button",
+        "Given the 'Register Customer' button is tapped, When the registration flow starts, Then it pre-fills the lookup value (e.g., phone number) into the in-store registration form",
+        "Given the lookup API is unavailable or times out after 5 seconds, When the error occurs, Then the POS shows 'Loyalty service temporarily unavailable \u2014 proceed without loyalty' and logs the failure"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-065"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-03 \u2014 POS Loyalty Status Display"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.2 (external integration protocols)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: negative path story covering not-found and timeout scenarios. Pre-filling lookup value reduces friction for in-store registration. Timeout handling ensures POS checkout isn't blocked by loyalty system failures."
+    },
+    {
+      "story_id": "US-067",
+      "feature_id": "F-05.2",
+      "title": "Manual Points Addition by Store Staff",
+      "user_story": "As Sana (store associate), I want to manually add points to a customer's account with a reason, so that I can resolve issues like missed accruals or provide goodwill gestures",
+      "acceptance_criteria": [
+        "Given I select a customer and choose 'Add Points', When I enter points amount (\u2264 500), select a reason from the predefined list (system_error_correction, goodwill_gesture, promotional_credit, other), and submit, Then the points are immediately credited and a success confirmation is shown",
+        "Given I select reason 'other', When the form is displayed, Then a free-text notes field becomes required and must contain at least 10 characters",
+        "Given the adjustment is submitted, When it is processed, Then an audit record is created with: staff_id, customer_id, action='add', points, reason, notes, timestamp, and approval_status='approved'",
+        "Given the adjustment succeeds, When the customer is notified, Then they receive a push notification: '{points} points added \u2014 Reason: {reason}. New balance: {balance}.'"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-10 \u2014 Manual Points Adjustment \u2014 add/deduct, reason selection, manager approval above threshold, audit logged"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (RBAC \u2014 role-based access)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: form + validation + ledger write + audit + notification. Separated add from deduct for clarity. \u2264500 threshold allows immediate processing without manager approval."
+    },
+    {
+      "story_id": "US-068",
+      "feature_id": "F-05.2",
+      "title": "Manual Points Deduction by Store Staff",
+      "user_story": "As Sana (store associate), I want to manually deduct points from a customer's account with a documented reason, so that I can correct errors or handle fraud cases",
+      "acceptance_criteria": [
+        "Given I select a customer and choose 'Deduct Points', When I enter points amount (\u2264 500), select a reason (system_error_correction, fraud_correction, other), and submit, Then the points are immediately deducted and a confirmation is shown",
+        "Given the deduction would result in a negative balance, When I submit, Then the system shows an error: 'Customer only has {balance} points available. Maximum deduction: {balance} points.'",
+        "Given the deduction succeeds, When the customer is notified, Then they receive: '{points} points deducted \u2014 Reason: {reason}. New balance: {balance}.'"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-067"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-10 \u2014 Manual Points Adjustment \u2014 add/deduct, reason selection, audit logged"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: reuses adjustment infrastructure from US-062 but adds negative balance validation. Negative path AC prevents over-deduction."
+    },
+    {
+      "story_id": "US-069",
+      "feature_id": "F-05.2",
+      "title": "Manager Approval for Large Adjustments",
+      "user_story": "As Sana (store associate), I want large point adjustments (> 500) to require manager approval, so that high-value changes have dual-control oversight",
+      "acceptance_criteria": [
+        "Given I submit an adjustment exceeding 500 points, When the request is created, Then it enters 'pending_approval' state and I see: 'Adjustment requires manager approval. Reference: {ref_id}'",
+        "Given a pending adjustment exists, When a user with 'loyalty_manager' role reviews it, Then they can approve or reject with an optional note",
+        "Given a manager approves the adjustment, When approval is recorded, Then the points are credited/deducted, the customer is notified, and the audit record includes approver_id",
+        "Given a manager rejects the adjustment, When rejection is recorded, Then the requesting staff is notified with the rejection reason and no points are moved",
+        "Given the adjustment API, When called by a user without 'loyalty_staff' or 'loyalty_manager' role, Then it returns 403 Forbidden"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-067"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-10 \u2014 Manual Points Adjustment \u2014 manager approval above threshold"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (RBAC)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: approval workflow + role checks + notification to staff. Dual-control follows SOX segregation of duties. Security AC for role authorization included."
+    },
+    {
+      "story_id": "US-070",
+      "feature_id": "F-05.3",
+      "title": "Automatic Retry for Failed Points Accrual",
+      "user_story": "As Clara (loyalty customer), I want the system to automatically retry when my points accrual fails, so that transient errors don't cause me to lose points",
+      "acceptance_criteria": [
+        "Given a points accrual fails due to system_error or timeout, When the failure is detected, Then the transaction is queued for automatic retry with exponential backoff (1min, 5min, 30min)",
+        "Given a retry succeeds on attempt 2 or 3, When points are credited, Then the standard accrual notification is sent and no failure notification is triggered",
+        "Given all 3 retry attempts fail, When the final retry exhausts, Then the transaction is marked as 'failed' and a failure notification is queued for the customer"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-11 \u2014 Failed Accrual Notification \u2014 notify within 5 minutes, explain issue, provide resolution instructions"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.1 (Pub/Sub for retry queues)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: retry queue + backoff logic + conditional notification. Resolves most transient failures silently. Only notifies customer after all retries exhausted."
+    },
+    {
+      "story_id": "US-071",
+      "feature_id": "F-05.3",
+      "title": "Failed Accrual Customer Notification",
+      "user_story": "As Clara (loyalty customer), I want to be notified when my points accrual permanently fails, so that I know to contact support with my receipt",
+      "acceptance_criteria": [
+        "Given all retry attempts have failed, When the failure notification is sent, Then it is delivered within 5 minutes of the final retry: 'We couldn't add points for your purchase on {date} ({order_id}). Please contact support or visit any store with your receipt. Reference: {failure_id}'",
+        "Given a failed accrual exists, When I view my transaction history, Then it appears with a 'failed' badge and the failure reference ID",
+        "Given the notification is sent, When a support ticket reference is created, Then store staff can look up the failure_id to process a manual adjustment"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-070"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-11 \u2014 Failed Accrual Notification \u2014 notify within 5 minutes, explain issue, provide resolution instructions"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: notification template + history badge + support reference. 5-minute SLA gives time for retries before notifying. Links to manual adjustment (F-05.2) for resolution."
+    },
+    {
+      "story_id": "US-072",
+      "feature_id": "F-05.3",
+      "title": "Failed Accrual \u2014 Non-Retryable Errors",
+      "user_story": "As a platform engineer, I want non-retryable accrual failures (customer_not_found, duplicate_transaction) to be handled differently from transient errors, so that the system doesn't waste resources retrying impossible operations",
+      "acceptance_criteria": [
+        "Given an accrual fails because the transaction_id already exists, When the duplicate is detected, Then it is rejected immediately with no retry and logged as 'duplicate_rejected'",
+        "Given an accrual fails because the customer_id is not found, When the failure is detected, Then it is placed in a dead-letter queue for manual review (customer may not be linked yet)",
+        "Given a dead-letter queue item exists, When an admin reviews it, Then they can retry (after linking customer) or discard with a reason"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Confidential",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-070"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-11 \u2014 Failed Accrual Notification"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a77.1 (Pub/Sub, dead-letter queues)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: error classification + DLQ + admin review UI. Negative path story ensuring non-retryable errors don't loop. Duplicate rejection prevents double-crediting."
+    },
+    {
+      "story_id": "US-073",
+      "feature_id": "F-05.4",
+      "title": "Immutable Audit Log for State Changes",
+      "user_story": "As a compliance officer, I want all state-changing operations logged immutably with full context, so that I can reconstruct any event for audit or investigation purposes",
+      "acceptance_criteria": [
+        "Given any state-changing operation occurs (points_earned, points_redeemed, points_adjusted, profile_updated, account_created, config_changed, tier_changed), When it completes, Then an audit entry is created with: event_id (UUID), timestamp, actor_type, actor_id, action, entity_type, entity_id, before_state, after_state, source_system, ip_address, correlation_id",
+        "Given the audit log table, When any database user attempts UPDATE or DELETE, Then the operation is denied by database permissions (append-only enforcement)",
+        "Given audit records exist, When retention policy is evaluated, Then records are retained for 7 years minimum",
+        "Given the audit log contains PII references, When accessed, Then only users with 'loyalty_admin' or 'compliance' role can query it, and access itself is logged"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": "SOX Section 404, UK GDPR Article 30",
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-28 \u2014 System Audit Trail \u2014 all state changes logged with actor, timestamp, action, before/after, source system. Immutable, retained per policy."
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (Cloud Audit Logs)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: schema design + append-only enforcement + retention config + RBAC. Restricted sensitivity because audit logs contain complete operational history. Security AC for access control on Restricted data."
+    },
+    {
+      "story_id": "US-074",
+      "feature_id": "F-05.4",
+      "title": "Audit Log Query API & Export",
+      "user_story": "As a compliance officer, I want to query and export audit logs by customer, action, or date range, so that I can produce evidence for audits and investigations",
+      "acceptance_criteria": [
+        "Given I am authenticated with 'loyalty_admin' or 'compliance' role, When I call GET /v1/admin/audit with filters (customer_id, action, from, to), Then matching audit entries are returned paginated (50 per page) sorted by timestamp descending",
+        "Given a query returns results, When I request CSV export, Then a downloadable file is generated with all matching records within 30 seconds for up to 10,000 records",
+        "Given I am authenticated without admin/compliance role, When I call the audit API, Then I receive 403 Forbidden"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": "SOX Section 404",
+      "depends_on": [
+        "US-073"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-28 \u2014 System Audit Trail \u2014 query and export capabilities"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (Cloud Audit Logs)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: query API + CSV export + authorization. Depends on audit log existing (US-068). Security AC for role-based access on Restricted data."
+    },
+    {
+      "story_id": "US-075",
+      "feature_id": "F-05.5",
+      "title": "Staff Authentication via Employee Credentials",
+      "user_story": "As Sana (store associate), I want to log in to the loyalty system using my employee credentials, so that my actions are tracked and I can access staff-only features",
+      "acceptance_criteria": [
+        "Given I am a store associate, When I enter my employee ID and password on the staff login screen, Then I am authenticated and issued a short-lived token (4-hour expiry) with my role claims",
+        "Given my token has expired after 4 hours, When I attempt any staff action, Then I am redirected to re-authenticate (no refresh token \u2014 shift-based sessions)",
+        "Given I enter incorrect credentials 5 times consecutively, When the 5th attempt fails, Then my account is locked for 30 minutes and a security alert is logged",
+        "Given the staff login screen, When navigated via keyboard, Then all form fields and buttons are accessible with visible focus indicators"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-10 \u2014 Manual Points Adjustment \u2014 requires authorized store associates",
+          "FR-28 \u2014 System Audit Trail \u2014 actor identification"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a73.2 (Auth: OAuth 2.0 / OpenID Connect)",
+          "enterprise-architecture \u00a75.1 (Identity: Cloud IAM)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: auth flow + short-lived tokens + lockout + role claims. Restricted because credentials are highest-sensitivity. 4-hour expiry prevents abandoned terminal exploitation. Security AC for lockout and access control."
+    },
+    {
+      "story_id": "US-076",
+      "feature_id": "F-05.5",
+      "title": "SSO Integration for Staff & Admin Users",
+      "user_story": "As a platform engineer, I want staff authentication to integrate with the client's identity provider via SSO, so that employee lifecycle management is centralized",
+      "acceptance_criteria": [
+        "Given the client's identity provider (Active Directory/Okta) is configured, When a staff member clicks 'Sign in with SSO', Then they are redirected to the IdP, authenticate, and return with a valid staff token containing role claims mapped from directory groups",
+        "Given a staff member is deactivated in the directory, When their token expires or they attempt re-authentication, Then access is denied immediately",
+        "Given SSO is configured, When the IdP is unavailable, Then a fallback to employee ID + password is available with a warning banner: 'SSO unavailable \u2014 using local authentication'"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-075"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-10 \u2014 requires authorized store associates",
+          "FR-28 \u2014 actor identification"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (Workload Identity Federation)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: OIDC/SAML integration + group-to-role mapping + fallback. Restricted sensitivity for credential handling. SSO ensures employee offboarding immediately revokes loyalty system access."
+    },
+    {
+      "story_id": "US-077",
+      "feature_id": "F-05.5",
+      "title": "Role-Based Access Control for Staff Operations",
+      "user_story": "As a platform engineer, I want staff API endpoints protected by role-based access control, so that associates, managers, and admins can only perform actions appropriate to their role",
+      "acceptance_criteria": [
+        "Given a user with 'loyalty_staff' role, When they call adjustment, customer lookup, or earn/redeem APIs, Then access is granted",
+        "Given a user with 'loyalty_staff' role, When they call approval, reporting, or configuration APIs, Then they receive 403 Forbidden",
+        "Given a user with 'loyalty_manager' role, When they call approval endpoints, Then access is granted in addition to all staff permissions",
+        "Given a user with 'loyalty_admin' role, When they call any staff or admin endpoint, Then access is granted (full system access)",
+        "Given any staff endpoint is called, When the request is processed, Then the actor's role and terminal_id (if POS) are included in the audit trail"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-075"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-10 \u2014 requires authorized store associates",
+          "FR-28 \u2014 actor identification for all operations"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (RBAC, Cloud IAM)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: middleware + role hierarchy + audit enrichment. Restricted because RBAC config is security-sensitive. Follows least-privilege principle with escalating permissions."
+    },
+    {
+      "story_id": "US-078",
+      "feature_id": "F-05.5",
+      "title": "MFA Requirement for Manager & Admin Roles",
+      "user_story": "As a security engineer, I want MFA enforced for manager and admin role logins, so that elevated privileges require stronger authentication",
+      "acceptance_criteria": [
+        "Given a user with 'loyalty_manager' or 'loyalty_admin' role authenticates, When primary credentials are verified, Then they are prompted for a second factor (TOTP or push notification) before a token is issued",
+        "Given MFA is required, When the second factor is not provided within 5 minutes, Then the authentication session expires and the user must restart login",
+        "Given a user with 'loyalty_staff' role authenticates, When primary credentials are verified, Then no MFA is required and a token is issued immediately"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-075"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-10 \u2014 requires authorized store associates",
+          "FR-28 \u2014 actor identification"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (security layers)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: MFA integration + conditional enforcement by role. Restricted sensitivity. MFA for elevated roles follows enterprise security standards and prevents credential theft from granting admin access."
+    },
+    {
+      "story_id": "US-079",
+      "feature_id": "F-05.5",
+      "title": "POS Terminal Device Authentication",
+      "user_story": "As a platform engineer, I want POS terminals to authenticate at the device level, so that transactions can be traced to specific terminals for audit purposes",
+      "acceptance_criteria": [
+        "Given a POS terminal is registered in the system, When a staff member authenticates on that terminal, Then the issued token includes a terminal_id claim alongside the staff identity",
+        "Given a transaction is processed from a POS terminal, When the audit record is created, Then it includes both staff_id and terminal_id for full traceability",
+        "Given a terminal_id is not recognized, When a request is made, Then it is rejected with 403 and a security alert is raised"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Restricted",
+      "regulatory_linkage": null,
+      "depends_on": [
+        "US-075"
+      ],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [
+          "FR-28 \u2014 System Audit Trail \u2014 source system identification"
+        ],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [
+          "enterprise-architecture \u00a75.1 (Identity, device authentication)"
+        ],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: device registration + token enrichment + unknown device rejection. Restricted because device auth config is security-sensitive. Enables per-terminal fraud detection."
+    }
+  ],
+  "coverage_matrix": [
+    {
+      "feature_id": "F-05.1",
+      "stories": [
+        "US-065",
+        "US-066"
+      ],
+      "total_points": 8
+    },
+    {
+      "feature_id": "F-05.2",
+      "stories": [
+        "US-067",
+        "US-068",
+        "US-069"
+      ],
+      "total_points": 13
+    },
+    {
+      "feature_id": "F-05.3",
+      "stories": [
+        "US-070",
+        "US-071",
+        "US-072"
+      ],
+      "total_points": 9
+    },
+    {
+      "feature_id": "F-05.4",
+      "stories": [
+        "US-073",
+        "US-074"
+      ],
+      "total_points": 8
+    },
+    {
+      "feature_id": "F-05.5",
+      "stories": [
+        "US-075",
+        "US-076",
+        "US-077",
+        "US-078",
+        "US-079"
+      ],
+      "total_points": 19
+    }
+  ],
+  "regression_summary": {
+    "total_regression_criteria": 0,
+    "existing_features_with_regression_tests": [],
+    "recommendation": "Greenfield \u2014 no regression testing needed. All stories are new capabilities."
+  }
+}

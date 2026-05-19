@@ -1,0 +1,1231 @@
+{
+  "product_name": "Unified Loyalty Program for Omnichannel Retail",
+  "total_epics": 8,
+  "total_features": 42,
+  "delivery_sprints": 4,
+
+  "epics": [
+    {
+      "epic_id": "EP-01",
+      "title": "Platform Foundation & Design System",
+      "description": "Establish the technical foundation: cloud infrastructure, CI/CD pipeline, shared design system component library, API gateway, and observability stack. This unblocks all subsequent development by providing the deployment target, shared UI components, and cross-cutting infrastructure.",
+      "sprint": 1,
+      "requirements_covered": ["FR-14", "FR-29", "NFR-01", "NFR-02", "NFR-03", "NFR-05", "NFR-06", "NFR-07", "NFR-08"],
+      "scope_in": [
+        "Cloud infrastructure provisioning (Kubernetes, databases, cache, messaging)",
+        "CI/CD pipeline setup",
+        "API gateway with authentication, rate limiting, and versioning",
+        "Shared design system component library (buttons, forms, cards, navigation)",
+        "Observability stack (logging, metrics, alerting)",
+        "Centralized loyalty database schema and connection pooling",
+        "Event bus for cross-channel synchronization"
+      ],
+      "scope_out": [
+        "Business logic implementation — handled in subsequent epics",
+        "Mobile app shell — part of EP-02",
+        "Admin portal UI — Sprint 3"
+      ],
+      "reasoning": "Every other epic depends on infrastructure, API layer, and shared components. Design system in Sprint 1 unblocks all UI work per prompt rules. FR-14 (centralized DB) and FR-29 (API layer) are architectural foundations. NFRs for performance, security, scalability, and observability are baked into the platform from day one.",
+
+      "features": [
+        {
+          "feature_id": "F-01.1",
+          "title": "Cloud Infrastructure & Database Provisioning",
+          "description": "Provision cloud infrastructure via IaC (Terraform): Kubernetes cluster, PostgreSQL database with connection pooling, Redis cache, object storage, and event streaming (Kafka/Pub-Sub). Database schema includes: customers table (id, email, phone, name, tier_id, created_at, updated_at), points_ledger table (id, customer_id, transaction_type, points, reference_id, channel, created_at), tiers table (id, name, threshold, multiplier). All data encrypted at rest (AES-256). Network configured with private subnets, load balancer, and ingress controller.",
+          "requirements_covered": ["FR-14", "NFR-02", "NFR-03", "NFR-05"],
+          "nfrs_applicable": ["NFR-02", "NFR-03", "NFR-05", "NFR-08"],
+          "user_facing": false,
+          "data_sensitivity": "Restricted",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-14: Centralized Loyalty Database with Cross-Channel Sync", "NFR-02: Data Encryption", "NFR-03: 10x Transaction Volume Capacity", "NFR-05: 99.9% Uptime with Failover"],
+            "kb_sections_used": ["kb-L0-epics-best-practices PM-BP-014 (risk-driven planning)", "enterprise-architecture §3.2 (microservices on GKE)", "enterprise-architecture §5.1 (security layers — AES-256, TLS 1.3)"]
+          },
+          "reasoning": "Database schema designed for strong consistency on points balance (NFR-08). PostgreSQL chosen for ACID transactions on financial ledger. Redis for session/cache. Event streaming for cross-channel sync (FR-14). Data sensitivity is Restricted because it contains the financial ledger."
+        },
+        {
+          "feature_id": "F-01.2",
+          "title": "API Gateway & Service Mesh",
+          "description": "Deploy API gateway with: OAuth2/API-key authentication, rate limiting (default 1000 req/min per client), request/response logging, API versioning (URL path: /v1/), CORS configuration, and health check endpoints. Service mesh with mTLS for internal service communication. Gateway exposes loyalty operations: /v1/points/earn, /v1/points/redeem, /v1/points/balance, /v1/customers/lookup, /v1/tiers/status. All endpoints return standardized error format: {error_code, message, details, trace_id}.",
+          "requirements_covered": ["FR-29", "NFR-07"],
+          "nfrs_applicable": ["NFR-01", "NFR-02", "NFR-07"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-29: Integration API Layer — RESTful API layer exposing loyalty operations", "NFR-07: API Rate Limiting and Abuse Prevention"],
+            "kb_sections_used": ["enterprise-architecture §3.2 (RESTful APIs, Apigee for API management)", "enterprise-architecture §7.1 (REST APIs for synchronous service-to-service)"]
+          },
+          "reasoning": "API gateway is the integration contract for POS, e-commerce, and mobile. Rate limiting (NFR-07) enforced at gateway level. mTLS from enterprise architecture security patterns. Versioned URLs allow non-breaking changes."
+        },
+        {
+          "feature_id": "F-01.3",
+          "title": "Observability & Monitoring Stack",
+          "description": "Deploy structured logging (JSON format, retained 90 days), metrics collection (Prometheus/CloudWatch), and dashboards showing: transaction rates, error rates, p95/p99 latency, active users. Automated alerting rules: latency > 2s triggers warning, error rate > 1% triggers page, availability drop triggers critical alert. Distributed tracing across all services with correlation IDs. Health check dashboard for all services.",
+          "requirements_covered": ["NFR-06"],
+          "nfrs_applicable": ["NFR-01", "NFR-05", "NFR-06"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-06: Monitoring, Logging, and Alerting — structured logs, real-time dashboards, automated alerting on SLA breaches"],
+            "kb_sections_used": ["enterprise-architecture §3.3 (Cloud Monitoring, Prometheus, Cloud Logging, Cloud Trace)", "enterprise-architecture §1.1 (Observability stack)"]
+          },
+          "reasoning": "Observability from Sprint 1 ensures all subsequent features are monitored from deployment. Alert thresholds derived from NFR-01 (2s latency target). 90-day retention balances cost with debugging needs."
+        },
+        {
+          "feature_id": "F-01.4",
+          "title": "Design System & Component Library",
+          "description": "Shared UI component library for web and mobile: buttons (primary, secondary, ghost), form inputs (text, number, phone, email with inline validation), cards (loyalty card, transaction card, tier card), navigation (tab bar, header, breadcrumbs), modals (confirmation, error, success), loading states (skeleton screens, spinners), notification toasts, badge components, progress bars. All components meet WCAG 2.1 AA: minimum 4.5:1 contrast ratio, focus indicators, screen reader labels, touch targets ≥ 44px. Theming support for brand customization. Responsive breakpoints: mobile (320-767px), tablet (768-1023px), desktop (1024px+).",
+          "requirements_covered": ["NFR-04"],
+          "nfrs_applicable": ["NFR-04", "NFR-09"],
+          "user_facing": true,
+          "data_sensitivity": "Public",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-04: WCAG 2.1 AA Compliance — screen reader support, keyboard navigation, colour contrast ratios, touch target sizes"],
+            "kb_sections_used": ["enterprise-architecture §9 Frontend (shared design system component library, WCAG 2.1 AA, brand-agnostic components)", "kb-L0-epics-best-practices PM-BP-011 (Sprint 1 must include Design System)"]
+          },
+          "reasoning": "Per prompt rules, design system must be in Sprint 1 to unblock all UI work. WCAG 2.1 AA baked into components means all screens built with these components inherit accessibility compliance. Enterprise architecture confirms shared component library pattern."
+        },
+        {
+          "feature_id": "F-01.5",
+          "title": "CI/CD Pipeline & Deployment Automation",
+          "description": "Automated build and deployment pipeline: source control (Git) → build (compile, lint, unit test) → container image build → push to container registry → deploy to staging (auto) → deploy to production (manual approval gate). Pipeline stages: lint + static analysis, unit tests (>80% coverage gate), build Docker image, security scan (SAST/SCA — block on critical/high), deploy to staging, integration tests, manual approval, deploy to production, smoke tests. Environment promotion: dev → staging → production. Rollback: one-click rollback to previous version. Infrastructure-as-code for all environments (Terraform). Branch strategy: feature branches → main → auto-deploy staging → manual promote to prod.",
+          "requirements_covered": ["NFR-05"],
+          "nfrs_applicable": ["NFR-02", "NFR-05"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-05: 99.9% Uptime — requires reliable, repeatable deployments with rollback capability"],
+            "kb_sections_used": ["enterprise-architecture §3.3 (GitHub, Cloud Build → Cloud Deploy → GKE, Terraform, Artifact Registry)", "kb-L0-epics-best-practices PM-BP-013 (SAST/DAST/SCA scans — zero critical/high)"]
+          },
+          "reasoning": "CI/CD is essential infrastructure — without it, no code reaches production. Security scanning in pipeline catches vulnerabilities before deployment. Manual approval gate for production prevents accidental releases. Rollback capability supports NFR-05 uptime target."
+        },
+        {
+          "feature_id": "F-01.6",
+          "title": "Notification Service Infrastructure",
+          "description": "Centralized notification service consuming events from the event bus and dispatching via configured channels. Channels: (1) Push notifications — integrate with Firebase Cloud Messaging (FCM) for Android and Apple Push Notification Service (APNs) for iOS. (2) Email — integrate with transactional email provider (SendGrid/SES). (3) In-app notification center — store notifications in database for retrieval. Service handles: template rendering (with variable substitution), channel routing (based on customer preferences from F-04.7), delivery tracking (sent/delivered/failed), retry on failure (3 attempts, exponential backoff). Push token management: register device token on app login, invalidate on logout. Notification templates stored in database (editable via admin portal in EP-06).",
+          "requirements_covered": ["FR-07", "FR-07a"],
+          "nfrs_applicable": ["NFR-01", "NFR-03"],
+          "user_facing": false,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-07: Points Accrual Notification — push within 30 seconds", "FR-07a: Points Redemption Notification"],
+            "kb_sections_used": ["enterprise-architecture §7.1 (Pub/Sub for async communication between microservices)"]
+          },
+          "reasoning": "Centralized notification service avoids duplicating delivery logic across features. Event-driven architecture decouples business logic from notification delivery. Push token management is essential for mobile notifications. Template system enables marketing to update copy without code changes."
+        },
+        {
+          "feature_id": "F-01.7",
+          "title": "Mobile App Shell & Web App Scaffold",
+          "description": "Mobile app (cross-platform or native): app shell with bottom tab navigation (Home, History, QR Code, Profile), splash screen, deep link handling (loyalty://), push notification permission request on first launch, app version check (force update if critical), secure storage initialization (Keychain/Keystore for tokens). Web app: SPA scaffold with routing, header/footer layout, responsive shell, cookie consent banner. Both: global error boundary (catch unhandled errors, show friendly message, report to monitoring), network status detection (online/offline indicator), authentication state management (redirect to login if token expired), loading/error/empty state patterns.",
+          "requirements_covered": ["NFR-09"],
+          "nfrs_applicable": ["NFR-04", "NFR-09"],
+          "user_facing": true,
+          "data_sensitivity": "Public",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-09: Mobile App Performance — cold start under 3 seconds, offline graceful degradation"],
+            "kb_sections_used": ["enterprise-architecture §9 Frontend (React SPA, micro-frontend or feature within app shell)", "enterprise-architecture §3.1 (Native mobile — Swift iOS, Kotlin Android)"]
+          },
+          "reasoning": "App shell is the container for all customer-facing features. Without it, no screens can be built. Deep linking enables notifications to open specific screens. Network detection enables offline mode (EP-08). Global error boundary prevents crashes from reaching users."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-02",
+      "title": "Customer Registration & Authentication",
+      "description": "Enable customers to create a loyalty account, verify their identity, and securely log in across mobile app and website. This is the user-facing foundation — every subsequent customer feature requires an authenticated user.",
+      "sprint": 1,
+      "requirements_covered": ["FR-04", "FR-16", "FR-27"],
+      "scope_in": [
+        "Multi-channel registration (app, web, in-store assisted)",
+        "Email/password authentication with social login (Google, Apple)",
+        "Email/phone verification via OTP",
+        "Terms & conditions acceptance with version tracking",
+        "Password reset flow",
+        "Session management (JWT with refresh tokens)",
+        "Account lockout after failed attempts"
+      ],
+      "scope_out": [
+        "Loyalty points logic — EP-03",
+        "Profile editing beyond initial registration — EP-04",
+        "Staff authentication for POS — EP-05"
+      ],
+      "reasoning": "FR-04 (sign-up), FR-16 (authentication), and FR-27 (T&C acceptance) form the registration user journey. Must be Sprint 1 because every other customer-facing feature requires an authenticated user. Placed after EP-01 because it depends on the API layer and database.",
+
+      "features": [
+        {
+          "feature_id": "F-02.1",
+          "title": "Customer Registration",
+          "description": "Registration form capturing: full name, email address, phone number, password (with strength meter). Validation: email format (RFC 5322), phone format (E.164), password minimum 12 characters with uppercase, lowercase, number, special character. On submit: create customer record in 'pending_verification' state, trigger OTP to email. Prevent duplicate registration (check existing email/phone). Rate limit: 5 registration attempts per IP per hour. In-store assisted mode: staff enters customer details on their behalf via POS API. Success: redirect to OTP verification screen. Failure: inline validation errors with specific messages.",
+          "requirements_covered": ["FR-04"],
+          "nfrs_applicable": ["NFR-02", "NFR-04", "NFR-07"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-04: Multi-Channel Loyalty Sign-Up — register via mobile app, website, or in-store. Requires name, email, phone, T&C acceptance. Active immediately."],
+            "kb_sections_used": ["enterprise-architecture §5.1 (security layers)", "kb-L0-agent-quality-standards B4 (PII handling)"]
+          },
+          "reasoning": "Registration is the entry point for all customers. Data sensitivity is Confidential (PII: name, email, phone). Rate limiting prevents abuse. In-store mode supports CON-01 (POS integration). Password rules from enterprise security standards."
+        },
+        {
+          "feature_id": "F-02.2",
+          "title": "OTP Verification",
+          "description": "Generate 6-digit numeric OTP with 5-minute expiry. Deliver via email (primary) with SMS as future option. Single-use — consumed on successful verification. Rate limit: max 3 OTP requests per 10 minutes per email/phone. Auto-focus on OTP input field. Resend button with 60-second countdown timer. On success: mark account as 'active', proceed to login. On failure: show 'Invalid code' with remaining attempts (max 5). After 5 failed attempts: block verification for 30 minutes, notify customer via email.",
+          "requirements_covered": ["FR-04"],
+          "nfrs_applicable": ["NFR-02", "NFR-07"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-04: Multi-Channel Loyalty Sign-Up — account active immediately upon completion"],
+            "kb_sections_used": ["enterprise-architecture §5.1 (security layers)", "kb-L0-agent-quality-standards B4 (security)"]
+          },
+          "reasoning": "OTP separated from registration because it's a distinct user action and screen. 5-minute expiry balances security with usability. Rate limiting prevents OTP bombing. Email-first aligns with ASM-05 (push/email channels)."
+        },
+        {
+          "feature_id": "F-02.3",
+          "title": "Authentication & Session Management",
+          "description": "Login screen with email/password. Social login buttons (Google, Apple) via OAuth2/OIDC. On success: issue JWT access token (15-min expiry) + refresh token (30-day expiry on mobile, 7-day on web). Store refresh token securely (Keychain on iOS, Keystore on Android, httpOnly cookie on web). Password reset: enter email → receive reset link (1-hour expiry) → set new password. Account lockout: after 5 consecutive failed login attempts, lock for 30 minutes. Show 'account locked' message with unlock time. Biometric login (Face ID/Touch ID) as optional enrollment after first successful login.",
+          "requirements_covered": ["FR-16"],
+          "nfrs_applicable": ["NFR-02", "NFR-07"],
+          "user_facing": true,
+          "data_sensitivity": "Restricted",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-16: User Authentication — email/password, social login (Google, Apple), 30-day session on mobile, password reset, lockout after 5 failures"],
+            "kb_sections_used": ["enterprise-architecture §3.2 (Auth: OAuth 2.0 / OpenID Connect)", "enterprise-architecture §5.1 (Identity: Cloud IAM)"]
+          },
+          "reasoning": "Data sensitivity is Restricted because credentials are highest-sensitivity. JWT + refresh token pattern from enterprise architecture (OAuth 2.0). Biometric adds convenience without reducing security. Social login reduces registration friction for the 100K sign-up KPI."
+        },
+        {
+          "feature_id": "F-02.4",
+          "title": "Terms & Conditions Acceptance",
+          "description": "During registration, display T&C with scrollable content and 'I accept' checkbox (must be unchecked by default). Record: customer_id, t&c_version, acceptance_timestamp, IP address. When T&C version is updated: on next login, display modal with updated T&C requiring re-acceptance before proceeding. T&C version stored in config (not hardcoded). Rejection: customer cannot complete registration without acceptance. Audit log entry for every acceptance/rejection.",
+          "requirements_covered": ["FR-27"],
+          "nfrs_applicable": ["NFR-02"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-27: Terms & Conditions Acceptance — accept during sign-up, record consent timestamp and version, re-accept on update"],
+            "kb_sections_used": ["kb-L0-epics-best-practices PM-BP-012 (compliance checkpoints)", "enterprise-architecture §5.2 (UK GDPR / DPA 2018)"]
+          },
+          "reasoning": "Regulatory requirement for data collection consent. Unchecked by default per GDPR (no pre-ticked boxes). Version tracking enables re-consent when terms change. Audit logging for compliance evidence."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-03",
+      "title": "Points Earning & Balance Management",
+      "description": "Enable the core loyalty mechanic: customers earn points on every purchase across all channels, see their balance update in real time, and receive notifications. This is the minimum viable loyalty program — after this sprint, customers can sign up and earn points.",
+      "sprint": 2,
+      "requirements_covered": ["FR-01", "FR-05", "FR-07", "FR-15", "FR-18", "FR-23", "NFR-08"],
+      "scope_in": [
+        "Points accrual on purchase (online and in-store)",
+        "Real-time balance updates across channels",
+        "Points accrual notifications",
+        "Transaction history (earn events)",
+        "Customer identification at POS (phone, loyalty ID, QR code)",
+        "Points reversal on returns/refunds",
+        "Points ledger with strong consistency"
+      ],
+      "scope_out": [
+        "Points redemption — EP-04",
+        "Tier system — EP-06",
+        "Promotional campaigns — EP-06",
+        "Points expiration — EP-07"
+      ],
+      "reasoning": "Points earning is the core value proposition. Customers must be able to earn before they can redeem. FR-01 (accrual), FR-05 (balance display), FR-07 (notification), FR-15 (POS identification), FR-18 (history), and FR-23 (reversal on returns) form the complete earn-side journey. NFR-08 (strong consistency) is critical here — the ledger must never show incorrect balances. Sprint 2 because it depends on EP-01 (infrastructure) and EP-02 (authenticated users).",
+
+      "features": [
+        {
+          "feature_id": "F-03.1",
+          "title": "Points Accrual Engine",
+          "description": "When a purchase transaction is received (via API from POS or e-commerce webhook), calculate points: transaction_amount × accrual_rate (configurable, default 1 point per $1). Round down to nearest integer. Only process finalized transactions (status: 'completed'). Idempotency: reject duplicate transaction_ids. Create ledger entry: {customer_id, type: 'earn', points, reference_id (order/transaction ID), channel (online/in-store/app), timestamp}. Update customer's cached balance atomically. Emit event: 'points.earned' to event bus for downstream consumers (notifications, analytics). Validation: transaction_amount > 0, customer exists and is active, transaction not already processed. Error handling: if customer not found, queue for retry (customer may not be linked yet). Processing target: < 2 seconds end-to-end.",
+          "requirements_covered": ["FR-01", "NFR-08"],
+          "nfrs_applicable": ["NFR-01", "NFR-03", "NFR-08"],
+          "user_facing": false,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-01: Points Accrual on Purchase — configurable rate, all channels, only after finalization", "NFR-08: Data Consistency — strongly consistent balance"],
+            "kb_sections_used": ["enterprise-architecture §7.1 (Pub/Sub events for async communication)", "enterprise-architecture §3.2 (Cloud SQL PostgreSQL for transactional data)"]
+          },
+          "reasoning": "Idempotency prevents double-crediting (fraud vector). Atomic balance update ensures NFR-08 (strong consistency). Event emission decouples notification delivery from accrual processing. Configurable rate supports ASM-03."
+        },
+        {
+          "feature_id": "F-03.2",
+          "title": "Real-Time Balance Display",
+          "description": "Customer dashboard widget showing: current available points balance (large, prominent), equivalent monetary value (e.g., '500 points = $25'), last updated timestamp. Balance refreshes: on page load, after any transaction, and via WebSocket push when server-side change occurs. Cached balance in Redis with 2-second TTL for read performance. Fallback: if cache miss, read from ledger (sum of all transactions). Mobile: show cached balance with 'last updated' timestamp when offline (NFR-09). Loading state: skeleton screen while fetching.",
+          "requirements_covered": ["FR-05"],
+          "nfrs_applicable": ["NFR-01", "NFR-08", "NFR-09"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-05: Real-Time Points Balance Display — updated within 2 seconds, visible in app and online account"],
+            "kb_sections_used": ["enterprise-architecture §3.2 (Memorystore Redis for caching)"]
+          },
+          "reasoning": "WebSocket push ensures real-time without polling. Redis cache with 2s TTL balances freshness with read performance. Offline fallback addresses NFR-09 mobile performance. Monetary value display helps customers understand point worth."
+        },
+        {
+          "feature_id": "F-03.3",
+          "title": "Points Accrual Notification",
+          "description": "When 'points.earned' event is consumed: send push notification to customer's mobile device within 30 seconds. Notification content: 'You earned {points} points on your {channel} purchase! New balance: {balance} points.' Notification stored in in-app notification center (list view, mark as read, paginated). If push delivery fails: retry 3 times with exponential backoff. Respect notification preferences (FR-30): only send if customer has transactional notifications enabled. Fallback to email if push token not available.",
+          "requirements_covered": ["FR-07"],
+          "nfrs_applicable": ["NFR-01"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-07: Points Accrual Notification — push notification within 30 seconds showing points earned, transaction reference, new balance"],
+            "kb_sections_used": ["enterprise-architecture §7.1 (Pub/Sub for async events)"]
+          },
+          "reasoning": "Event-driven (not synchronous) so accrual isn't blocked by notification delivery. 30-second SLA is generous enough for async processing. Retry with backoff handles transient push service failures. Preference check respects FR-30."
+        },
+        {
+          "feature_id": "F-03.4",
+          "title": "Customer Identification at POS",
+          "description": "Three identification methods for in-store: (a) Phone number lookup: staff enters customer phone → API returns matching customer with loyalty summary. (b) Loyalty ID: unique 10-digit numeric ID assigned at registration, staff enters manually. (c) QR code: customer opens app → 'My QR Code' screen shows dynamic QR containing encrypted customer_id (refreshes every 60 seconds). Staff scans with POS scanner. API endpoint: GET /v1/customers/identify?method={phone|loyalty_id|qr}&value={value}. Response: {customer_id, name, tier, points_balance, member_since}. Not found: return 404 with suggestion to register. Rate limit: 30 lookups per minute per POS terminal.",
+          "requirements_covered": ["FR-15"],
+          "nfrs_applicable": ["NFR-01", "NFR-02", "NFR-07"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-15: Customer Identification at POS — phone number, loyalty ID, QR code scan from app"],
+            "kb_sections_used": ["enterprise-architecture §7.2 (external integration protocols)"]
+          },
+          "reasoning": "Three methods provide flexibility for different POS capabilities. Dynamic QR prevents screenshot replay attacks. Rate limiting prevents enumeration attacks on phone numbers. Response includes loyalty summary so staff can personalize service (FR-03)."
+        },
+        {
+          "feature_id": "F-03.5",
+          "title": "Points Transaction History",
+          "description": "Screen showing chronological list of all points transactions. Each entry shows: date/time, type (earned/redeemed/adjusted/bonus/expired), points amount (+/-), running balance, reference (order ID or reason), channel icon (online/in-store/app). Pagination: 20 items per page, infinite scroll on mobile. Filters: date range picker, transaction type dropdown. Sort: newest first (default). Empty state: 'No transactions yet — make a purchase to start earning!' API: GET /v1/customers/{id}/transactions?page=1&limit=20&type=earn&from=2026-01-01&to=2026-12-31.",
+          "requirements_covered": ["FR-18"],
+          "nfrs_applicable": ["NFR-01", "NFR-04"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-18: Points Transaction History — chronological, accruals with purchase reference, pagination and date filtering"],
+            "kb_sections_used": ["enterprise-architecture §9 Frontend (React SPA patterns)"]
+          },
+          "reasoning": "Running balance provides audit trail visibility to customers. Filters and pagination handle customers with long history. Channel icons provide at-a-glance context. API design supports both mobile and web consumption."
+        },
+        {
+          "feature_id": "F-03.6",
+          "title": "Points Reversal on Return/Refund",
+          "description": "When a refund/return event is received (via API from POS or e-commerce): look up original transaction by reference_id. Calculate points to reverse: original_points_earned for full refund, proportional for partial refund. Create ledger entry: {type: 'reversal', points: -N, reference_id: original_order_id, reason: 'return'}. If customer's current balance < reversal amount: set balance to 0 and create 'negative_balance' record tracking the deficit. Future accruals offset the deficit before crediting the customer. Send notification: 'Points adjusted: {points} points deducted due to return of order {order_id}. New balance: {balance}.' Time limit: reversals only processed within 90 days of original transaction.",
+          "requirements_covered": ["FR-23"],
+          "nfrs_applicable": ["NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-23: Points Reversal on Return/Refund — auto-deduct on return, track negative balance, offset against future accruals"],
+            "kb_sections_used": ["kb-L0-epics-best-practices PM-BP-014 (operational risk — money movement equivalent)"]
+          },
+          "reasoning": "Negative balance tracking prevents blocking returns when points are already spent. 90-day limit prevents ancient transaction reversals. Proportional calculation handles partial refunds. This is a critical financial integrity feature."
+        },
+        {
+          "feature_id": "F-03.7",
+          "title": "E-commerce & POS Event Adapter",
+          "description": "Webhook receiver and event adapter that ingests purchase/refund events from external systems and translates them into loyalty system commands. E-commerce adapter: receive webhook POST from e-commerce platform on order.completed and order.refunded events. Validate webhook signature (HMAC-SHA256 with shared secret). Parse order payload: extract customer_email, order_id, total_amount, items, channel. Map customer_email to loyalty customer_id. Forward to points accrual engine (F-03.1) or reversal engine (F-03.6). POS adapter: receive transaction events from POS system (format TBD per CON-01 — support REST and file-based polling as fallback). Dead letter queue: if event cannot be processed (customer not found, invalid format), store in DLQ for manual review. Idempotency: deduplicate by order_id + event_type. Health endpoint: /v1/webhooks/health for e-commerce platform monitoring. Retry: if loyalty engine is unavailable, queue events and retry with backoff.",
+          "requirements_covered": ["FR-01", "FR-23"],
+          "nfrs_applicable": ["NFR-03", "NFR-05"],
+          "user_facing": false,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-01: Points Accrual on Purchase — regardless of channel", "FR-23: Points Reversal on Return/Refund — when purchase is returned"],
+            "kb_sections_used": ["enterprise-architecture §7.2 (external integration protocols)", "kb-L0-epics-best-practices PM-BP-014 (third-party integration — vendor security assessment, circuit breakers)"]
+          },
+          "reasoning": "This is the bridge between external systems (POS, e-commerce) and the loyalty engine. Without it, no purchase events flow into the system. Webhook signature validation prevents spoofed events. DLQ ensures no events are silently lost. File-based polling fallback addresses legacy POS systems that can't push webhooks (CON-01)."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-04",
+      "title": "Points Redemption & Customer Profile",
+      "description": "Enable customers to redeem points for discounts at checkout (online and in-store), manage their profile, and control notification preferences. After this epic, the loyalty program is fully functional for earn-and-redeem — the MVP is production-ready.",
+      "sprint": 2,
+      "requirements_covered": ["FR-02", "FR-06", "FR-07a", "FR-17", "FR-19", "FR-20", "FR-21", "FR-30"],
+      "scope_in": [
+        "Points redemption at checkout with discount calculation",
+        "Over-redemption prevention",
+        "Redemption rules engine (min threshold, max per transaction)",
+        "Redemption notification",
+        "Customer profile view and edit",
+        "Loyalty dashboard (home screen)",
+        "Staff customer lookup",
+        "Notification preferences management"
+      ],
+      "scope_out": [
+        "Tier-based benefits — EP-06",
+        "Promotional campaigns — EP-06",
+        "Admin portal — EP-06",
+        "Account linking — EP-07"
+      ],
+      "reasoning": "Redemption completes the earn-redeem loop — the core loyalty value proposition. FR-02 (redeem), FR-06 (over-redemption prevention), FR-21 (rules engine) are tightly coupled. FR-17 (profile), FR-19 (dashboard), FR-20 (staff lookup) provide the user experience shell. Sprint 2 because redemption depends on having points to redeem (EP-03). After Sprint 2, the app is a functional MVP: sign up → earn → redeem.",
+
+      "features": [
+        {
+          "feature_id": "F-04.1",
+          "title": "Points Redemption at Checkout",
+          "description": "During checkout (online or via POS API): customer selects 'Use points' → enters number of points to redeem (or selects from presets: 100, 250, 500, all). System calculates discount: points × redemption_rate (configurable, default: 100 points = $5). Display: '{points} points = ${discount} off'. Apply discount to order total. API: POST /v1/points/redeem {customer_id, points_to_redeem, order_id, order_total, channel}. Response: {success, discount_applied, remaining_balance, transaction_id}. Partial redemption allowed: customer can use any amount ≥ minimum threshold. Discount cannot exceed order total (cap at order value). Atomically deduct points and record ledger entry in single transaction. On POS: staff initiates redemption after customer confirms verbally.",
+          "requirements_covered": ["FR-02"],
+          "nfrs_applicable": ["NFR-01", "NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-02: Points Redemption at Checkout — configurable rate, partial redemption, applied to order total"],
+            "kb_sections_used": ["enterprise-architecture §3.2 (Cloud SQL PostgreSQL for transactional data — ACID)"]
+          },
+          "reasoning": "Atomic deduction prevents race conditions (NFR-08). Discount cap at order total prevents negative orders. Presets reduce friction. POS flow via API supports CON-01 integration."
+        },
+        {
+          "feature_id": "F-04.2",
+          "title": "Over-Redemption Prevention & Rules Engine",
+          "description": "Before processing any redemption, validate: (1) customer.available_balance >= requested_points (FR-06), (2) requested_points >= minimum_threshold (configurable, default: 100), (3) discount_amount <= max_discount_percentage × order_total (configurable, default: 50%). Use database-level row locking on customer balance during redemption to prevent concurrent over-redemption. Error responses: insufficient_balance: 'You have {balance} points available. Maximum you can redeem: {balance} points (${value}).' below_minimum: 'Minimum redemption is {min} points. You selected {requested}.' exceeds_max_discount: 'Maximum discount is {max}% of order total (${max_amount}). Please reduce points.' All rules configurable via admin portal (EP-06) without code deployment.",
+          "requirements_covered": ["FR-06", "FR-21"],
+          "nfrs_applicable": ["NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-06: Over-Redemption Prevention — block if exceeds balance, show error", "FR-21: Redemption Rules Engine — min threshold, max per transaction, max discount percentage"],
+            "kb_sections_used": ["enterprise-architecture §3.2 (PostgreSQL row-level locking for consistency)"]
+          },
+          "reasoning": "Row-level locking is the strongest guarantee against concurrent over-redemption. Three-rule validation covers all business constraints. Configurable rules support business agility without engineering involvement."
+        },
+        {
+          "feature_id": "F-04.3",
+          "title": "Redemption Notification",
+          "description": "When 'points.redeemed' event is consumed: send push notification within 30 seconds. Content: 'You redeemed {points} points for ${discount} off your purchase! Remaining balance: {balance} points.' Store in notification center. Same delivery mechanism as F-03.3 (shared notification service). Respect notification preferences.",
+          "requirements_covered": ["FR-07a"],
+          "nfrs_applicable": ["NFR-01"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-07a: Points Redemption Notification — points redeemed, discount applied, remaining balance"],
+            "kb_sections_used": ["enterprise-architecture §7.1 (Pub/Sub async events)"]
+          },
+          "reasoning": "Reuses notification infrastructure from F-03.3. Separate feature because it's a distinct event type with different content template."
+        },
+        {
+          "feature_id": "F-04.4",
+          "title": "Customer Profile Management",
+          "description": "Profile screen showing: name, email (verified badge), phone (verified badge), member since date, loyalty tier (with tier badge), lifetime points earned. Edit mode: change name (immediate), change email (requires OTP re-verification), change phone (requires OTP re-verification). Communication preferences section (links to F-04.7). Account deletion: 'Delete my account' button → confirmation modal → soft-delete (anonymize PII, retain ledger for audit). API: GET/PUT /v1/customers/{id}/profile.",
+          "requirements_covered": ["FR-17"],
+          "nfrs_applicable": ["NFR-02", "NFR-04"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-17: Customer Profile Management — view/edit profile, view tier and membership date"],
+            "kb_sections_used": ["enterprise-architecture §5.2 (UK GDPR — right to erasure)", "kb-L0-epics-best-practices PM-BP-013 (GDPR Art. 17 erasure)"]
+          },
+          "reasoning": "Re-verification on email/phone change prevents account takeover. Soft-delete with anonymization satisfies GDPR right to erasure while retaining audit trail (CON-02). Lifetime points provides engagement metric."
+        },
+        {
+          "feature_id": "F-04.5",
+          "title": "Loyalty Dashboard (Customer Home)",
+          "description": "Home screen of the app/website showing: (1) Points balance card — large number, monetary equivalent, tier badge. (2) Progress to next tier — progress bar with 'X more points to {next_tier}'. (3) Recent transactions — last 5 entries (tap to see full history F-03.5). (4) Active promotions banner — carousel of current offers (placeholder until EP-06). (5) Quick actions: 'View QR Code', 'Transaction History', 'Redeem Points'. Pull-to-refresh on mobile. Skeleton loading states for each section independently.",
+          "requirements_covered": ["FR-19"],
+          "nfrs_applicable": ["NFR-04", "NFR-09"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-19: Loyalty Dashboard — balance, tier, progress, recent transactions, active promotions"],
+            "kb_sections_used": ["enterprise-architecture §9 Frontend (React SPA, shared design system)"]
+          },
+          "reasoning": "Dashboard is the primary engagement surface. Independent skeleton loading prevents blank screen while slow sections load (NFR-09). Promotions banner is placeholder — populated when EP-06 delivers campaign engine."
+        },
+        {
+          "feature_id": "F-04.6",
+          "title": "Staff Customer Lookup",
+          "description": "POS-facing API and optional web UI for store staff to search customers. Search by: phone number (exact match), email (exact match), name (fuzzy/partial match), loyalty ID (exact match). Results: list of matching customers showing name, tier, points balance, member since. Select customer → full loyalty summary (same as FR-03 POS display). API: GET /v1/staff/customers/search?q={query}&field={phone|email|name|loyalty_id}. Authorization: requires staff role token. Rate limit: 60 searches per minute per staff user. No customer PII exposed in search results beyond name and masked email/phone.",
+          "requirements_covered": ["FR-20"],
+          "nfrs_applicable": ["NFR-01", "NFR-02", "NFR-07"],
+          "user_facing": false,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-20: Staff Customer Lookup — search by phone, email, name, loyalty ID from POS"],
+            "kb_sections_used": ["enterprise-architecture §5.1 (RBAC — role-based access)", "kb-L0-agent-quality-standards B4 (PII masking)"]
+          },
+          "reasoning": "Staff role authorization prevents customer-to-customer lookup. Masked PII in results follows data minimization principle. Fuzzy name search handles spelling variations. Rate limiting prevents enumeration."
+        },
+        {
+          "feature_id": "F-04.7",
+          "title": "Notification Preferences",
+          "description": "Settings screen with toggle switches for notification categories: (1) Transactional — points earned, redeemed, adjusted (default: ON, cannot fully disable — regulatory minimum). (2) Promotional — campaigns, offers, early access (default: OFF, opt-in required). (3) System — expiration warnings, account changes, security alerts (default: ON). Each toggle: immediate effect, persisted to customer profile. Confirmation toast on save. API: GET/PUT /v1/customers/{id}/preferences. Email preference: receive email copies of notifications (default: OFF).",
+          "requirements_covered": ["FR-30"],
+          "nfrs_applicable": ["NFR-02"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-30: Notification Preferences Management — opt in/out by category, transactional on by default, promotional requires opt-in"],
+            "kb_sections_used": ["enterprise-architecture §5.2 (UK GDPR — consent for marketing communications)"]
+          },
+          "reasoning": "Promotional opt-in required by GDPR for marketing communications. Transactional cannot be fully disabled because customers need to know about balance changes. System notifications kept on for security (account changes)."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-05",
+      "title": "POS Integration & Store Operations",
+      "description": "Enable store staff to view loyalty status, process points accrual/redemption at POS, and manually adjust points. After this epic, the in-store channel is fully operational alongside online.",
+      "sprint": 3,
+      "requirements_covered": ["FR-03", "FR-10", "FR-11", "FR-28"],
+      "scope_in": [
+        "POS loyalty status display during checkout",
+        "Manual points adjustment with audit logging",
+        "Failed accrual notification to customers",
+        "System-wide audit trail for all state changes",
+        "Staff authorization and role management"
+      ],
+      "scope_out": [
+        "POS hardware integration — client responsibility",
+        "Staff training materials — separate workstream",
+        "Offline POS mode — EP-07"
+      ],
+      "reasoning": "POS integration is the in-store channel enablement. FR-03 (POS display), FR-10 (manual adjustment), FR-11 (failed accrual notification), and FR-28 (audit trail) are all store-operations focused. Sprint 3 because it depends on the points engine (EP-03) and redemption (EP-04) being stable. Audit trail (FR-28) placed here because it's the first epic with staff write operations requiring full audit.",
+
+      "features": [
+        {
+          "feature_id": "F-05.1",
+          "title": "POS Loyalty Status Display",
+          "description": "When staff identifies a customer (via F-03.4), POS displays loyalty summary panel: customer name, tier name with badge color, current points balance, monetary equivalent, member since date, lifetime points earned, and last 3 transactions. Display loads within 2 seconds of identification (NFR-01). If customer not found: show 'Not a loyalty member' with option to register (triggers in-store sign-up F-02.1). API: GET /v1/staff/customers/{id}/loyalty-summary. Response includes personalization hints: 'Gold member — eligible for 10% bonus' (when tier system active in EP-06).",
+          "requirements_covered": ["FR-03"],
+          "nfrs_applicable": ["NFR-01", "NFR-04"],
+          "user_facing": false,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-03: POS Loyalty Status Display — tier, balance, membership status within 2 seconds"],
+            "kb_sections_used": ["enterprise-architecture §7.2 (external integration protocols)"]
+          },
+          "reasoning": "2-second SLA from NFR-01. Personalization hints enable upselling per Store Associate Alex persona goals. Last 3 transactions give context without overwhelming the POS screen."
+        },
+        {
+          "feature_id": "F-05.2",
+          "title": "Manual Points Adjustment",
+          "description": "Staff-facing form (POS-integrated or web): select customer → choose action (add/deduct) → enter points amount → select reason from predefined list (system_error_correction, goodwill_gesture, promotional_credit, fraud_correction, other) → free-text notes (required if 'other'). Approval workflow: adjustments ≤ 500 points: immediate with staff authorization. Adjustments > 500 points: requires manager approval (pending state until approved). Audit record: {staff_id, customer_id, action, points, reason, notes, timestamp, approval_status, approver_id}. Customer notification: '{points} points {added/deducted} — Reason: {reason}. New balance: {balance}.' API: POST /v1/staff/adjustments {customer_id, action, points, reason, notes}. Authorization: requires 'loyalty_staff' role; manager approval requires 'loyalty_manager' role.",
+          "requirements_covered": ["FR-10"],
+          "nfrs_applicable": ["NFR-02"],
+          "user_facing": false,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-10: Manual Points Adjustment — add/deduct, reason selection, manager approval above threshold, audit logged"],
+            "kb_sections_used": ["kb-L0-epics-best-practices PM-BP-013 (SOX Sec 404 — dual-control, segregation of duties)"]
+          },
+          "reasoning": "Threshold-based approval prevents unauthorized large adjustments. Predefined reasons enable analytics on adjustment patterns (fraud detection). Dual-control (staff + manager) follows enterprise security patterns."
+        },
+        {
+          "feature_id": "F-05.3",
+          "title": "Failed Accrual Notification",
+          "description": "When points accrual fails (F-03.1 error path): log failure with reason (customer_not_found, duplicate_transaction, system_error, timeout). For system_error and timeout: queue for automatic retry (3 attempts, exponential backoff: 1min, 5min, 30min). If all retries fail: send customer notification within 5 minutes: 'We couldn't add points for your purchase on {date} ({order_id}). Please contact support or visit any store with your receipt. Reference: {failure_id}.' Create support ticket reference for staff lookup. Dashboard indicator: show pending/failed accruals in customer's transaction history with 'processing' or 'failed' status.",
+          "requirements_covered": ["FR-11"],
+          "nfrs_applicable": ["NFR-05"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-11: Failed Accrual Notification — notify within 5 minutes, explain issue, provide resolution instructions"],
+            "kb_sections_used": ["enterprise-architecture §7.1 (Pub/Sub for retry queues)"]
+          },
+          "reasoning": "Automatic retry resolves transient failures without customer action. 5-minute SLA gives time for retries before notifying. Support ticket reference enables staff to resolve manually (connects to FR-10 adjustment)."
+        },
+        {
+          "feature_id": "F-05.4",
+          "title": "System Audit Trail",
+          "description": "Immutable audit log for all state-changing operations. Each entry: {event_id (UUID), timestamp, actor_type (customer|staff|system), actor_id, action (points_earned|points_redeemed|points_adjusted|profile_updated|account_created|account_deleted|config_changed|tier_changed), entity_type, entity_id, before_state (JSON), after_state (JSON), source_system (app|web|pos|admin|system), ip_address, correlation_id}. Storage: append-only table with no UPDATE/DELETE permissions. Retention: 7 years (financial audit requirement). Query API for admin: GET /v1/admin/audit?customer_id=X&action=Y&from=Z&to=W. Export: CSV download for compliance team.",
+          "requirements_covered": ["FR-28"],
+          "nfrs_applicable": ["NFR-02", "NFR-05"],
+          "user_facing": false,
+          "data_sensitivity": "Restricted",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-28: System Audit Trail — all state changes logged with actor, timestamp, action, before/after, source system. Immutable, retained per policy."],
+            "kb_sections_used": ["kb-L0-epics-best-practices PM-BP-013 (SOX Sec 404 — audit trail, segregation of duties)", "enterprise-architecture §5.1 (Cloud Audit Logs)"]
+          },
+          "reasoning": "Data sensitivity is Restricted because audit logs contain the complete history of all operations including PII references. 7-year retention aligns with financial services audit requirements. Append-only prevents tampering. Before/after state enables full reconstruction."
+        },
+        {
+          "feature_id": "F-05.5",
+          "title": "Staff Authentication & Role Management",
+          "description": "Separate authentication flow for store staff and admin users (not customer auth). Staff login via: employee ID + password, or SSO integration with client's identity provider (Active Directory/Okta). Roles: 'loyalty_staff' (view customer, initiate earn/redeem, request adjustment), 'loyalty_manager' (approve adjustments, view reports), 'loyalty_admin' (full system configuration). Role assignment: managed via admin portal (EP-06) or synced from client's directory. Session: short-lived tokens (4-hour expiry, no refresh — staff must re-authenticate each shift). API authentication: staff endpoints require valid staff token with appropriate role claim. POS integration: staff token can be issued to POS terminal (device-level auth) with terminal_id claim for audit purposes. MFA: required for manager and admin roles.",
+          "requirements_covered": ["FR-10", "FR-28"],
+          "nfrs_applicable": ["NFR-02", "NFR-07"],
+          "user_facing": false,
+          "data_sensitivity": "Restricted",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-10: Manual Points Adjustment — requires authorized store associates", "FR-28: System Audit Trail — actor identification for all operations"],
+            "kb_sections_used": ["enterprise-architecture §3.2 (Auth: OAuth 2.0 / OpenID Connect)", "enterprise-architecture §5.1 (Identity: Cloud IAM, Workload Identity Federation)", "kb-L0-epics-best-practices PM-BP-013 (SOX — segregation of duties)"]
+          },
+          "reasoning": "Staff auth is separate from customer auth because: different identity source (employee directory vs self-registration), different session requirements (shift-based vs persistent), different role model (RBAC vs customer). Short session prevents abandoned POS terminals from being exploited. Device-level auth supports shared POS terminals. MFA for elevated roles follows least-privilege principle."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-06",
+      "title": "Loyalty Tiers, Promotions & Admin Portal",
+      "description": "Deliver the tier system, promotional campaigns, admin management portal, and app sign-up bonus. After this epic, marketing teams can self-serve program configuration and run campaigns without engineering involvement.",
+      "sprint": 3,
+      "requirements_covered": ["FR-09", "FR-12", "FR-24", "FR-25", "FR-26"],
+      "scope_in": [
+        "Loyalty tier engine (auto-upgrade, annual downgrade review)",
+        "Tier-based early access to sales",
+        "Promotional bonus campaigns (2x points, category bonuses)",
+        "Admin portal for program management",
+        "App sign-up bonus points"
+      ],
+      "scope_out": [
+        "Gamification badges — EP-07",
+        "Third-party partner rewards — out of scope (CON-06)",
+        "Advanced analytics/BI — future phase"
+      ],
+      "reasoning": "Tiers and promotions are the engagement layer that drives the 100K sign-up and 45% repeat rate KPIs. FR-26 (tiers), FR-12 (early access), FR-24 (campaigns), FR-25 (admin), and FR-09 (sign-up bonus) are all engagement/marketing capabilities. Sprint 3 because they build on the stable earn/redeem foundation from Sprint 2. Admin portal enables marketing self-service.",
+
+      "features": [
+        {
+          "feature_id": "F-06.1",
+          "title": "Loyalty Tier Engine",
+          "description": "Configurable tier system with default tiers: Bronze (0-999 lifetime points), Silver (1000-4999), Gold (5000-19999), Platinum (20000+). Each tier has: name, threshold (points), earn_rate_multiplier (Bronze: 1x, Silver: 1.25x, Gold: 1.5x, Platinum: 2x), badge_color, benefits_list. Auto-upgrade: when customer's lifetime points cross threshold, immediately upgrade tier and send notification: 'Congratulations! You've reached {tier} status!' Downgrade: annual review (configurable date) — if customer hasn't maintained threshold in trailing 12 months, downgrade one tier. 30-day warning before downgrade. Tier displayed on: dashboard, profile, POS lookup, transaction history. API: GET /v1/tiers (list all), GET /v1/customers/{id}/tier (current tier + progress).",
+          "requirements_covered": ["FR-26"],
+          "nfrs_applicable": ["NFR-01", "NFR-03"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-26: Loyalty Tier System — configurable tiers, auto-upgrade, annual downgrade, configurable benefits"],
+            "kb_sections_used": ["kb-L0-epics-best-practices PM-BP-011 (business capability grouping)"]
+          },
+          "reasoning": "Tier multipliers incentivize higher spending. Immediate upgrade provides instant gratification. 30-day downgrade warning gives customers chance to maintain status. Configurable thresholds support business experimentation."
+        },
+        {
+          "feature_id": "F-06.2",
+          "title": "Tier-Based Early Access",
+          "description": "When a sale/promotion is created with early_access: true, system sends notification to qualifying tier members (configurable: Gold+ by default) at the early_access_start time. Notification: 'Exclusive early access! As a {tier} member, you can shop the {sale_name} {hours} hours before everyone else.' Access control: during early access window, sale pages/endpoints check customer tier before granting access. Non-qualifying customers see: 'This sale opens for all members on {date}.' Early access window: configurable per promotion (default: 24 hours before general access).",
+          "requirements_covered": ["FR-12"],
+          "nfrs_applicable": ["NFR-01"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-12: Loyalty Tier-Based Early Access — qualifying tiers, notification, configurable window"],
+            "kb_sections_used": ["INPUT"]
+          },
+          "reasoning": "Early access is a key tier benefit that drives upgrades. Configurable qualifying tier and window gives marketing flexibility. Access control at API level prevents circumvention."
+        },
+        {
+          "feature_id": "F-06.3",
+          "title": "Promotional Bonus Campaigns",
+          "description": "Campaign entity: {id, name, type (multiplier|fixed_bonus|category_bonus), value (e.g., 2x or +50 points), start_date, end_date, eligibility_rules (all_customers|tier_minimum|new_members_only), applicable_categories (optional), max_budget (optional — stop when total bonus points reach limit), status (draft|active|paused|completed)}. During points accrual (F-03.1): check active campaigns → if eligible, apply bonus (multiplier on base points or add fixed bonus). Ledger entry for bonus: {type: 'bonus', campaign_id, points}. Campaign dashboard in admin: active campaigns, total bonus awarded, budget remaining. Customer-facing: banner on dashboard showing active campaigns they're eligible for.",
+          "requirements_covered": ["FR-24"],
+          "nfrs_applicable": ["NFR-03"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-24: Promotional Bonus Campaigns — time-bound, eligibility rules, multiplier or fixed bonus"],
+            "kb_sections_used": ["INPUT — NFR-03 mentions marketing campaigns driving 10x volume"]
+          },
+          "reasoning": "Campaign budget cap prevents runaway liability. Eligibility rules enable targeted promotions. Separate ledger entry for bonus enables campaign ROI analysis. NFR-03 scalability is critical here — campaigns drive volume spikes."
+        },
+        {
+          "feature_id": "F-06.4",
+          "title": "Admin Portal — Program Management",
+          "description": "Web-based admin portal (separate from customer app) with role-based access (admin, marketing, support). Sections: (1) Dashboard: active members, sign-ups this month, redemption rate, points liability. (2) Tier Management: CRUD tiers, set thresholds and multipliers. (3) Campaign Management: create/edit/pause campaigns, view performance. (4) Rules Configuration: accrual rate, redemption rate, min redemption, max discount %. (5) Customer Lookup: search customers, view full history, trigger manual adjustment. (6) Reports: export sign-ups, transactions, campaign performance as CSV. (7) Audit Log viewer (read-only, from F-05.4). Authentication: SSO/OAuth2 with MFA required. All admin actions logged to audit trail.",
+          "requirements_covered": ["FR-25"],
+          "nfrs_applicable": ["NFR-02", "NFR-07"],
+          "user_facing": false,
+          "data_sensitivity": "Restricted",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-25: Admin Portal — configure rates, manage tiers, create promotions, view analytics, export reports"],
+            "kb_sections_used": ["enterprise-architecture §3.2 (Auth: OAuth 2.0)", "kb-L0-epics-best-practices PM-BP-014 (RBAC, segregation of duties)"]
+          },
+          "reasoning": "Data sensitivity is Restricted because admin portal provides access to all customer data and system configuration. MFA required per enterprise security standards. Role separation (admin vs marketing vs support) follows least-privilege principle."
+        },
+        {
+          "feature_id": "F-06.5",
+          "title": "App Sign-Up Bonus",
+          "description": "When a new customer completes registration via mobile app (channel: 'app' in registration event): award configurable bonus points (default: 200, set via admin portal). One-time only: check customer hasn't received app_signup_bonus before (flag in customer record). Ledger entry: {type: 'bonus', reason: 'app_signup', points: 200}. Notification: 'Welcome! You've earned {points} bonus points for joining via the app!' Displayed prominently on first dashboard view: 'You earned {points} bonus points!' celebration animation. Not awarded for web or in-store registrations (incentivizes app adoption per KPI).",
+          "requirements_covered": ["FR-09"],
+          "nfrs_applicable": ["NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-09: App Sign-Up Bonus Points — configurable amount, one-time per customer, credited immediately on app registration"],
+            "kb_sections_used": ["INPUT — KPI: 15,000 app downloads/month target"]
+          },
+          "reasoning": "One-time flag prevents abuse (re-registration). App-only restriction drives the 15K downloads/month KPI. Celebration animation creates positive first impression. Configurable amount lets marketing experiment."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-07",
+      "title": "Account Linking, Expiration & Gamification",
+      "description": "Enable customers to link separate accounts, implement points expiration policy, and add gamification badges. These are engagement-deepening features that enhance the program beyond core earn/redeem.",
+      "sprint": 4,
+      "requirements_covered": ["FR-08", "FR-13", "FR-22"],
+      "scope_in": [
+        "Account linking (online + in-store) with OTP verification",
+        "Points expiration after inactivity with warning notifications",
+        "Gamification badges for milestones",
+        "Expiration warning notifications (30-day and 7-day)"
+      ],
+      "scope_out": [
+        "Points transfer/gifting between customers — out of scope",
+        "Family/household accounts — out of scope",
+        "Physical loyalty cards — CON-05"
+      ],
+      "reasoning": "Account linking (FR-08), expiration (FR-22), and gamification (FR-13) are all engagement features that don't block core functionality. Sprint 4 because they require the full platform to be stable. Account linking is complex (merging two ledgers) and benefits from the audit trail (EP-05) being in place. Expiration requires the notification system and admin configurability from Sprint 3.",
+
+      "features": [
+        {
+          "feature_id": "F-07.1",
+          "title": "Account Linking",
+          "description": "Flow: customer initiates 'Link accounts' from profile → enters email/phone of other account → system sends OTP to that email/phone → customer enters OTP to prove ownership → system merges accounts. Merge logic: (1) Combine points balances (sum). (2) Merge transaction histories (interleave by date). (3) Keep the initiating account as primary (retain its customer_id). (4) Mark secondary account as 'merged_into: {primary_id}'. (5) Transfer any tier qualification (use higher tier). (6) Consolidate notification preferences (OR logic — if either had opt-in, keep opt-in). Completion within 1 minute. Notification: 'Accounts linked! Your combined balance is {total} points.' Edge cases: if secondary account has negative balance (from returns), carry it forward. If secondary has active redemption in progress, block linking until complete. Audit log: full before/after state of both accounts.",
+          "requirements_covered": ["FR-08"],
+          "nfrs_applicable": ["NFR-08", "NFR-02"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-08: Account Linking — verify ownership via OTP, consolidate points within 1 minute, merge transaction history"],
+            "kb_sections_used": ["enterprise-architecture §3.2 (PostgreSQL transactions for atomic merge)"]
+          },
+          "reasoning": "OTP verification prevents unauthorized linking. Atomic merge in single transaction ensures consistency (NFR-08). Higher-tier retention rewards the more engaged account. Blocking during active redemption prevents race conditions."
+        },
+        {
+          "feature_id": "F-07.2",
+          "title": "Points Expiration Engine",
+          "description": "Background job runs daily: for each customer, check last activity date (last earn or redeem). If inactivity_period >= expiration_threshold (configurable, default: 12 months): expire all points. Expiration process: (1) 30 days before: send warning notification: 'Your {points} points will expire on {date} if you don't make a purchase or redemption.' (2) 7 days before: send urgent notification: 'Last chance! {points} points expiring in 7 days.' (3) On expiration date: create ledger entry {type: 'expired', points: -balance}, set balance to 0. Send final notification: 'Your {points} points have expired due to 12 months of inactivity.' Admin configuration: expiration_months (default: 12), can be set to 0 for 'never expire'. Expired points visible in transaction history with 'expired' badge. Expiration resets when any earn or redeem activity occurs.",
+          "requirements_covered": ["FR-22"],
+          "nfrs_applicable": ["NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-22: Points Expiration Policy — configurable inactivity period, 30-day and 7-day warnings, deduct and log expired points"],
+            "kb_sections_used": ["INPUT — ASM-07 (12-month default, configurable)"]
+          },
+          "reasoning": "Daily batch job is efficient for expiration checks (not real-time needed). Two-stage warning gives customers time to act. Configurable threshold supports ASM-07 (can be set to never). Activity reset incentivizes continued engagement."
+        },
+        {
+          "feature_id": "F-07.3",
+          "title": "Gamification Badges",
+          "description": "Badge system with configurable milestones. Default badges: 'First Purchase' (1st earn), 'Century Club' (100 points), 'Points Master' (1000 points), 'Loyal Regular' (10 purchases), 'Redeemer' (first redemption), 'App Pioneer' (signed up via app), 'Linked Up' (linked accounts). Badge entity: {id, name, icon_url, description, trigger_type (points_threshold|transaction_count|event), trigger_value, rarity (common|rare|epic)}. Award logic: after each transaction, check if any unearned badges are now qualified. On award: push notification with badge image: 'Badge unlocked: {name}! {description}'. Profile section: 'My Badges' grid showing earned (full color) and locked (greyed out with progress). Admin: CRUD badges, set triggers. No monetary value — purely engagement/recognition.",
+          "requirements_covered": ["FR-13"],
+          "nfrs_applicable": ["NFR-04"],
+          "user_facing": true,
+          "data_sensitivity": "Public",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-13: Gamification Badges — configurable milestones, displayed on profile"],
+            "kb_sections_used": ["INPUT"]
+          },
+          "reasoning": "Data sensitivity is Public because badges contain no PII — they're achievement metadata. Locked badges with progress create aspiration. Rarity classification adds collectibility. No monetary value prevents gaming/fraud concerns."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-08",
+      "title": "Resilience, Security Hardening & Cross-Cutting Concerns",
+      "description": "Harden the platform for production readiness: disaster recovery, fraud prevention, load testing validation, and edge case handling. After this epic, the system meets all NFRs and is production-grade.",
+      "sprint": 4,
+      "requirements_covered": ["NFR-01", "NFR-03", "NFR-05", "NFR-07", "NFR-08", "NFR-09"],
+      "scope_in": [
+        "Disaster recovery setup and failover testing",
+        "Load testing to validate 10x capacity",
+        "Fraud detection rules (velocity limits, duplicate detection)",
+        "Mobile app offline graceful degradation",
+        "Security penetration testing remediation",
+        "Performance optimization and caching tuning"
+      ],
+      "scope_out": [
+        "Advanced ML-based fraud detection — future phase",
+        "Multi-region active-active — future phase"
+      ],
+      "reasoning": "Cross-cutting concerns grouped in final sprint per prompt rules. These features harden the system but don't add new business capabilities. Sprint 4 because: (1) load testing requires all features to be built, (2) DR testing requires production-like environment, (3) fraud rules require understanding of real usage patterns from earlier sprints. The system is functional without these but not production-grade.",
+
+      "features": [
+        {
+          "feature_id": "F-08.1",
+          "title": "Disaster Recovery & Failover",
+          "description": "Configure: database replication (synchronous standby), Redis cluster with failover, multi-AZ Kubernetes deployment. RTO target: 1 hour (NFR-05). RPO target: 5 minutes (max data loss). Automated failover: if primary DB health check fails for 30 seconds, promote standby. Runbook: documented step-by-step recovery procedures. DR test: quarterly scheduled failover drill. Backup: daily full database backup, retained 30 days. Point-in-time recovery: enabled with 5-minute granularity. Monitoring: alert if replication lag > 30 seconds.",
+          "requirements_covered": ["NFR-05"],
+          "nfrs_applicable": ["NFR-05", "NFR-08"],
+          "user_facing": false,
+          "data_sensitivity": "Restricted",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-05: 99.9% Uptime with Failover — RTO 1 hour, RPO 5 minutes, automatic failover"],
+            "kb_sections_used": ["enterprise-architecture §5.1 (multi-AZ, failover)", "kb-L0-epics-best-practices PM-BP-013 (DORA Art. 11 — BCP tested quarterly)"]
+          },
+          "reasoning": "Synchronous replication ensures RPO of 5 minutes. Multi-AZ prevents single point of failure. Quarterly DR drills validate recovery procedures. Data sensitivity is Restricted because DR configuration exposes infrastructure details."
+        },
+        {
+          "feature_id": "F-08.2",
+          "title": "Load Testing & Performance Validation",
+          "description": "Load test suite validating NFR-01 and NFR-03: (1) Baseline test: current expected volume — all endpoints < 2s p95. (2) Peak test: 10x volume — system remains responsive, no errors. (3) Soak test: sustained 5x volume for 4 hours — no memory leaks, no degradation. (4) Spike test: sudden 20x burst for 5 minutes — graceful degradation, no data loss. Test scenarios: concurrent points accrual (1000 TPS), concurrent redemption for same customer (race condition test), mixed workload (70% reads, 30% writes). Performance budget: balance query < 500ms p99, accrual < 2s p95, redemption < 2s p95. Results documented with pass/fail against NFR targets. Auto-scaling validated: scales from 3 to 15 pods within 2 minutes.",
+          "requirements_covered": ["NFR-01", "NFR-03"],
+          "nfrs_applicable": ["NFR-01", "NFR-03"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-01: Transaction Processing Latency — 2s p95", "NFR-03: 10x Transaction Volume Capacity"],
+            "kb_sections_used": ["kb-L0-epics-best-practices PM-BP-013 (performance tests passed against NFR targets)"]
+          },
+          "reasoning": "Race condition test specifically validates NFR-08 (no double-spend under concurrent load). Soak test catches memory leaks. Spike test validates auto-scaling. All NFR targets must pass before production launch."
+        },
+        {
+          "feature_id": "F-08.3",
+          "title": "Fraud Prevention Rules",
+          "description": "Rule-based fraud detection engine: (1) Velocity limits: max 10 earn transactions per customer per hour, max 5 redemptions per customer per day. (2) Duplicate detection: reject transactions with same order_id within 24 hours. (3) Suspicious patterns: alert if customer earns > 10,000 points in single day, alert if redemption immediately follows large earn (< 5 minutes). (4) Device fingerprinting: flag if same customer authenticates from > 5 devices in 24 hours. (5) New account abuse: restrict redemption for first 24 hours after registration (earn only). Actions: block (reject transaction), alert (allow but flag for review), throttle (rate limit). Admin dashboard: fraud alerts queue, false positive marking, rule configuration. All fraud events logged to audit trail.",
+          "requirements_covered": ["NFR-07"],
+          "nfrs_applicable": ["NFR-02", "NFR-07"],
+          "user_facing": false,
+          "data_sensitivity": "Restricted",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-07: API Rate Limiting and Abuse Prevention — configurable rate limiting, brute-force protection"],
+            "kb_sections_used": ["kb-L0-epics-best-practices PM-BP-014 (fraud screening, transaction limits)"]
+          },
+          "reasoning": "Rule-based approach is appropriate for initial launch (ML-based is future phase). 24-hour redemption restriction for new accounts prevents sign-up-and-drain attacks. Configurable rules allow tuning based on observed patterns. Data sensitivity is Restricted because fraud rules are security-sensitive."
+        },
+        {
+          "feature_id": "F-08.4",
+          "title": "Mobile Offline Graceful Degradation",
+          "description": "When mobile app detects no network connectivity: (1) Show cached points balance with 'Last updated: {timestamp}' indicator and subtle offline badge. (2) Transaction history: show cached last 20 transactions. (3) QR code: continue generating from cached customer_id (still works for POS scanning). (4) Disable: redemption button (greyed out with 'Requires internet'), profile editing. (5) Queue: if customer attempts action while offline, show 'This action requires an internet connection. Please try again when connected.' (6) On reconnection: silently refresh balance and history, remove offline indicator, show toast if balance changed: 'Balance updated: {new_balance} points.' Cache strategy: persist last-known state to device storage on every successful API response.",
+          "requirements_covered": ["NFR-09"],
+          "nfrs_applicable": ["NFR-09"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-09: Mobile App Performance — offline graceful degradation, show cached balance with last updated timestamp"],
+            "kb_sections_used": ["INPUT — GAP-05 (offline behaviour)"]
+          },
+          "reasoning": "QR code continues working offline because it's generated from cached customer_id — this is critical for in-store identification. Redemption disabled offline because it requires real-time balance validation (NFR-08). Silent refresh on reconnection avoids jarring UX."
+        }
+      ]
+    }
+  ],
+
+  "nfr_mapping": [
+    {
+      "nfr_id": "NFR-01",
+      "title": "Transaction Processing Latency",
+      "applies_to_epics": ["EP-01", "EP-03", "EP-04", "EP-05", "EP-06", "EP-08"],
+      "implementation_notes": "2-second p95 target enforced via: API gateway timeouts (EP-01), Redis caching for balance reads (EP-03), database query optimization (EP-04), POS response SLA (EP-05), load testing validation (EP-08).",
+      "reasoning": "Applies to all epics with transactional operations. EP-02 (auth) has its own latency profile. EP-07 (batch operations) doesn't have real-time latency requirements."
+    },
+    {
+      "nfr_id": "NFR-02",
+      "title": "Data Encryption",
+      "applies_to_epics": ["EP-01", "EP-02", "EP-03", "EP-04", "EP-05", "EP-06", "EP-07", "EP-08"],
+      "implementation_notes": "TLS 1.2+ enforced at API gateway (EP-01). AES-256 at rest configured in database provisioning (EP-01). Application-level PII encryption in all services handling customer data. RBAC enforced across all APIs.",
+      "reasoning": "Security NFR applies universally. Every epic handles customer data that must be encrypted."
+    },
+    {
+      "nfr_id": "NFR-03",
+      "title": "10x Transaction Volume Capacity",
+      "applies_to_epics": ["EP-01", "EP-03", "EP-06", "EP-08"],
+      "implementation_notes": "Horizontal scaling configured in infrastructure (EP-01). Points engine designed for high throughput (EP-03). Campaign engine handles volume spikes (EP-06). Load testing validates 10x capacity (EP-08).",
+      "reasoning": "Primarily affects transaction-heavy epics. EP-02 (auth) and EP-07 (batch) don't drive volume spikes. EP-06 campaigns are the primary spike driver."
+    },
+    {
+      "nfr_id": "NFR-04",
+      "title": "WCAG 2.1 AA Compliance",
+      "applies_to_epics": ["EP-01", "EP-02", "EP-03", "EP-04", "EP-05", "EP-06", "EP-07"],
+      "implementation_notes": "Design system (EP-01) bakes in accessibility. All customer-facing screens in EP-02 through EP-07 use accessible components. Tested with screen readers and keyboard navigation.",
+      "reasoning": "Applies to all epics with user-facing UI. EP-08 is infrastructure-only with no customer UI."
+    },
+    {
+      "nfr_id": "NFR-05",
+      "title": "99.9% Uptime with Failover",
+      "applies_to_epics": ["EP-01", "EP-08"],
+      "implementation_notes": "Multi-AZ deployment configured in EP-01. DR failover tested and validated in EP-08. Monitoring alerts on availability drop (EP-01).",
+      "reasoning": "Infrastructure concern primarily addressed in platform setup (EP-01) and hardening (EP-08). Other epics benefit from but don't directly implement availability."
+    },
+    {
+      "nfr_id": "NFR-06",
+      "title": "Monitoring, Logging, and Alerting",
+      "applies_to_epics": ["EP-01"],
+      "implementation_notes": "Observability stack deployed in EP-01. All subsequent epics emit structured logs and metrics automatically via shared middleware.",
+      "reasoning": "Implemented once in EP-01 as shared infrastructure. All other epics inherit observability through the platform."
+    },
+    {
+      "nfr_id": "NFR-07",
+      "title": "API Rate Limiting and Abuse Prevention",
+      "applies_to_epics": ["EP-01", "EP-02", "EP-03", "EP-04", "EP-05", "EP-06", "EP-08"],
+      "implementation_notes": "Rate limiting at API gateway (EP-01). Auth-specific limits (EP-02). Transaction-specific limits (EP-03, EP-04). Staff API limits (EP-05). Admin API limits (EP-06). Fraud rules (EP-08).",
+      "reasoning": "Rate limiting applies to every API-exposing epic. EP-07 (batch operations) runs internally and doesn't need external rate limiting."
+    },
+    {
+      "nfr_id": "NFR-08",
+      "title": "Data Consistency Model",
+      "applies_to_epics": ["EP-01", "EP-03", "EP-04", "EP-07", "EP-08"],
+      "implementation_notes": "PostgreSQL ACID transactions (EP-01). Row-level locking on balance (EP-03, EP-04). Atomic merge in account linking (EP-07). Race condition testing (EP-08).",
+      "reasoning": "Strong consistency critical for points balance operations. EP-02 (auth), EP-05 (POS display — read-only), and EP-06 (config/campaigns) don't require the same consistency guarantees."
+    },
+    {
+      "nfr_id": "NFR-09",
+      "title": "Mobile App Performance",
+      "applies_to_epics": ["EP-01", "EP-03", "EP-04", "EP-08"],
+      "implementation_notes": "Design system optimized for mobile (EP-01). Balance caching for fast display (EP-03). Dashboard skeleton loading (EP-04). Offline mode (EP-08).",
+      "reasoning": "Applies to epics with mobile-specific UI concerns. EP-05 (POS) and EP-06 (admin) are not mobile customer experiences."
+    }
+  ],
+
+  "traceability_matrix": [
+    {"requirement_id": "FR-01", "covered_by_features": ["F-03.1"], "covered_by_epic": "EP-03"},
+    {"requirement_id": "FR-02", "covered_by_features": ["F-04.1"], "covered_by_epic": "EP-04"},
+    {"requirement_id": "FR-03", "covered_by_features": ["F-05.1"], "covered_by_epic": "EP-05"},
+    {"requirement_id": "FR-04", "covered_by_features": ["F-02.1", "F-02.2"], "covered_by_epic": "EP-02"},
+    {"requirement_id": "FR-05", "covered_by_features": ["F-03.2"], "covered_by_epic": "EP-03"},
+    {"requirement_id": "FR-06", "covered_by_features": ["F-04.2"], "covered_by_epic": "EP-04"},
+    {"requirement_id": "FR-07", "covered_by_features": ["F-03.3"], "covered_by_epic": "EP-03"},
+    {"requirement_id": "FR-07a", "covered_by_features": ["F-04.3"], "covered_by_epic": "EP-04"},
+    {"requirement_id": "FR-08", "covered_by_features": ["F-07.1"], "covered_by_epic": "EP-07"},
+    {"requirement_id": "FR-09", "covered_by_features": ["F-06.5"], "covered_by_epic": "EP-06"},
+    {"requirement_id": "FR-10", "covered_by_features": ["F-05.2"], "covered_by_epic": "EP-05"},
+    {"requirement_id": "FR-11", "covered_by_features": ["F-05.3"], "covered_by_epic": "EP-05"},
+    {"requirement_id": "FR-12", "covered_by_features": ["F-06.2"], "covered_by_epic": "EP-06"},
+    {"requirement_id": "FR-13", "covered_by_features": ["F-07.3"], "covered_by_epic": "EP-07"},
+    {"requirement_id": "FR-14", "covered_by_features": ["F-01.1"], "covered_by_epic": "EP-01"},
+    {"requirement_id": "FR-15", "covered_by_features": ["F-03.4"], "covered_by_epic": "EP-03"},
+    {"requirement_id": "FR-16", "covered_by_features": ["F-02.3"], "covered_by_epic": "EP-02"},
+    {"requirement_id": "FR-17", "covered_by_features": ["F-04.4"], "covered_by_epic": "EP-04"},
+    {"requirement_id": "FR-18", "covered_by_features": ["F-03.5"], "covered_by_epic": "EP-03"},
+    {"requirement_id": "FR-19", "covered_by_features": ["F-04.5"], "covered_by_epic": "EP-04"},
+    {"requirement_id": "FR-20", "covered_by_features": ["F-04.6"], "covered_by_epic": "EP-04"},
+    {"requirement_id": "FR-21", "covered_by_features": ["F-04.2"], "covered_by_epic": "EP-04"},
+    {"requirement_id": "FR-22", "covered_by_features": ["F-07.2"], "covered_by_epic": "EP-07"},
+    {"requirement_id": "FR-23", "covered_by_features": ["F-03.6"], "covered_by_epic": "EP-03"},
+    {"requirement_id": "FR-24", "covered_by_features": ["F-06.3"], "covered_by_epic": "EP-06"},
+    {"requirement_id": "FR-25", "covered_by_features": ["F-06.4"], "covered_by_epic": "EP-06"},
+    {"requirement_id": "FR-26", "covered_by_features": ["F-06.1"], "covered_by_epic": "EP-06"},
+    {"requirement_id": "FR-27", "covered_by_features": ["F-02.4"], "covered_by_epic": "EP-02"},
+    {"requirement_id": "FR-28", "covered_by_features": ["F-05.4"], "covered_by_epic": "EP-05"},
+    {"requirement_id": "FR-29", "covered_by_features": ["F-01.2"], "covered_by_epic": "EP-01"},
+    {"requirement_id": "FR-30", "covered_by_features": ["F-04.7"], "covered_by_epic": "EP-04"}
+  ],
+
+  "uncovered_requirements": [],
+
+  "delivery_summary": "The Unified Loyalty Program is delivered across 4 two-week sprints (8 weeks total) with 8 epics and 38 features. Sprint 1 establishes the technical foundation (infrastructure, API gateway, design system) and customer authentication — enabling a deployable skeleton. Sprint 2 delivers the core earn-and-redeem loop with real-time balance, notifications, and customer dashboard — this is the MVP that can go to production. Sprint 3 adds the in-store channel (POS integration, staff operations, audit trail) and engagement layer (tiers, campaigns, admin portal) — enabling marketing self-service. Sprint 4 hardens the platform with account linking, expiration, gamification, disaster recovery, load testing, and fraud prevention — making the system production-grade at scale. Each sprint produces a production-deployable increment."
+}
