@@ -1,12 +1,12 @@
 openapi: 3.0.3
 info:
-  title: Next Loyalty API — Customers
+  title: Dunelm Loyalty API — Customers
   version: 1.0.0
-  description: Customers endpoints for the Next Loyalty Program API.
+  description: Customers endpoints for the Dunelm Loyalty Program API.
 servers:
-- url: https://loyalty.next.co.uk/api/v1
+- url: https://loyalty.Dunelm.co.uk/api/v1
   description: Production
-- url: https://staging.loyalty.next.co.uk/api/v1
+- url: https://staging.loyalty.Dunelm.co.uk/api/v1
   description: Staging
 - url: http://localhost:3000/api/v1
   description: Local Development
@@ -305,7 +305,7 @@ paths:
       description: 'Returns all data needed to render the customer home screen in
         a single call:
 
-        points balance, tier info, progress to next tier, recent transactions, and
+        points balance, tier info, progress to Dunelm tier, recent transactions, and
 
         active promotions. BFF-optimised endpoint to reduce mobile round-trips.
 
@@ -329,10 +329,10 @@ paths:
                         $ref: '#/components/schemas/PointsBalance'
                       tier:
                         $ref: '#/components/schemas/Tier'
-                      nextTierProgress:
+                      DunelmTierProgress:
                         type: object
                         properties:
-                          nextTierName:
+                          DunelmTierName:
                             type: string
                           pointsRequired:
                             type: integer
@@ -716,7 +716,7 @@ components:
           - system
         description:
           type: string
-          example: Purchase at Next Oxford Street
+          example: Purchase at Dunelm Oxford Street
         createdAt:
           type: string
           format: date-time
@@ -930,7 +930,7 @@ components:
         totalPages:
           type: integer
           example: 8
-        hasNextPage:
+        hasDunelmPage:
           type: boolean
           example: true
         hasPreviousPage:
@@ -944,7 +944,7 @@ components:
           type: string
           format: uri
           description: URI reference identifying the problem type
-          example: https://loyalty.next.co.uk/problems/validation-error
+          example: https://loyalty.Dunelm.co.uk/problems/validation-error
         title:
           type: string
           description: Short human-readable summary
@@ -982,7 +982,7 @@ components:
                 type: string
                 example: INVALID_FORMAT
       example:
-        type: https://loyalty.next.co.uk/problems/validation-error
+        type: https://loyalty.Dunelm.co.uk/problems/validation-error
         title: Validation Error
         status: 422
         detail: One or more fields failed validation
@@ -1014,7 +1014,7 @@ components:
           schema:
             $ref: '#/components/schemas/ProblemDetails'
           example:
-            type: https://loyalty.next.co.uk/problems/bad-request
+            type: https://loyalty.Dunelm.co.uk/problems/bad-request
             title: Bad Request
             status: 400
             detail: Request body is malformed or missing required fields
@@ -1026,7 +1026,7 @@ components:
           schema:
             $ref: '#/components/schemas/ProblemDetails'
           example:
-            type: https://loyalty.next.co.uk/problems/unauthorized
+            type: https://loyalty.Dunelm.co.uk/problems/unauthorized
             title: Unauthorized
             status: 401
             detail: Access token is missing, expired, or invalid
@@ -1038,7 +1038,7 @@ components:
           schema:
             $ref: '#/components/schemas/ProblemDetails'
           example:
-            type: https://loyalty.next.co.uk/problems/forbidden
+            type: https://loyalty.Dunelm.co.uk/problems/forbidden
             title: Forbidden
             status: 403
             detail: You do not have permission to perform this action
@@ -1050,7 +1050,7 @@ components:
           schema:
             $ref: '#/components/schemas/ProblemDetails'
           example:
-            type: https://loyalty.next.co.uk/problems/not-found
+            type: https://loyalty.Dunelm.co.uk/problems/not-found
             title: Not Found
             status: 404
             detail: The requested resource was not found
@@ -1062,7 +1062,7 @@ components:
           schema:
             $ref: '#/components/schemas/ProblemDetails'
           example:
-            type: https://loyalty.next.co.uk/problems/validation-error
+            type: https://loyalty.Dunelm.co.uk/problems/validation-error
             title: Validation Error
             status: 422
             detail: One or more fields failed validation
@@ -1078,7 +1078,7 @@ components:
           schema:
             $ref: '#/components/schemas/ProblemDetails'
           example:
-            type: https://loyalty.next.co.uk/problems/internal-error
+            type: https://loyalty.Dunelm.co.uk/problems/internal-error
             title: Internal Server Error
             status: 500
             detail: An unexpected error occurred. Please try again later.

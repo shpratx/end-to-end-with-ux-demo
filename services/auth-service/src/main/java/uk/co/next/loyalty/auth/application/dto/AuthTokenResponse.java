@@ -1,4 +1,4 @@
-package uk.co.next.loyalty.auth.application.dto;
+package uk.co.Dunelm.loyalty.auth.application.dto;
 
 public record AuthTokenResponse(
         String accessToken,

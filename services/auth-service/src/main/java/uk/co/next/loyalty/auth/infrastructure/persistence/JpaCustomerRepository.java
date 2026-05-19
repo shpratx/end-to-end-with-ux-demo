@@ -1,9 +1,9 @@
-package uk.co.next.loyalty.auth.infrastructure.persistence;
+package uk.co.Dunelm.loyalty.auth.infrastructure.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import uk.co.next.loyalty.auth.domain.model.Customer;
-import uk.co.next.loyalty.auth.domain.port.CustomerRepository;
+import uk.co.Dunelm.loyalty.auth.domain.model.Customer;
+import uk.co.Dunelm.loyalty.auth.domain.port.CustomerRepository;
 
 import java.util.Optional;
 import java.util.UUID;

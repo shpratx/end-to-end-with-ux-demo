@@ -1,4 +1,4 @@
-package uk.co.next.loyalty.api;
+package uk.co.Dunelm.loyalty.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;

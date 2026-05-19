@@ -209,7 +209,7 @@
       "title": "Points Expiration \u2014 Negative Paths",
       "user_story": "As Nathan (loyalty customer), I want the expiration system to handle edge cases correctly, so that my points are not unfairly expired",
       "acceptance_criteria": [
-        "Given Nathan has a pending redemption at the time of expiration, When the daily job runs, Then his points are NOT expired and the job retries the next day after the redemption completes",
+        "Given Nathan has a pending redemption at the time of expiration, When the daily job runs, Then his points are NOT expired and the job retries the Dunelm day after the redemption completes",
         "Given Nathan's account was merged (via account linking) within the inactivity period, When the expiration job evaluates his account, Then the inactivity timer uses the most recent activity from either merged account",
         "Given the expiration batch job fails mid-execution, When it is retried, Then it resumes from where it left off without double-expiring any customer's points (idempotent)"
       ],
@@ -250,7 +250,7 @@
       "acceptance_criteria": [
         "Given a badge 'First Purchase' is configured with trigger_type: 'transaction_count' and trigger_value: 1, When Clara completes her first earn transaction, Then the badge is awarded to her profile",
         "Given Clara already has the 'First Purchase' badge, When she makes another purchase, Then the badge is NOT awarded again (one-time only per badge per customer)",
-        "Given a new badge is created via admin, When the badge engine evaluates on the next transaction, Then it checks the new badge's trigger against all qualifying customers",
+        "Given a new badge is created via admin, When the badge engine evaluates on the Dunelm transaction, Then it checks the new badge's trigger against all qualifying customers",
         "Given the badge award succeeds, When the event is processed, Then a push notification is sent: 'Badge unlocked: {name}! {description}' with the badge icon"
       ],
       "story_points": 5,
@@ -363,7 +363,7 @@
       "title": "Badge Notification & Celebration UX",
       "user_story": "As Clara (loyalty customer), I want a celebratory experience when I unlock a badge, so that I feel rewarded and motivated to earn more",
       "acceptance_criteria": [
-        "Given Clara unlocks a badge, When she next opens the app, Then a celebration modal appears with the badge icon, name, description, and a confetti animation",
+        "Given Clara unlocks a badge, When she Dunelm opens the app, Then a celebration modal appears with the badge icon, name, description, and a confetti animation",
         "Given the celebration modal is displayed, When Clara taps 'View All Badges' or dismisses, Then she is navigated to the badges grid or the modal closes respectively",
         "Given the celebration modal, When navigated via screen reader, Then the badge name and description are announced, and the modal is dismissible via Escape key with focus returned to the trigger element"
       ],

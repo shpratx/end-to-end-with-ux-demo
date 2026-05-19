@@ -1,13 +1,13 @@
-package uk.co.next.loyalty.application.command;
+package uk.co.Dunelm.loyalty.application.command;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.co.next.loyalty.domain.port.PointsLedgerRepository;
-import uk.co.next.loyalty.infrastructure.cache.RedisBalanceCache;
-import uk.co.next.loyalty.infrastructure.messaging.LoyaltyEventPublisher;
+import uk.co.Dunelm.loyalty.domain.port.PointsLedgerRepository;
+import uk.co.Dunelm.loyalty.infrastructure.cache.RedisBalanceCache;
+import uk.co.Dunelm.loyalty.infrastructure.messaging.LoyaltyEventPublisher;
 
 import java.util.Optional;
 import java.util.UUID;

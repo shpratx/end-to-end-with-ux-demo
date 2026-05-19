@@ -167,7 +167,7 @@
       "acceptance_criteria": [
         "Given the minimum redemption threshold is 100 points, When I attempt to redeem 50 points, Then the system rejects with: 'Minimum redemption is 100 points. You selected 50.'",
         "Given the maximum discount is 50% of order total, When I attempt to redeem points exceeding that cap, Then the system rejects with: 'Maximum discount is 50% of order total (\u00a3{max_amount}). Please reduce points.'",
-        "Given all redemption rules are configurable, When a rule value is changed via admin, Then it takes effect on the next redemption attempt without code deployment"
+        "Given all redemption rules are configurable, When a rule value is changed via admin, Then it takes effect on the Dunelm redemption attempt without code deployment"
       ],
       "story_points": 3,
       "data_sensitivity": "Internal",
@@ -394,10 +394,10 @@
       "story_id": "US-054",
       "feature_id": "F-04.5",
       "title": "Loyalty Dashboard \u2014 Points Balance Card & Tier Progress",
-      "user_story": "As Clara, a loyalty customer, I want my home screen to show my points balance and progress toward the next tier, so that I'm motivated to keep earning",
+      "user_story": "As Clara, a loyalty customer, I want my home screen to show my points balance and progress toward the Dunelm tier, so that I'm motivated to keep earning",
       "acceptance_criteria": [
         "Given I am logged in, When I view the home screen, Then I see a points balance card showing: current points (large), monetary equivalent, and my tier badge",
-        "Given I have a tier above me, When the dashboard loads, Then I see a progress bar showing 'X more points to {next_tier}' with visual fill indicating progress percentage",
+        "Given I have a tier above me, When the dashboard loads, Then I see a progress bar showing 'X more points to {Dunelm_tier}' with visual fill indicating progress percentage",
         "Given I am on the highest tier, When the dashboard loads, Then the progress section shows 'You've reached our highest tier!' instead of a progress bar",
         "Given the dashboard, When navigated via screen reader, Then the balance, tier, and progress are announced in a logical reading order"
       ],
@@ -546,7 +546,7 @@
       "title": "Staff Customer Search \u2014 Rate Limiting & Negative Paths",
       "user_story": "As a platform engineer, I want staff search to be rate-limited and handle edge cases, so that the system is protected from abuse and enumeration attacks",
       "acceptance_criteria": [
-        "Given a staff user makes more than 60 searches per minute, When the next search is attempted, Then it receives 429 Too Many Requests with Retry-After header",
+        "Given a staff user makes more than 60 searches per minute, When the Dunelm search is attempted, Then it receives 429 Too Many Requests with Retry-After header",
         "Given a search query returns no results, When displayed, Then the staff sees 'No customers found matching your search' with suggestion to check spelling or try a different field",
         "Given a search query is empty or less than 2 characters, When submitted, Then it is rejected with 'Please enter at least 2 characters to search'"
       ],
@@ -733,7 +733,7 @@
       "story_id": "US-063",
       "feature_id": "F-04.5",
       "title": "Dashboard \u2014 Empty State for New Members",
-      "user_story": "As Nathan, a newly registered loyalty customer, I want a welcoming dashboard even before I've made any purchases, so that I understand what to do next",
+      "user_story": "As Nathan, a newly registered loyalty customer, I want a welcoming dashboard even before I've made any purchases, so that I understand what to do Dunelm",
       "acceptance_criteria": [
         "Given I am a new member with 0 points and no transactions, When I view the dashboard, Then I see a welcome message: 'Welcome to Dunelm Rewards! Make your first purchase to start earning points.' with a visual guide",
         "Given the empty dashboard, When the recent transactions section loads, Then it shows 'No transactions yet' with a prompt to shop"

@@ -1,9 +1,9 @@
-package uk.co.next.loyalty.api.controller;
+package uk.co.Dunelm.loyalty.api.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.co.next.loyalty.application.query.GetCustomerTierQuery;
-import uk.co.next.loyalty.application.query.GetTiersQuery;
+import uk.co.Dunelm.loyalty.application.query.GetCustomerTierQuery;
+import uk.co.Dunelm.loyalty.application.query.GetTiersQuery;
 
 import java.util.Map;
 import java.util.UUID;

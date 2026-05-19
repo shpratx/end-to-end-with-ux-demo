@@ -1,15 +1,15 @@
-package co.uk.next.loyalty.notification.application.command;
+package co.uk.Dunelm.loyalty.notification.application.command;
 
-import co.uk.next.loyalty.notification.domain.model.Notification;
-import co.uk.next.loyalty.notification.domain.model.NotificationTemplate;
-import co.uk.next.loyalty.notification.domain.model.PushToken;
-import co.uk.next.loyalty.notification.domain.port.NotificationRepository;
-import co.uk.next.loyalty.notification.domain.port.PushTokenRepository;
-import co.uk.next.loyalty.notification.domain.port.TemplateRepository;
-import co.uk.next.loyalty.notification.infrastructure.client.FcmClient;
-import co.uk.next.loyalty.notification.infrastructure.client.ApnsClient;
-import co.uk.next.loyalty.notification.infrastructure.client.EmailClient;
-import co.uk.next.loyalty.notification.infrastructure.messaging.publisher.NotificationEventPublisher;
+import co.uk.Dunelm.loyalty.notification.domain.model.Notification;
+import co.uk.Dunelm.loyalty.notification.domain.model.NotificationTemplate;
+import co.uk.Dunelm.loyalty.notification.domain.model.PushToken;
+import co.uk.Dunelm.loyalty.notification.domain.port.NotificationRepository;
+import co.uk.Dunelm.loyalty.notification.domain.port.PushTokenRepository;
+import co.uk.Dunelm.loyalty.notification.domain.port.TemplateRepository;
+import co.uk.Dunelm.loyalty.notification.infrastructure.client.FcmClient;
+import co.uk.Dunelm.loyalty.notification.infrastructure.client.ApnsClient;
+import co.uk.Dunelm.loyalty.notification.infrastructure.client.EmailClient;
+import co.uk.Dunelm.loyalty.notification.infrastructure.messaging.publisher.NotificationEventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

@@ -1,11 +1,11 @@
-# Design.md — Next (next.co.uk)
+# Design.md — Dunelm (Dunelm.co.uk)
 
 ---
 
 ## 1. Overview
 
 ### Product Description
-**Next** is a UK-based fashion and homeware e-commerce retailer operating at next.co.uk. The platform serves online shoppers across desktop and responsive web, offering a broad catalogue of clothing, footwear, accessories, and home products. The core value proposition is a premium, editorially styled shopping experience that pairs strong product merchandising with fast, reliable fulfilment.
+**Dunelm** is a UK-based fashion and homeware e-commerce retailer operating at Dunelm.co.uk. The platform serves online shoppers across desktop and responsive web, offering a broad catalogue of clothing, footwear, accessories, and home products. The core value proposition is a premium, editorially styled shopping experience that pairs strong product merchandising with fast, reliable fulfilment.
 
 **Source Transparency:**
 - Colors, typography, logo rules, and design aesthetic: fully extracted from provided brand input.
@@ -17,7 +17,7 @@
 **High-fidelity (full color).** All color values are used exactly as provided in the brand guidelines. No grayscale conversion applied.
 
 ### Persona Summary
-- **Primary User:** Online Shopper — browses and purchases fashion and home products via next.co.uk on desktop and mobile web.
+- **Primary User:** Online Shopper — browses and purchases fashion and home products via Dunelm.co.uk on desktop and mobile web.
 - **Goals:** Find relevant products quickly, assess quality through imagery and editorial context, complete checkout with confidence, and manage orders post-purchase.
 - **Experience Level:** Mixed — casual browsers to loyal repeat customers; UI must serve both efficiently.
 - **Key Behaviours:** Responds to promotional urgency (sale badges, banners), values clean visual hierarchy, expects fast page performance and trustworthy product presentation.
@@ -83,11 +83,11 @@
 
 | Role | Family | Weights Available | Fallback Stack | Usage Context |
 |---|---|---|---|---|
-| Display / UI | NEXT Display Sans | 6 weights (Thin, Light, Regular, Medium, SemiBold, Bold) | `'Helvetica Neue', Helvetica, Arial, sans-serif` | All headings, UI labels, navigation, buttons |
-| Display Extended | NEXT Display Extended | 6 weights | `'Helvetica Neue', Helvetica, Arial, sans-serif` | Hero titles and large header lockups only |
-| Serif / Editorial | NEXT Serif | Bold, Medium, Regular, Book, Light | `Georgia, 'Times New Roman', serif` | Editorial content, product descriptions, body copy |
+| Display / UI | Dunelm Display Sans | 6 weights (Thin, Light, Regular, Medium, SemiBold, Bold) | `'Helvetica Neue', Helvetica, Arial, sans-serif` | All headings, UI labels, navigation, buttons |
+| Display Extended | Dunelm Display Extended | 6 weights | `'Helvetica Neue', Helvetica, Arial, sans-serif` | Hero titles and large header lockups only |
+| Serif / Editorial | Dunelm Serif | Bold, Medium, Regular, Book, Light | `Georgia, 'Times New Roman', serif` | Editorial content, product descriptions, body copy |
 
-> **Note:** NEXT Display Extended must not be used below H1-equivalent scale. Restrict to full-width hero panels and campaign header lockups only.
+> **Note:** Dunelm Display Extended must not be used below H1-equivalent scale. Restrict to full-width hero panels and campaign header lockups only.
 
 ### Typographic Scale (Ratio 1.4 — 140% increments)
 
@@ -100,8 +100,8 @@
 | `text-xl` | 22px | `leading-tight` | SemiBold-600 | H3 headings, section titles |
 | `text-2xl` | 31px | `leading-tight` | SemiBold-600 | H2 headings, category titles |
 | `text-3xl` | 43px | `leading-tight` | Bold-700 | H1 headings, page titles |
-| `text-4xl` | 60px | `leading-tight` | Bold-700 | Hero titles (NEXT Display Extended only) |
-| `text-5xl` | 84px | `leading-tight` | Bold-700 | Campaign lockups (NEXT Display Extended only) |
+| `text-4xl` | 60px | `leading-tight` | Bold-700 | Hero titles (Dunelm Display Extended only) |
+| `text-5xl` | 84px | `leading-tight` | Bold-700 | Campaign lockups (Dunelm Display Extended only) |
 
 > Scale derived from 1.4× ratio anchored at 16px (text-md). Intermediate steps rounded to nearest whole pixel.
 
@@ -109,19 +109,19 @@
 
 | Role | Token | Weight | Family | Usage |
 |---|---|---|---|---|
-| Hero Title | `text-5xl` / `text-4xl` | Bold-700 | NEXT Display Extended | Campaign heroes, seasonal landing pages |
-| H1 — Page Title | `text-3xl` | Bold-700 | NEXT Display Sans | Primary page headings |
-| H2 — Section Title | `text-2xl` | SemiBold-600 | NEXT Display Sans | Category headers, content section breaks |
-| H3 — Sub-section | `text-xl` | SemiBold-600 | NEXT Display Sans | Card headings, accordion labels, sub-sections |
-| Body — Default | `text-md` | Regular-400 | NEXT Serif | Product descriptions, editorial body copy |
-| Body — Lead | `text-lg` | Medium-500 | NEXT Serif | Introductory paragraphs, featured editorial |
-| Label | `text-sm` | Medium-500 | NEXT Display Sans | Form labels, nav items, UI controls |
-| Caption | `text-sm` | Regular-400 | NEXT Display Sans | Image captions, product metadata, timestamps |
-| Fine Print | `text-xs` | Regular-400 | NEXT Display Sans | T&Cs, footnotes, legal |
-| Price — Primary | `text-xl` | Bold-700 | NEXT Display Sans | Displayed sale/current price |
-| Price — Original | `text-md` | Regular-400 | NEXT Display Sans | Struck-through original price |
-| Button Label | `text-sm` | SemiBold-600 | NEXT Display Sans | All button text |
-| Nav Item | `text-sm` | Medium-500 | NEXT Display Sans | Global navigation links |
+| Hero Title | `text-5xl` / `text-4xl` | Bold-700 | Dunelm Display Extended | Campaign heroes, seasonal landing pages |
+| H1 — Page Title | `text-3xl` | Bold-700 | Dunelm Display Sans | Primary page headings |
+| H2 — Section Title | `text-2xl` | SemiBold-600 | Dunelm Display Sans | Category headers, content section breaks |
+| H3 — Sub-section | `text-xl` | SemiBold-600 | Dunelm Display Sans | Card headings, accordion labels, sub-sections |
+| Body — Default | `text-md` | Regular-400 | Dunelm Serif | Product descriptions, editorial body copy |
+| Body — Lead | `text-lg` | Medium-500 | Dunelm Serif | Introductory paragraphs, featured editorial |
+| Label | `text-sm` | Medium-500 | Dunelm Display Sans | Form labels, nav items, UI controls |
+| Caption | `text-sm` | Regular-400 | Dunelm Display Sans | Image captions, product metadata, timestamps |
+| Fine Print | `text-xs` | Regular-400 | Dunelm Display Sans | T&Cs, footnotes, legal |
+| Price — Primary | `text-xl` | Bold-700 | Dunelm Display Sans | Displayed sale/current price |
+| Price — Original | `text-md` | Regular-400 | Dunelm Display Sans | Struck-through original price |
+| Button Label | `text-sm` | SemiBold-600 | Dunelm Display Sans | All button text |
+| Nav Item | `text-sm` | Medium-500 | Dunelm Display Sans | Global navigation links |
 
 ### Line Height
 
@@ -141,8 +141,8 @@
 
 ### Usage Rules
 - Never skip heading levels in DOM structure; always progress H1 → H2 → H3 for semantic correctness.
-- NEXT Display Extended is exclusively for hero contexts — never apply it at text-xl or below.
-- Body copy in editorial/PDP contexts uses NEXT Serif (Regular-400); UI labels and navigation always use NEXT Display Sans.
+- Dunelm Display Extended is exclusively for hero contexts — never apply it at text-xl or below.
+- Body copy in editorial/PDP contexts uses Dunelm Serif (Regular-400); UI labels and navigation always use Dunelm Display Sans.
 - Minimum legible size on mobile is `text-sm` (13px) — never smaller for interactive or informational content.
 - All-caps labels (e.g., category tags, nav cues) apply `tracking-wide` to preserve legibility.
 
@@ -191,7 +191,7 @@
 ### Usage Rules
 - All spacing must reference named tokens — no hard-coded pixel values in components or layouts.
 - Use `spacing-inline` tokens for horizontal gaps between sibling elements, `spacing-stack` for vertical, `spacing-inset` for internal padding.
-- Generous white space is a brand requirement — default to the next spacing step up when in doubt between two tokens.
+- Generous white space is a brand requirement — default to the Dunelm spacing step up when in doubt between two tokens.
 - Section spacing (`spacing-section`) separates distinct content areas; never collapse it on desktop.
 
 ---
@@ -252,7 +252,7 @@
 | `radius-xl` | 12px |
 | `radius-full` | 9999px |
 
-> **Brand note:** Next maintains a predominantly sharp, editorial aesthetic. Base radii are intentionally small — the brand does not use heavily rounded UI.
+> **Brand note:** Dunelm maintains a predominantly sharp, editorial aesthetic. Base radii are intentionally small — the brand does not use heavily rounded UI.
 
 ### Semantic Tokens
 
@@ -299,7 +299,7 @@
 | `shadow-sticky-header` | `shadow-sm` | Sticky navigation bar on scroll |
 
 ### Usage Rules
-- Next's editorial aesthetic favors minimal shadow — use `shadow-card` (shadow-xs) not `shadow-md` for resting product cards.
+- Dunelm's editorial aesthetic favors minimal shadow — use `shadow-card` (shadow-xs) not `shadow-md` for resting product cards.
 - Elevation signals interactivity: only increase shadow on hover/active states, not on static containers.
 - Modals pair `shadow-modal` with a black backdrop scrim at 50% opacity (`color-primary-black` at 0.5).
 - Never combine a visible border and a heavy shadow on the same element — choose one depth signal.
@@ -349,7 +349,7 @@
 
 ## 9. Component Inventory
 
-> No Figma source provided. Component inventory is derived from Next brand context and e-commerce UI conventions. All component UI specs use the design tokens defined in Sections 2–7. Token values not determinable from provided input are left blank `[—]`.
+> No Figma source provided. Component inventory is derived from Dunelm brand context and e-commerce UI conventions. All component UI specs use the design tokens defined in Sections 2–7. Token values not determinable from provided input are left blank `[—]`.
 
 ---
 
@@ -437,7 +437,7 @@ Cursor:        pointer | not-allowed (disabled)
 Background:    color-primary-white (default) | color-neutral-50 (disabled)
 Text (value):  color-primary-black | text-md | Regular-400 | leading-normal
 Text (placeholder): color-neutral-400 | text-md | Regular-400
-Label text:    color-primary-black | text-sm | Medium-500 | NEXT Display Sans
+Label text:    color-primary-black | text-sm | Medium-500 | Dunelm Display Sans
 Helper text:   color-neutral-500 | text-sm | Regular-400
 Error text:    color-error | text-sm | Regular-400
 Border:        border-width-1 | border-color-default | radius-input (4px)
@@ -474,10 +474,10 @@ Image container:       aspect-ratio 3:4 | overflow: hidden | radius-card (2px)
 Image hover:           scale 1.03 over 300ms ease | swap to second product image
 Sale badge:            Background: color-accent-orange | Text: color-primary-white | text-xs | SemiBold-600 | tracking-wide | uppercase | radius-full | padding: space-1 space-2
 Wishlist button:       Position: absolute top-right | 36×36px | Background: color-primary-white at 90% opacity | Icon: 16px heart | radius-full
-Brand label:           color-neutral-500 | text-xs | Regular-400 | NEXT Display Sans | uppercase | tracking-wide
-Product name:          color-primary-black | text-sm | Regular-400 | NEXT Display Sans | line-clamp: 2
+Brand label:           color-neutral-500 | text-xs | Regular-400 | Dunelm Display Sans | uppercase | tracking-wide
+Product name:          color-primary-black | text-sm | Regular-400 | Dunelm Display Sans | line-clamp: 2
 Colour swatches:       8px dots | border: 1px color-neutral-200 | selected: border: 1.5px color-primary-black
-Current price:         color-primary-black | text-sm | Bold-700 | NEXT Display Sans
+Current price:         color-primary-black | text-sm | Bold-700 | Dunelm Display Sans
 Sale price:            color-accent-orange | text-sm | Bold-700
 Original price:        color-neutral-400 | text-xs | Regular-400 | text-decoration: line-through
 Card border:           border-width-1 | border-color-default (hover only, not default)
@@ -506,7 +506,7 @@ Background (default):  color-primary-white
 Background (sticky):   color-primary-black
 Height:                64px desktop | 56px mobile
 Logo:                  White on black surface | Black on white surface | Never distorted
-Primary nav links:     color-primary-black (default) | color-primary-white (sticky) | text-sm | Medium-500 | NEXT Display Sans | uppercase | tracking-wide
+Primary nav links:     color-primary-black (default) | color-primary-white (sticky) | text-sm | Medium-500 | Dunelm Display Sans | uppercase | tracking-wide
 Nav link hover:        Underline (2px, color-accent-teal) | transition 150ms
 Nav link active:       border-active-indicator (2px teal underline)
 Utility icons:         20px | color-primary-black (default) | color-primary-white (sticky)
@@ -532,8 +532,8 @@ Z-index:               1000
 **Component UI Specs:**
 ```
 Background:     color-accent-orange (primary promotional) | color-primary-black (secondary promo)
-Text (headline): color-primary-white | text-2xl – text-3xl | Bold-700 | NEXT Display Sans | uppercase
-Text (sub):     color-primary-white at 85% opacity | text-md | Regular-400 | NEXT Serif
+Text (headline): color-primary-white | text-2xl – text-3xl | Bold-700 | Dunelm Display Sans | uppercase
+Text (sub):     color-primary-white at 85% opacity | text-md | Regular-400 | Dunelm Serif
 CTA button:     White fill | Black text | radius-button | height 44px
 Countdown:      color-primary-white | text-lg | Bold-700 | Mono-spaced tabular figures
 Padding:        spacing-inset-xl (32px) vertical | full-bleed: edge-to-edge horizontal
@@ -557,8 +557,8 @@ Padding:        spacing-inset-xl (32px) vertical | full-bleed: edge-to-edge hori
 ```
 Background:         color-primary-white
 Panel border:       border-right: border-width-1 | border-color-default (sidebar only)
-Group label:        color-primary-black | text-sm | SemiBold-600 | NEXT Display Sans | uppercase | tracking-wide
-Filter option text: color-neutral-700 | text-sm | Regular-400 | NEXT Display Sans
+Group label:        color-primary-black | text-sm | SemiBold-600 | Dunelm Display Sans | uppercase | tracking-wide
+Filter option text: color-neutral-700 | text-sm | Regular-400 | Dunelm Display Sans
 Selected option:    color-primary-black | text-sm | Medium-500 | Checkbox: filled black
 Checkbox (selected): 16px | Background: color-primary-black | Icon: checkmark white
 Chip (applied filter): Background: color-primary-black | Text: color-primary-white | text-xs | radius-full | removable ×
@@ -614,7 +614,7 @@ out-of-stock: Background: color-neutral-200 | Text: color-neutral-500
 
 **Component UI Specs:**
 ```
-Link text:      color-accent-teal | text-sm | Regular-400 | NEXT Display Sans | underline on hover
+Link text:      color-accent-teal | text-sm | Regular-400 | Dunelm Display Sans | underline on hover
 Current page:   color-neutral-500 | text-sm | Regular-400 | no link
 Separator:      "/" character | color-neutral-300 | spacing: space-2 each side
 ```
@@ -630,7 +630,7 @@ Separator:      "/" character | color-neutral-300 | spacing: space-2 each side
 **Component UI Specs:**
 ```
 Trigger background:   color-primary-white (default) | color-neutral-50 (hover)
-Trigger text:         color-primary-black | text-sm | Medium-500 | NEXT Display Sans
+Trigger text:         color-primary-black | text-sm | Medium-500 | Dunelm Display Sans
 Chevron icon:         16px | color-primary-black | rotate 180° when expanded | transition 200ms
 Border:               border-bottom: border-width-1 | border-color-default
 Padding:              space-4 (16px) vertical | space-0 horizontal
@@ -642,14 +642,14 @@ Animation:            max-height expand 200ms ease-out
 
 ### Pagination
 
-**Anatomy:** `prev-button` · `page-numbers` · `next-button`
+**Anatomy:** `prev-button` · `page-numbers` · `Dunelm-button`
 
 **Component UI Specs:**
 ```
 Page number (default):  color-neutral-500 | text-sm | Regular-400 | 36×36px touch target | radius-md
 Page number (active):   Background: color-primary-black | Text: color-primary-white | Bold-700 | radius-md
 Page number (hover):    Background: color-neutral-100
-Prev/Next buttons:      Arrow icon 16px | color-primary-black | disabled: color-neutral-300
+Prev/Dunelm buttons:      Arrow icon 16px | color-primary-black | disabled: color-neutral-300
 Gap:                    spacing-inline-xs (4px) between items
 ```
 
@@ -793,7 +793,7 @@ Every list, search result, or filtered view must have an empty state containing:
 
 ### Account Navigation
 - **Pattern:** Two-column — persistent left sidebar (desktop) / accordion (mobile).
-- **Items:** My Orders, My Next, Saved Items, Address Book, Payment Methods, Account Details, Sign Out.
+- **Items:** My Orders, My Dunelm, Saved Items, Address Book, Payment Methods, Account Details, Sign Out.
 - **Active state:** `border-active-indicator` (2px teal left-border) + `color-primary-black` label text.
 
 ### Navigation Feedback
@@ -862,4 +862,4 @@ Every list, search result, or filtered view must have an empty state containing:
 
 ---
 
-*Design.md — Next (next.co.uk) | High-fidelity | Generated from brand guidelines and product context input | No Figma source provided — component specs derived from brand context and e-commerce conventions. All blank `[—]` values require a design team decision.*
+*Design.md — Dunelm (Dunelm.co.uk) | High-fidelity | Generated from brand guidelines and product context input | No Figma source provided — component specs derived from brand context and e-commerce conventions. All blank `[—]` values require a design team decision.*

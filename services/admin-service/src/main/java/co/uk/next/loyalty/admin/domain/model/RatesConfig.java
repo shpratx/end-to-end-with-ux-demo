@@ -1,4 +1,4 @@
-package co.uk.next.loyalty.admin.domain.model;
+package co.uk.Dunelm.loyalty.admin.domain.model;
 
 import jakarta.persistence.*;
 import java.time.Instant;

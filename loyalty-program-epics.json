@@ -276,7 +276,7 @@
         {
           "feature_id": "F-02.4",
           "title": "Terms & Conditions Acceptance",
-          "description": "During registration, display T&C with scrollable content and 'I accept' checkbox (must be unchecked by default). Record: customer_id, t&c_version, acceptance_timestamp, IP address. When T&C version is updated: on next login, display modal with updated T&C requiring re-acceptance before proceeding. T&C version stored in config (not hardcoded). Rejection: customer cannot complete registration without acceptance. Audit log entry for every acceptance/rejection.",
+          "description": "During registration, display T&C with scrollable content and 'I accept' checkbox (must be unchecked by default). Record: customer_id, t&c_version, acceptance_timestamp, IP address. When T&C version is updated: on Dunelm login, display modal with updated T&C requiring re-acceptance before proceeding. T&C version stored in config (not hardcoded). Rejection: customer cannot complete registration without acceptance. Audit log entry for every acceptance/rejection.",
           "requirements_covered": ["FR-27"],
           "nfrs_applicable": ["NFR-02"],
           "user_facing": true,
@@ -593,7 +593,7 @@
         {
           "feature_id": "F-04.5",
           "title": "Loyalty Dashboard (Customer Home)",
-          "description": "Home screen of the app/website showing: (1) Points balance card — large number, monetary equivalent, tier badge. (2) Progress to next tier — progress bar with 'X more points to {next_tier}'. (3) Recent transactions — last 5 entries (tap to see full history F-03.5). (4) Active promotions banner — carousel of current offers (placeholder until EP-06). (5) Quick actions: 'View QR Code', 'Transaction History', 'Redeem Points'. Pull-to-refresh on mobile. Skeleton loading states for each section independently.",
+          "description": "Home screen of the app/website showing: (1) Points balance card — large number, monetary equivalent, tier badge. (2) Progress to Dunelm tier — progress bar with 'X more points to {Dunelm_tier}'. (3) Recent transactions — last 5 entries (tap to see full history F-03.5). (4) Active promotions banner — carousel of current offers (placeholder until EP-06). (5) Quick actions: 'View QR Code', 'Transaction History', 'Redeem Points'. Pull-to-refresh on mobile. Skeleton loading states for each section independently.",
           "requirements_covered": ["FR-19"],
           "nfrs_applicable": ["NFR-04", "NFR-09"],
           "user_facing": true,

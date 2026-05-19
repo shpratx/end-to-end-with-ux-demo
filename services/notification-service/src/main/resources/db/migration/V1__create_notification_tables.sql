@@ -44,7 +44,7 @@ CREATE TABLE notification_templates (
 
 -- Seed templates
 INSERT INTO notification_templates (event_type, title_template, body_template, channels) VALUES
-('customer.registered', 'Welcome to Next Loyalty!', 'Hi! Welcome to the Next Loyalty Program. Start earning points on every purchase.', 'email,in_app'),
+('customer.registered', 'Welcome to Dunelm Loyalty!', 'Hi! Welcome to the Dunelm Loyalty Program. Start earning points on every purchase.', 'email,in_app'),
 ('points.earned', 'Points Earned!', 'You earned {points} points! New balance: {balance} points.', 'push,in_app'),
 ('points.redeemed', 'Points Redeemed', 'You redeemed {points} points for £{discount} off your order.', 'push,in_app'),
 ('tier.upgraded', 'Tier Upgrade!', 'Congratulations! You''ve been upgraded to {tier} tier.', 'push,email,in_app'),

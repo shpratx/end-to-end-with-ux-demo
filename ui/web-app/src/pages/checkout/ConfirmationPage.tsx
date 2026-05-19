@@ -17,7 +17,7 @@ export function ConfirmationPage() {
 
       <div className="text-left text-sm text-neutral-600 leading-relaxed mb-6">
         <p>Delivery: Click & Collect</p>
-        <p>Store: Next, Oxford Street</p>
+        <p>Store: Dunelm, Oxford Street</p>
         <p>Ready by: Tomorrow</p>
       </div>
 

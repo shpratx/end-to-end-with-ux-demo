@@ -1,4 +1,4 @@
-package co.uk.next.loyalty.notification.domain.model;
+package co.uk.Dunelm.loyalty.notification.domain.model;
 
 import jakarta.persistence.*;
 import java.time.Instant;

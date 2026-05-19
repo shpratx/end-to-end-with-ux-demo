@@ -1,4 +1,4 @@
-package uk.co.next.loyalty.infrastructure.messaging;
+package uk.co.Dunelm.loyalty.infrastructure.messaging;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-# Solution Architecture — Next Loyalty Program
+# Solution Architecture — Dunelm Loyalty Program
 
 **Version:** 1.0.0  
 **Mode:** Greenfield  
@@ -87,7 +87,7 @@
 | Cache | Redis Cluster (3-node) | Sub-ms rate limiting, balance cache (2s TTL), session metadata |
 | Messaging | Apache Kafka (3 brokers, RF=3) | Durable event log, replay capability, partition by customer_id for ordering |
 | Mobile | React Native | Single codebase iOS+Android, shared design system with web, native modules for push/biometric |
-| Web Frontend | React / Next.js | SSR for SEO, shared component library with mobile, responsive |
+| Web Frontend | React / Dunelm.js | SSR for SEO, shared component library with mobile, responsive |
 | Admin Portal | React (SPA) | Internal tool, no SEO needed, role-based access |
 | IaC | Terraform | Multi-cloud capable, declarative, state management, modular |
 | CI/CD | GitHub Actions | Git → lint → test → SAST → build → deploy staging (auto) → prod (manual approval) |
@@ -199,8 +199,8 @@
 | Environment | Purpose | Deploy Method | URL |
 |-------------|---------|---------------|-----|
 | Development | Local dev | Docker Compose | localhost:* |
-| Staging | Integration/QA | Auto-deploy on merge to main | staging.loyalty.next.co.uk |
-| Production | Live customers | Manual approval gate | loyalty.next.co.uk |
+| Staging | Integration/QA | Auto-deploy on merge to main | staging.loyalty.Dunelm.co.uk |
+| Production | Live customers | Manual approval gate | loyalty.Dunelm.co.uk |
 
 ---
 

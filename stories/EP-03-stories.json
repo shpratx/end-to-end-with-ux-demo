@@ -362,7 +362,7 @@
       "user_story": "As Clara, a loyalty customer, I want to see a chronological list of all my points transactions, so that I can track how I've earned and spent my points",
       "acceptance_criteria": [
         "Given I navigate to transaction history, When the screen loads, Then I see a list of transactions showing: date/time, type (earned/redeemed/adjusted/expired), points amount (+/-), running balance, reference (order ID), and channel icon",
-        "Given I have more than 20 transactions, When I scroll to the bottom of the list, Then the next page loads automatically (infinite scroll) with a loading indicator",
+        "Given I have more than 20 transactions, When I scroll to the bottom of the list, Then the Dunelm page loads automatically (infinite scroll) with a loading indicator",
         "Given I have no transactions, When I view the history screen, Then I see an empty state: 'No transactions yet \u2014 make a purchase to start earning!'",
         "Given the transaction history screen, When navigated via screen reader, Then each transaction row is announced with type, points, date, and channel"
       ],
@@ -673,7 +673,7 @@
       "user_story": "As a loyalty program manager, I want the points accrual rate to be configurable without code changes, so that I can adjust the earn rate based on business needs",
       "acceptance_criteria": [
         "Given the accrual rate is configured to 2 points per \u00a31, When a \u00a350 purchase is processed, Then 100 points are awarded",
-        "Given the accrual rate is changed, When the next transaction arrives, Then it uses the new rate immediately without requiring a deployment",
+        "Given the accrual rate is changed, When the Dunelm transaction arrives, Then it uses the new rate immediately without requiring a deployment",
         "Given an invalid rate value (0 or negative) is set, When the configuration is saved, Then it is rejected with a validation error and the previous rate remains active"
       ],
       "story_points": 2,
@@ -709,7 +709,7 @@
       "title": "Transaction History API",
       "user_story": "As a backend developer, I want a paginated transaction history API, so that both mobile and web clients can retrieve customer transaction data efficiently",
       "acceptance_criteria": [
-        "Given a GET request to /v1/customers/{id}/transactions, When called with page=1&limit=20, Then it returns the 20 most recent transactions with pagination metadata (total_count, has_next_page)",
+        "Given a GET request to /v1/customers/{id}/transactions, When called with page=1&limit=20, Then it returns the 20 most recent transactions with pagination metadata (total_count, has_Dunelm_page)",
         "Given filter parameters type=earn&from=2026-01-01&to=2026-06-30, When applied, Then only matching transactions are returned",
         "Given a request for another customer's transactions, When the authenticated customer_id doesn't match the requested id, Then it returns 403 Forbidden"
       ],

@@ -1,15 +1,15 @@
-package uk.co.next.loyalty.auth.application.command;
+package uk.co.Dunelm.loyalty.auth.application.command;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uk.co.next.loyalty.auth.application.dto.RegisterRequest;
-import uk.co.next.loyalty.auth.domain.model.Consent;
-import uk.co.next.loyalty.auth.domain.model.Customer;
-import uk.co.next.loyalty.auth.domain.model.OtpCode;
-import uk.co.next.loyalty.auth.domain.port.CustomerRepository;
-import uk.co.next.loyalty.auth.domain.port.OtpRepository;
-import uk.co.next.loyalty.auth.infrastructure.persistence.JpaConsentRepository;
+import uk.co.Dunelm.loyalty.auth.application.dto.RegisterRequest;
+import uk.co.Dunelm.loyalty.auth.domain.model.Consent;
+import uk.co.Dunelm.loyalty.auth.domain.model.Customer;
+import uk.co.Dunelm.loyalty.auth.domain.model.OtpCode;
+import uk.co.Dunelm.loyalty.auth.domain.port.CustomerRepository;
+import uk.co.Dunelm.loyalty.auth.domain.port.OtpRepository;
+import uk.co.Dunelm.loyalty.auth.infrastructure.persistence.JpaConsentRepository;
 
 import java.security.SecureRandom;
 import java.time.Instant;
@@ -73,10 +73,10 @@ public class RegisterCustomerCommand {
     }
 
     private String generateOtp() {
-        return String.format("%06d", secureRandom.nextInt(1_000_000));
+        return String.format("%06d", secureRandom.DunelmInt(1_000_000));
     }
 
     private String generateLoyaltyId() {
-        return String.format("%010d", secureRandom.nextLong(1_000_000_000L, 9_999_999_999L));
+        return String.format("%010d", secureRandom.DunelmLong(1_000_000_000L, 9_999_999_999L));
     }
 }

@@ -53,7 +53,7 @@ export function QrPage() {
   return (
     <div className="flex flex-col items-center gap-4 py-12 px-4">
       <h1 className="font-display text-xl font-bold">Scan at till</h1>
-      <p className="text-sm text-neutral-500 text-center">Show this code at any Next till to earn points</p>
+      <p className="text-sm text-neutral-500 text-center">Show this code at any Dunelm till to earn points</p>
 
       <div className="bg-neutral-50 border border-neutral-200 rounded-sm p-8 flex flex-col items-center gap-3">
         {isLoading ? (

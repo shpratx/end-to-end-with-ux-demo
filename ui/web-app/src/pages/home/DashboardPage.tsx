@@ -8,7 +8,7 @@ export function DashboardPage() {
   if (error) return <p className="text-red-600 text-sm p-4" role="alert">Failed to load dashboard.</p>;
   if (!data) return null;
 
-  const { balance, tier, nextTierProgress, recentTransactions, activePromotions } = data;
+  const { balance, tier, DunelmTierProgress, recentTransactions, activePromotions } = data;
 
   return (
     <div className="flex flex-col gap-6">
@@ -23,13 +23,13 @@ export function DashboardPage() {
         </p>
 
         {/* Tier Progress */}
-        {nextTierProgress && (
+        {DunelmTierProgress && (
           <div className="mt-4">
             <div className="w-full bg-white/15 rounded-full h-1.5">
-              <div className="bg-[#007A7A] h-1.5 rounded-full transition-all" style={{ width: `${nextTierProgress.progressPercent}%` }} />
+              <div className="bg-[#007A7A] h-1.5 rounded-full transition-all" style={{ width: `${DunelmTierProgress.progressPercent}%` }} />
             </div>
             <p className="text-xs text-neutral-400 mt-2">
-              {(nextTierProgress.pointsRequired - nextTierProgress.pointsEarned).toLocaleString()} pts to {nextTierProgress.nextTierName} · {nextTierProgress.nextTierName === 'Silver' ? 'Early Sale Access' : 'Extended Sale Access'}
+              {(DunelmTierProgress.pointsRequired - DunelmTierProgress.pointsEarned).toLocaleString()} pts to {DunelmTierProgress.DunelmTierName} · {DunelmTierProgress.DunelmTierName === 'Silver' ? 'Early Sale Access' : 'Extended Sale Access'}
             </p>
           </div>
         )}
@@ -59,7 +59,7 @@ export function DashboardPage() {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-neutral-400">Your next purchase will appear here</p>
+          <p className="text-sm text-neutral-400">Your Dunelm purchase will appear here</p>
         )}
         <Link to="/history" className="block mt-3 font-display text-sm text-[#007A7A] underline">View all activity</Link>
       </section>

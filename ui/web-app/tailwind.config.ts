@@ -25,8 +25,8 @@ export default {
         info: '#007A7A',
       },
       fontFamily: {
-        display: ["'NEXT Display Sans'", "'Helvetica Neue'", 'Helvetica', 'Arial', 'sans-serif'],
-        serif: ["'NEXT Serif'", 'Georgia', "'Times New Roman'", 'serif'],
+        display: ["'Dunelm Display Sans'", "'Helvetica Neue'", 'Helvetica', 'Arial', 'sans-serif'],
+        serif: ["'Dunelm Serif'", 'Georgia', "'Times New Roman'", 'serif'],
       },
       fontSize: {
         xs: ['11px', { lineHeight: '1.2' }],

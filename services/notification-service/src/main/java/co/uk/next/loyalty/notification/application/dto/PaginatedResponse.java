@@ -1,4 +1,4 @@
-package co.uk.next.loyalty.notification.application.dto;
+package co.uk.Dunelm.loyalty.notification.application.dto;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ public record PaginatedResponse<T>(
         this(data, new Meta(pageNumber, pageSize, totalItems, totalPages, pageNumber < totalPages, pageNumber > 1));
     }
 
-    public record Meta(int pageNumber, int pageSize, long totalItems, int totalPages, boolean hasNextPage, boolean hasPreviousPage) {}
+    public record Meta(int pageNumber, int pageSize, long totalItems, int totalPages, boolean hasDunelmPage, boolean hasPreviousPage) {}
 }

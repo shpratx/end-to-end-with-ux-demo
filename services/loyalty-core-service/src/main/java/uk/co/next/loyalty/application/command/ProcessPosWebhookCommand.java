@@ -1,7 +1,7 @@
-package uk.co.next.loyalty.application.command;
+package uk.co.Dunelm.loyalty.application.command;
 
 import org.springframework.stereotype.Service;
-import uk.co.next.loyalty.domain.port.PointsLedgerRepository;
+import uk.co.Dunelm.loyalty.domain.port.PointsLedgerRepository;
 
 import java.util.UUID;
 

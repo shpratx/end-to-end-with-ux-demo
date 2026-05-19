@@ -24,11 +24,11 @@ export function VerifyOtpScreen({ route }: Props) {
   }, [countdown]);
 
   const handleChange = (text: string, index: number) => {
-    const next = [...digits];
-    next[index] = text.slice(-1);
-    setDigits(next);
+    const Dunelm = [...digits];
+    Dunelm[index] = text.slice(-1);
+    setDigits(Dunelm);
     if (text && index < 5) refs.current[index + 1]?.focus();
-    if (next.every((d) => d)) handleSubmit(next.join(''));
+    if (Dunelm.every((d) => d)) handleSubmit(Dunelm.join(''));
   };
 
   const handleSubmit = async (code: string) => {

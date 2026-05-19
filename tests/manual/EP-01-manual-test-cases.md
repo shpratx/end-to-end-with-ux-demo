@@ -146,7 +146,7 @@
 | 1 | Send 1000 requests within 1 minute | `GET /v1/health` with valid token, looped 1000 times | All return HTTP 200 |
 | 2 | Send the 1001st request | Same endpoint, same minute window | HTTP 429 Too Many Requests |
 | 3 | Verify Retry-After header present | Inspect response headers | `Retry-After` header present with seconds value |
-| 4 | Wait for rate limit window to reset | Wait until Retry-After period elapses | Next request returns HTTP 200 |
+| 4 | Wait for rate limit window to reset | Wait until Retry-After period elapses | Dunelm request returns HTTP 200 |
 
 **Postconditions:** Rate limiting correctly enforced and recoverable
 
@@ -845,7 +845,7 @@
 | 2 | Focus on first notification item | Screen reader focuses first item | Title announced |
 | 3 | Verify time is announced | Listen to announcement | Relative time (e.g., "2 hours ago") announced |
 | 4 | Verify read/unread status announced | Listen to announcement | "Unread" or "Read" status announced |
-| 5 | Move to next notification | Swipe right / Tab | Next notification announced with same detail |
+| 5 | Move to Dunelm notification | Swipe right / Tab | Dunelm notification announced with same detail |
 
 **Postconditions:** Notification center fully accessible via screen reader
 

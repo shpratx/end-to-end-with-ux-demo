@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
-Test set: uk.co.next.loyalty.api.controller.WebhookControllerContractTest
+Test set: uk.co.Dunelm.loyalty.api.controller.WebhookControllerContractTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.264 s -- in uk.co.next.loyalty.api.controller.WebhookControllerContractTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.264 s -- in uk.co.Dunelm.loyalty.api.controller.WebhookControllerContractTest

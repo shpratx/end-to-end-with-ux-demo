@@ -13,7 +13,7 @@
       "acceptance_criteria": [
         "Given tiers are configured (Bronze 0-999, Silver 1000-4999, Gold 5000-19999, Platinum 20000+), When my lifetime points cross a tier threshold, Then my tier is immediately upgraded and the new tier is reflected on my dashboard within 2 seconds",
         "Given I am upgraded to a new tier, When the upgrade occurs, Then I receive a push notification: 'Congratulations! You've reached {tier} status!'",
-        "Given my tier is upgraded, When my earn rate is calculated on the next purchase, Then the new tier multiplier is applied (Silver 1.25x, Gold 1.5x, Platinum 2x)",
+        "Given my tier is upgraded, When my earn rate is calculated on the Dunelm purchase, Then the new tier multiplier is applied (Silver 1.25x, Gold 1.5x, Platinum 2x)",
         "Given the tier upgrade notification, When read by a screen reader, Then it announces the tier name and new benefits clearly"
       ],
       "story_points": 5,
@@ -85,11 +85,11 @@
       "story_id": "US-082",
       "feature_id": "F-06.1",
       "title": "Tier Progress Display on Dashboard",
-      "user_story": "As Clara (loyalty customer), I want to see my progress toward the next tier on my dashboard, so that I'm motivated to keep earning",
+      "user_story": "As Clara (loyalty customer), I want to see my progress toward the Dunelm tier on my dashboard, so that I'm motivated to keep earning",
       "acceptance_criteria": [
-        "Given I am logged in, When I view my dashboard, Then I see a progress bar showing my current lifetime points relative to the next tier threshold with label: '{current_points} / {next_threshold} points to {next_tier}'",
+        "Given I am logged in, When I view my dashboard, Then I see a progress bar showing my current lifetime points relative to the Dunelm tier threshold with label: '{current_points} / {Dunelm_threshold} points to {Dunelm_tier}'",
         "Given I am at the highest tier (Platinum), When I view the progress bar, Then it shows 'Platinum \u2014 You're at the top!' with a full progress bar",
-        "Given the progress bar, When navigated by screen reader, Then it announces current tier, points earned, points needed, and next tier name"
+        "Given the progress bar, When navigated by screen reader, Then it announces current tier, points earned, points needed, and Dunelm tier name"
       ],
       "story_points": 3,
       "data_sensitivity": "Internal",
@@ -549,7 +549,7 @@
         "Given a customer has already received the app_signup bonus (flag set in customer record), When they attempt to trigger it again (e.g., re-install and re-login), Then no additional bonus is awarded",
         "Given a customer registers via the website (channel: 'web'), When their account becomes active, Then no sign-up bonus is awarded",
         "Given a customer registers via in-store assisted mode (channel: 'pos'), When their account becomes active, Then no sign-up bonus is awarded",
-        "Given the bonus amount is changed in admin portal from 200 to 300, When the next app registration occurs, Then the new amount (300) is awarded"
+        "Given the bonus amount is changed in admin portal from 200 to 300, When the Dunelm app registration occurs, Then the new amount (300) is awarded"
       ],
       "story_points": 3,
       "data_sensitivity": "Internal",

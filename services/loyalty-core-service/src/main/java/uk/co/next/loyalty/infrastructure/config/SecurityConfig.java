@@ -1,4 +1,4 @@
-package uk.co.next.loyalty.infrastructure.config;
+package uk.co.Dunelm.loyalty.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

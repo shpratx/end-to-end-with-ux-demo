@@ -1,6 +1,6 @@
-package co.uk.next.loyalty.notification.domain.port;
+package co.uk.Dunelm.loyalty.notification.domain.port;
 
-import co.uk.next.loyalty.notification.domain.model.NotificationTemplate;
+import co.uk.Dunelm.loyalty.notification.domain.model.NotificationTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.UUID;

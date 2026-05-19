@@ -1,4 +1,4 @@
-package uk.co.next.loyalty.auth.domain.model;
+package uk.co.Dunelm.loyalty.auth.domain.model;
 
 import jakarta.persistence.*;
 import java.time.Instant;

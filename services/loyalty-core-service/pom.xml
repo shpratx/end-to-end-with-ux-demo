@@ -9,7 +9,7 @@
         <version>3.3.0</version>
         <relativePath/>
     </parent>
-    <groupId>uk.co.next.loyalty</groupId>
+    <groupId>uk.co.Dunelm.loyalty</groupId>
     <artifactId>loyalty-core-service</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>loyalty-core-service</name>

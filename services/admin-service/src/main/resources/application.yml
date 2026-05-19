@@ -5,7 +5,7 @@ spring:
   application:
     name: admin-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/next_loyalty
+    url: jdbc:postgresql://localhost:5432/Dunelm_loyalty
     username: ${DB_USERNAME:loyalty}
     password: ${DB_PASSWORD:loyalty}
   jpa:

@@ -6,8 +6,8 @@
   "discovery": {
     "existing_components_analysed": [],
     "existing_docs_analysed": [
-      "kb-L0-next-enterprise-architecture.md — system landscape, integration patterns, security architecture, data architecture",
-      "kb-L0-next-retail-domain.md — channels, customer behaviour, terminology, regulatory context",
+      "kb-L0-Dunelm-enterprise-architecture.md — system landscape, integration patterns, security architecture, data architecture",
+      "kb-L0-Dunelm-retail-domain.md — channels, customer behaviour, terminology, regulatory context",
       "loyalty-program-requirements.json — 30 FRs, 9 NFRs",
       "loyalty-program-epics.json — EP-01 (7 features), EP-02 (4 features)",
       "stories/EP-01-stories.json — 14 stories, 54 pts",
@@ -29,7 +29,7 @@
     "apis_new": [
       {"endpoint": "/v1/auth/register", "method": "POST", "purpose": "Customer registration", "request_schema": "{name, email, phone, password, t_and_c_version}", "response_schema": "{customer_id, status: pending_verification}", "stories": ["US-015", "US-016", "US-017"]},
       {"endpoint": "/v1/auth/verify-otp", "method": "POST", "purpose": "OTP verification", "request_schema": "{customer_id, otp_code}", "response_schema": "{verified: boolean, remaining_attempts}", "stories": ["US-018", "US-019"]},
-      {"endpoint": "/v1/auth/resend-otp", "method": "POST", "purpose": "Resend OTP", "request_schema": "{customer_id}", "response_schema": "{sent: boolean, next_resend_at}", "stories": ["US-018"]},
+      {"endpoint": "/v1/auth/resend-otp", "method": "POST", "purpose": "Resend OTP", "request_schema": "{customer_id}", "response_schema": "{sent: boolean, Dunelm_resend_at}", "stories": ["US-018"]},
       {"endpoint": "/v1/auth/login", "method": "POST", "purpose": "Email/password login", "request_schema": "{email, password}", "response_schema": "{access_token, refresh_token, expires_in}", "stories": ["US-020"]},
       {"endpoint": "/v1/auth/login/social", "method": "POST", "purpose": "Social login (Google/Apple)", "request_schema": "{provider, id_token}", "response_schema": "{access_token, refresh_token, is_new_account}", "stories": ["US-021"]},
       {"endpoint": "/v1/auth/refresh", "method": "POST", "purpose": "Refresh access token", "request_schema": "{refresh_token}", "response_schema": "{access_token, expires_in}", "stories": ["US-020"]},
@@ -91,7 +91,7 @@
       "context": "Loyalty program requires ACID transactions for points ledger (strong consistency per NFR-08). Need pgvector extension for future personalisation.",
       "decision": "Use PostgreSQL as the single relational database for all loyalty services in Sprint 1. Points ledger requires row-level locking for concurrent redemption safety.",
       "consequences": "Strong consistency guaranteed. Horizontal read scaling via read replicas. Must manage connection pooling (PgBouncer). Schema migrations via versioned migration tool.",
-      "kb_reference": "kb-L0-next-enterprise-architecture §9.1 (Own database, PostgreSQL, ACID)"
+      "kb_reference": "kb-L0-Dunelm-enterprise-architecture §9.1 (Own database, PostgreSQL, ACID)"
     },
     {
       "id": "ADR-02",
@@ -99,7 +99,7 @@
       "context": "Customers access via mobile app (long sessions) and web (shorter sessions). Need stateless auth for horizontal scaling.",
       "decision": "Short-lived JWT access tokens (15 min) + long-lived refresh tokens (30 days mobile, 7 days web). Refresh tokens stored in DB for revocation capability.",
       "consequences": "Stateless verification for most requests (no DB hit). Revocation requires checking refresh token on renewal. Token rotation on each refresh prevents replay.",
-      "kb_reference": "kb-L0-next-enterprise-architecture §5.2 (Authentication Patterns)"
+      "kb_reference": "kb-L0-Dunelm-enterprise-architecture §5.2 (Authentication Patterns)"
     },
     {
       "id": "ADR-03",
@@ -107,7 +107,7 @@
       "context": "Multiple features trigger notifications (points earned, redeemed, expired, tier change). Notification delivery must not block business logic.",
       "decision": "Business services emit domain events (e.g., points.earned). Notification service consumes events asynchronously, renders templates, dispatches via appropriate channel.",
       "consequences": "Decoupled: business logic unaffected by notification failures. Retry with backoff on delivery failure. Dead letter queue for undeliverable notifications.",
-      "kb_reference": "kb-L0-next-enterprise-architecture §4.2 (Asynchronous Event-Driven patterns)"
+      "kb_reference": "kb-L0-Dunelm-enterprise-architecture §4.2 (Asynchronous Event-Driven patterns)"
     },
     {
       "id": "ADR-04",
@@ -115,7 +115,7 @@
       "context": "Sprint 1 establishes foundation. Team is small. Need fast iteration without premature distribution complexity.",
       "decision": "Monorepo with clear module boundaries: auth-service, notification-service, loyalty-core (Sprint 2+). Deploy as separate containers from same repo. Shared libraries for common concerns (logging, auth middleware, error handling).",
       "consequences": "Fast development, shared tooling, atomic commits across services. Must enforce module boundaries via linting. Can extract to separate repos later if team grows.",
-      "kb_reference": "kb-L0-next-enterprise-architecture §2.1 (Microservices architecture)"
+      "kb_reference": "kb-L0-Dunelm-enterprise-architecture §2.1 (Microservices architecture)"
     },
     {
       "id": "ADR-05",
@@ -123,7 +123,7 @@
       "context": "Rate limiting (registration, OTP, login) needs shared state across service instances. Balance cache (Sprint 2) needs sub-500ms reads.",
       "decision": "Redis cluster for: rate limit counters (sliding window), session metadata, and future points balance cache. TTL-based expiry for all keys.",
       "consequences": "Fast reads for rate limiting without DB load. Must handle Redis unavailability gracefully (fail-open for reads, fail-closed for writes). Cluster mode for HA.",
-      "kb_reference": "kb-L0-next-enterprise-architecture §3.2 (Caching: Redis)"
+      "kb_reference": "kb-L0-Dunelm-enterprise-architecture §3.2 (Caching: Redis)"
     },
     {
       "id": "ADR-06",
@@ -131,7 +131,7 @@
       "context": "Need reliable event delivery for notifications, future analytics, and cross-service communication. Must guarantee at-least-once delivery.",
       "decision": "Kafka (or managed equivalent: MSK/Confluent/Event Hubs) for all domain events. Topics: customer.registered, notification.send, points.earned (Sprint 2+). Consumer groups per service.",
       "consequences": "Durable event log enables replay. Partition by customer_id for ordering. Must handle idempotent consumers (deduplication). Schema registry for contract evolution.",
-      "kb_reference": "kb-L0-next-enterprise-architecture §4.2 (Domain Events: Kafka)"
+      "kb_reference": "kb-L0-Dunelm-enterprise-architecture §4.2 (Domain Events: Kafka)"
     },
     {
       "id": "ADR-07",
@@ -139,7 +139,7 @@
       "context": "Need iOS + Android app. Small team. Design system must be shared. Barcode scanning and push notifications required.",
       "decision": "React Native for mobile app. Shared component library between web (React) and mobile (React Native) where possible. Native modules for push tokens and biometric auth.",
       "consequences": "Single codebase for both platforms. Faster iteration. Some native bridge work for push/biometric. Performance acceptable for loyalty app (not gaming/video).",
-      "kb_reference": "kb-L0-next-enterprise-architecture §3.1 (Frontend — mobile)"
+      "kb_reference": "kb-L0-Dunelm-enterprise-architecture §3.1 (Frontend — mobile)"
     }
   ],
 

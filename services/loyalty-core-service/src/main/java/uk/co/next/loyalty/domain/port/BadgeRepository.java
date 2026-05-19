@@ -1,7 +1,7 @@
-package uk.co.next.loyalty.domain.port;
+package uk.co.Dunelm.loyalty.domain.port;
 
-import uk.co.next.loyalty.domain.model.Badge;
-import uk.co.next.loyalty.domain.model.CustomerBadge;
+import uk.co.Dunelm.loyalty.domain.model.Badge;
+import uk.co.Dunelm.loyalty.domain.model.CustomerBadge;
 import java.util.List;
 import java.util.UUID;
 

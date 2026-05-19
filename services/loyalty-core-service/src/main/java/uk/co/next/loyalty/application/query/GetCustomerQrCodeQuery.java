@@ -1,4 +1,4 @@
-package uk.co.next.loyalty.application.query;
+package uk.co.Dunelm.loyalty.application.query;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package co.uk.next.loyalty.notification.infrastructure.client;
+package co.uk.Dunelm.loyalty.notification.infrastructure.client;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;

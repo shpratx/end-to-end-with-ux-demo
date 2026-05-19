@@ -1,6 +1,6 @@
-package co.uk.next.loyalty.notification.domain.port;
+package co.uk.Dunelm.loyalty.notification.domain.port;
 
-import co.uk.next.loyalty.notification.domain.model.Notification;
+import co.uk.Dunelm.loyalty.notification.domain.model.Notification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

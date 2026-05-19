@@ -1,12 +1,12 @@
-package uk.co.next.loyalty.application.command;
+package uk.co.Dunelm.loyalty.application.command;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uk.co.next.loyalty.domain.model.Adjustment;
-import uk.co.next.loyalty.domain.model.PointsLedgerEntry;
-import uk.co.next.loyalty.domain.port.AdjustmentRepository;
-import uk.co.next.loyalty.domain.port.PointsLedgerRepository;
-import uk.co.next.loyalty.infrastructure.cache.RedisBalanceCache;
+import uk.co.Dunelm.loyalty.domain.model.Adjustment;
+import uk.co.Dunelm.loyalty.domain.model.PointsLedgerEntry;
+import uk.co.Dunelm.loyalty.domain.port.AdjustmentRepository;
+import uk.co.Dunelm.loyalty.domain.port.PointsLedgerRepository;
+import uk.co.Dunelm.loyalty.infrastructure.cache.RedisBalanceCache;
 
 import java.util.UUID;
 

@@ -1,7 +1,7 @@
-# High-Level Design — Next Loyalty Program
+# High-Level Design — Dunelm Loyalty Program
 
 **Version:** 1.0.0 | **Mode:** Greenfield | **Date:** 2026-05-18  
-**Tech Stack:** TypeScript, NestJS, PostgreSQL, Redis, Kafka, React Native, React/Next.js
+**Tech Stack:** TypeScript, NestJS, PostgreSQL, Redis, Kafka, React Native, React/Dunelm.js
 
 ---
 
@@ -12,7 +12,7 @@
 │                            CLIENTS                                           │
 │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────────────┐    │
 │  │Mobile App  │  │  Web App   │  │Admin Portal│  │  POS Terminal      │    │
-│  │(React Nat.)│  │(Next.js)   │  │(React SPA) │  │  (Store Staff)     │    │
+│  │(React Nat.)│  │(Dunelm.js)   │  │(React SPA) │  │  (Store Staff)     │    │
 │  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘  └─────────┬──────────┘    │
 └────────┼────────────────┼───────────────┼───────────────────┼───────────────┘
          │                │               │                   │

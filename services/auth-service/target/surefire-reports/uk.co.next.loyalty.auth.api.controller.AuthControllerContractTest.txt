@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
-Test set: uk.co.next.loyalty.auth.api.controller.AuthControllerContractTest
+Test set: uk.co.Dunelm.loyalty.auth.api.controller.AuthControllerContractTest
 -------------------------------------------------------------------------------
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.355 s -- in uk.co.next.loyalty.auth.api.controller.AuthControllerContractTest
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.355 s -- in uk.co.Dunelm.loyalty.auth.api.controller.AuthControllerContractTest

@@ -7,7 +7,7 @@ import { DashboardPage } from './DashboardPage';
 const mockDashboard = {
   balance: { availablePoints: 2500, monetaryEquivalent: 125.0, pendingPoints: 0, tierMultiplier: 1.5, lastUpdated: '2026-05-18T11:45:00Z' },
   tier: { tierId: '1', name: 'Gold', threshold: 5000, earnRateMultiplier: 1.5, badgeColor: '#FFD700', benefits: [] },
-  nextTierProgress: { nextTierName: 'Platinum', pointsRequired: 10000, pointsEarned: 5200, progressPercent: 52 },
+  DunelmTierProgress: { DunelmTierName: 'Platinum', pointsRequired: 10000, pointsEarned: 5200, progressPercent: 52 },
   recentTransactions: [
     { transactionId: 'tx1', type: 'earn', points: 76, runningBalance: 2576, referenceId: 'ORD-001', channel: 'online', description: 'Online purchase', createdAt: '2026-05-18T14:30:00Z' },
   ],

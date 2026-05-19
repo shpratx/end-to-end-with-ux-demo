@@ -1,12 +1,12 @@
-package uk.co.next.loyalty.auth.api.controller;
+package uk.co.Dunelm.loyalty.auth.api.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.co.next.loyalty.auth.application.command.*;
-import uk.co.next.loyalty.auth.application.dto.*;
+import uk.co.Dunelm.loyalty.auth.application.command.*;
+import uk.co.Dunelm.loyalty.auth.application.dto.*;
 
 import java.util.Map;
 import java.util.UUID;

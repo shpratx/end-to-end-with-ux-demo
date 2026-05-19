@@ -1,6 +1,6 @@
-package uk.co.next.loyalty.auth.domain.port;
+package uk.co.Dunelm.loyalty.auth.domain.port;
 
-import uk.co.next.loyalty.auth.domain.model.Customer;
+import uk.co.Dunelm.loyalty.auth.domain.model.Customer;
 import java.util.Optional;
 import java.util.UUID;
 

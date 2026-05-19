@@ -16,7 +16,7 @@ export function PaymentPage() {
     return (
       <div className="mx-auto max-w-[640px] py-12 px-4">
         <button onClick={() => setShowEnrolment(false)} className="font-display text-sm text-[#007A7A] mb-6">← Back to payment</button>
-        <h1 className="font-display text-xl font-bold mb-4">Join Next Loyalty</h1>
+        <h1 className="font-display text-xl font-bold mb-4">Join Dunelm Loyalty</h1>
         <div className="bg-neutral-50 border border-neutral-200 rounded-sm p-4 mb-4">
           <p className="text-xs text-neutral-600 leading-relaxed">We track purchases to give you rewards. We do not use data to restrict your account.</p>
           <div className="mt-3 flex flex-col gap-2">

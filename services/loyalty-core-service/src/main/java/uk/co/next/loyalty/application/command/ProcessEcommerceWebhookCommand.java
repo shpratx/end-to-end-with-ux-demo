@@ -1,8 +1,8 @@
-package uk.co.next.loyalty.application.command;
+package uk.co.Dunelm.loyalty.application.command;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import uk.co.next.loyalty.domain.port.PointsLedgerRepository;
+import uk.co.Dunelm.loyalty.domain.port.PointsLedgerRepository;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;

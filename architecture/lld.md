@@ -1,4 +1,4 @@
-# Low-Level Design — Next Loyalty Program
+# Low-Level Design — Dunelm Loyalty Program
 
 **Version:** 1.0.0  
 **Tech Stack:** TypeScript, NestJS, PostgreSQL (TypeORM), Redis, Kafka (KafkaJS), bcrypt, jsonwebtoken  
@@ -522,7 +522,7 @@ CREATE INDEX idx_adjustments_requested_by ON adjustments(requested_by);
 | **Type** | Query |
 | **Input DTO** | `{ customerId: UUID, pageNumber?: int (default 1), pageSize?: int (default 20, max 100), type?: string, fromDate?: date, toDate?: date }` |
 | **Business Logic** | 1. Build query with filters (type, date range) 2. Query points_ledger WHERE customer_id = :id, ordered by created_at DESC 3. Apply pagination (OFFSET/LIMIT) 4. Count total for pagination meta |
-| **Output DTO** | `{ data: Transaction[], meta: { pageNumber, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage } }` |
+| **Output DTO** | `{ data: Transaction[], meta: { pageNumber, pageSize, totalItems, totalPages, hasDunelmPage, hasPreviousPage } }` |
 | **Events** | None |
 | **Errors** | `INVALID_DATE_RANGE` (422) |
 
@@ -531,8 +531,8 @@ CREATE INDEX idx_adjustments_requested_by ON adjustments(requested_by);
 |-------|-------|
 | **Type** | Query |
 | **Input DTO** | `{ customerId: UUID }` (from JWT) |
-| **Business Logic** | 1. Parallel fetch: balance (cached), tier info, recent 5 transactions, active promotions 2. Calculate next tier progress (lifetime_points vs next tier threshold) 3. Aggregate into single response |
-| **Output DTO** | `{ balance: PointsBalance, tier: Tier, nextTierProgress: { nextTierName, pointsRequired, pointsEarned, progressPercent }, recentTransactions: Transaction[5], activePromotions: [{id, name, description, endsAt}] }` |
+| **Business Logic** | 1. Parallel fetch: balance (cached), tier info, recent 5 transactions, active promotions 2. Calculate Dunelm tier progress (lifetime_points vs Dunelm tier threshold) 3. Aggregate into single response |
+| **Output DTO** | `{ balance: PointsBalance, tier: Tier, DunelmTierProgress: { DunelmTierName, pointsRequired, pointsEarned, progressPercent }, recentTransactions: Transaction[5], activePromotions: [{id, name, description, endsAt}] }` |
 | **Events** | None |
 | **Errors** | `CUSTOMER_NOT_FOUND` (404) |
 
@@ -757,7 +757,7 @@ Migration 027: ALTER TABLE points_ledger ADD COLUMN original_customer_id UUID (f
 
 ### Zero-Downtime Strategy
 - **Additive only per release:** new columns are always `NULL` or have defaults; no column drops in same release as code change
-- **Nullable new columns:** all new FKs (tier_id, campaign_id) added as nullable first, backfilled, then optionally constrained in next release
+- **Nullable new columns:** all new FKs (tier_id, campaign_id) added as nullable first, backfilled, then optionally constrained in Dunelm release
 - **Backfill scripts:** separate migration for data backfill (e.g., calculating lifetime_points from ledger), run as background job
 - **Blue-green deploys:** old code must work with new schema (forward-compatible migrations)
 - **Rollback safety:** each migration has a corresponding DOWN script; tested in staging before prod
@@ -821,7 +821,7 @@ All errors follow RFC 7807 Problem Details format (`application/problem+json`).
 **Error Response Structure:**
 ```json
 {
-  "type": "https://loyalty.next.co.uk/problems/{error-code}",
+  "type": "https://loyalty.Dunelm.co.uk/problems/{error-code}",
   "title": "Human Readable Title",
   "status": 422,
   "detail": "Specific explanation for this occurrence",
@@ -844,7 +844,7 @@ The following handlers complete the API coverage. They follow the same CQRS patt
 - **Input:** `{ customerId: UUID }`
 - **Validation:** Customer exists, status = pending_verification, rate limit (3/10min) not exceeded
 - **Logic:** Generate new 6-digit OTP → hash → store in otp_codes → invalidate previous → send via email
-- **Output:** `{ sent: true, nextResendAt: ISO8601 }`
+- **Output:** `{ sent: true, DunelmResendAt: ISO8601 }`
 - **Events:** notification.send (OTP email)
 - **Errors:** RATE_LIMITED (429), CUSTOMER_NOT_FOUND (404), ALREADY_VERIFIED (422)
 
@@ -937,8 +937,8 @@ The following handlers complete the API coverage. They follow the same CQRS patt
 ### GetCustomerTierQuery
 - **Type:** Query
 - **Input:** `{ customerId: UUID }`
-- **Logic:** Get customer tier_id → join tiers table → calculate progress to next tier
-- **Output:** `{ currentTier: { name, multiplier, badge }, nextTier: { name, pointsRequired, progress } }`
+- **Logic:** Get customer tier_id → join tiers table → calculate progress to Dunelm tier
+- **Output:** `{ currentTier: { name, multiplier, badge }, DunelmTier: { name, pointsRequired, progress } }`
 
 ### GetTiersQuery
 - **Type:** Query (Public)

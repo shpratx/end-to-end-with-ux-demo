@@ -1,11 +1,11 @@
-package uk.co.next.loyalty.auth.infrastructure.persistence;
+package uk.co.Dunelm.loyalty.auth.infrastructure.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import uk.co.next.loyalty.auth.domain.model.RefreshToken;
-import uk.co.next.loyalty.auth.domain.port.TokenRepository;
+import uk.co.Dunelm.loyalty.auth.domain.model.RefreshToken;
+import uk.co.Dunelm.loyalty.auth.domain.port.TokenRepository;
 
 import java.time.Instant;
 import java.util.Optional;

@@ -1,6 +1,6 @@
-package co.uk.next.loyalty.admin.infrastructure.persistence;
+package co.uk.Dunelm.loyalty.admin.infrastructure.persistence;
 
-import co.uk.next.loyalty.admin.domain.model.RatesConfig;
+import co.uk.Dunelm.loyalty.admin.domain.model.RatesConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package uk.co.next.loyalty.auth.api.controller;
+package uk.co.Dunelm.loyalty.auth.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -8,12 +8,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.co.next.loyalty.auth.application.command.*;
-import uk.co.next.loyalty.auth.application.dto.AuthTokenResponse;
-import uk.co.next.loyalty.auth.application.dto.LoginRequest;
-import uk.co.next.loyalty.auth.application.dto.RegisterRequest;
-import uk.co.next.loyalty.auth.infrastructure.config.JwtAuthFilter;
-import uk.co.next.loyalty.auth.infrastructure.config.JwtService;
+import uk.co.Dunelm.loyalty.auth.application.command.*;
+import uk.co.Dunelm.loyalty.auth.application.dto.AuthTokenResponse;
+import uk.co.Dunelm.loyalty.auth.application.dto.LoginRequest;
+import uk.co.Dunelm.loyalty.auth.application.dto.RegisterRequest;
+import uk.co.Dunelm.loyalty.auth.infrastructure.config.JwtAuthFilter;
+import uk.co.Dunelm.loyalty.auth.infrastructure.config.JwtService;
 
 import java.util.Map;
 import java.util.UUID;

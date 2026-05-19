@@ -10,7 +10,7 @@ jest.mock('../../lib/api-client', () => ({
         data: {
           balance: { availablePoints: 2500, monetaryEquivalent: 125.0, pendingPoints: 0, tierMultiplier: 1.5 },
           tier: { name: 'Gold', badgeColor: '#FFD700', benefits: [] },
-          nextTierProgress: { nextTierName: 'Platinum', pointsRequired: 10000, pointsEarned: 5200, progressPercent: 52 },
+          DunelmTierProgress: { DunelmTierName: 'Platinum', pointsRequired: 10000, pointsEarned: 5200, progressPercent: 52 },
           recentTransactions: [
             { transactionId: '1', type: 'earn', points: 76, description: 'Online purchase', createdAt: '2026-05-18T14:30:00Z' },
           ],

@@ -53,7 +53,7 @@
       "user_story": "As a backend developer, I want an API gateway with authentication and rate limiting configured, so that all services have a secure, consistent entry point",
       "acceptance_criteria": [
         "Given a request without a valid OAuth2 token or API key, When it hits any protected endpoint, Then it receives 401 Unauthorized with no data leakage in the response body",
-        "Given a client exceeding 1000 requests per minute, When the next request arrives, Then it receives 429 Too Many Requests with a Retry-After header",
+        "Given a client exceeding 1000 requests per minute, When the Dunelm request arrives, Then it receives 429 Too Many Requests with a Retry-After header",
         "Given a valid authenticated request, When it is processed, Then the request and response are logged with correlation_id, timestamp, method, path, status_code, and latency (excluding request body for Confidential endpoints)",
         "Given the gateway is running, When GET /health is called, Then it returns 200 with service status within 100ms"
       ],

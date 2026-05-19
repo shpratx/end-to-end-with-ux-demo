@@ -1,4 +1,4 @@
-# Integration Architecture — Next Loyalty Program
+# Integration Architecture — Dunelm Loyalty Program
 
 **Version:** 1.0.0 | **Status:** Greenfield | **Date:** 2026-05-18
 
@@ -257,7 +257,7 @@ X-Webhook-Signature: sha256={signature}
 |---------|--------------|
 | Rate Limiting | 1000 req/min global; per-endpoint: 5 reg/IP/hr, 3 OTP/10min, 10 login/IP/hr |
 | Auth Validation | JWT verification (RS256), API key validation, refresh token rotation |
-| CORS | Whitelist: `loyalty.next.co.uk`, `staging.loyalty.next.co.uk`, mobile deep-link schemes |
+| CORS | Whitelist: `loyalty.Dunelm.co.uk`, `staging.loyalty.Dunelm.co.uk`, mobile deep-link schemes |
 | Request Logging | Structured JSON: method, path, status, latency, client_ip (PII excluded from body) |
 | Correlation ID | Inject `X-Correlation-ID` (UUID v4) if not present; propagate to all downstream calls |
 | Request Size | Max body: 1MB (webhooks), 256KB (standard API) |

@@ -1,4 +1,4 @@
-package uk.co.next.loyalty.auth.application.command;
+package uk.co.Dunelm.loyalty.auth.application.command;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,13 +7,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import uk.co.next.loyalty.auth.application.dto.RegisterRequest;
-import uk.co.next.loyalty.auth.domain.model.Consent;
-import uk.co.next.loyalty.auth.domain.model.Customer;
-import uk.co.next.loyalty.auth.domain.model.OtpCode;
-import uk.co.next.loyalty.auth.domain.port.CustomerRepository;
-import uk.co.next.loyalty.auth.domain.port.OtpRepository;
-import uk.co.next.loyalty.auth.infrastructure.persistence.JpaConsentRepository;
+import uk.co.Dunelm.loyalty.auth.application.dto.RegisterRequest;
+import uk.co.Dunelm.loyalty.auth.domain.model.Consent;
+import uk.co.Dunelm.loyalty.auth.domain.model.Customer;
+import uk.co.Dunelm.loyalty.auth.domain.model.OtpCode;
+import uk.co.Dunelm.loyalty.auth.domain.port.CustomerRepository;
+import uk.co.Dunelm.loyalty.auth.domain.port.OtpRepository;
+import uk.co.Dunelm.loyalty.auth.infrastructure.persistence.JpaConsentRepository;
 
 import java.util.Map;
 import java.util.UUID;

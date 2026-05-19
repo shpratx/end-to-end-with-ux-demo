@@ -1,6 +1,6 @@
-# Application Baseline — Next Loyalty Program
+# Application Baseline — Dunelm Loyalty Program
 ### kb-L3-loyalty-application-baseline v1.0.0 (Sprint 1)
-### Current state of the Next Loyalty application after Sprint 1 delivery.
+### Current state of the Dunelm Loyalty application after Sprint 1 delivery.
 ### Used by agents to classify requirements as new/enhancement/existing in subsequent sprints.
 
 ---
@@ -9,7 +9,7 @@
 
 | Product ID | Name | Type | Status | Parameters |
 |---|---|---|---|---|
-| loyalty-program-v1 | Next Loyalty Program | Points-based loyalty | 🚧 Sprint 1 (Foundation only) | Accrual: 1pt/£1 (configurable), Redemption: 100pts=£5 (configurable), Tiers: TBD (Sprint 3), Expiry: 12mo inactivity (Sprint 4) |
+| loyalty-program-v1 | Dunelm Loyalty Program | Points-based loyalty | 🚧 Sprint 1 (Foundation only) | Accrual: 1pt/£1 (configurable), Redemption: 100pts=£5 (configurable), Tiers: TBD (Sprint 3), Expiry: 12mo inactivity (Sprint 4) |
 
 ---
 
@@ -236,8 +236,8 @@
 | Environment | Purpose | Deploy Method | URL Pattern |
 |---|---|---|---|
 | Development | Local development | Docker Compose | localhost:* |
-| Staging | Integration testing, QA | Auto-deploy on merge to main | staging.loyalty.next.co.uk |
-| Production | Live customers | Manual approval gate | loyalty.next.co.uk |
+| Staging | Integration testing, QA | Auto-deploy on merge to main | staging.loyalty.Dunelm.co.uk |
+| Production | Live customers | Manual approval gate | loyalty.Dunelm.co.uk |
 
 | Service | Replicas (Prod) | CPU | Memory | Health Check |
 |---|---|---|---|---|
@@ -305,7 +305,7 @@ services/
 **Repository structure:**
 ```
 ui/
-├── web-app/           (React SPA — next.co.uk/loyalty)
+├── web-app/           (React SPA — Dunelm.co.uk/loyalty)
 │   ├── src/
 │   │   ├── components/ui/     (Button, Input, Toast — design system)
 │   │   ├── components/layout/ (AppShell, AuthGuard)
@@ -317,7 +317,7 @@ ui/
 │   │   ├── pages/qr/
 │   │   ├── hooks/             (useAuth, usePoints, useNotifications)
 │   │   └── lib/               (api-client, auth-store)
-│   ├── tailwind.config.ts     (Next brand design tokens)
+│   ├── tailwind.config.ts     (Dunelm brand design tokens)
 │   └── Dockerfile
 └── mobile-app/        (React Native — iOS + Android)
     ├── src/
@@ -335,7 +335,7 @@ ui/
 
 **Design system alignment:**
 - Colors: #000000 (primary-black), #FFFFFF (primary-white), #007A7A (accent-teal), #FF6A3B (accent-orange)
-- Typography: NEXT Display Sans (UI), NEXT Serif (body)
+- Typography: Dunelm Display Sans (UI), Dunelm Serif (body)
 - Spacing: 4px base scale (space-1 through space-24)
 - Border radius: 4px buttons/inputs, 2px cards
 - Shadows: minimal (editorial aesthetic)

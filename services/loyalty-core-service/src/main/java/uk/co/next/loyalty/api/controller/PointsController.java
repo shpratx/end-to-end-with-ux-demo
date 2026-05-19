@@ -1,14 +1,14 @@
-package uk.co.next.loyalty.api.controller;
+package uk.co.Dunelm.loyalty.api.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.co.next.loyalty.application.command.EarnPointsCommand;
-import uk.co.next.loyalty.application.command.RedeemPointsCommand;
-import uk.co.next.loyalty.application.query.GetBalanceQuery;
-import uk.co.next.loyalty.application.query.GetTransactionsQuery;
-import uk.co.next.loyalty.domain.model.PointsLedgerEntry;
+import uk.co.Dunelm.loyalty.application.command.EarnPointsCommand;
+import uk.co.Dunelm.loyalty.application.command.RedeemPointsCommand;
+import uk.co.Dunelm.loyalty.application.query.GetBalanceQuery;
+import uk.co.Dunelm.loyalty.application.query.GetTransactionsQuery;
+import uk.co.Dunelm.loyalty.domain.model.PointsLedgerEntry;
 
 import java.util.Map;
 import java.util.UUID;
@@ -70,7 +70,7 @@ public class PointsController {
                         "pageSize", page.getSize(),
                         "totalItems", page.getTotalElements(),
                         "totalPages", page.getTotalPages(),
-                        "hasNextPage", page.hasNext(),
+                        "hasDunelmPage", page.hasDunelm(),
                         "hasPreviousPage", page.hasPrevious()
                 )
         ));

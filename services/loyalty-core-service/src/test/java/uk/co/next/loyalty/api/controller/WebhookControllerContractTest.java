@@ -1,4 +1,4 @@
-package uk.co.next.loyalty.api.controller;
+package uk.co.Dunelm.loyalty.api.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +7,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.co.next.loyalty.application.command.ProcessEcommerceWebhookCommand;
-import uk.co.next.loyalty.application.command.ProcessPosWebhookCommand;
+import uk.co.Dunelm.loyalty.application.command.ProcessEcommerceWebhookCommand;
+import uk.co.Dunelm.loyalty.application.command.ProcessPosWebhookCommand;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;

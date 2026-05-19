@@ -38,9 +38,9 @@ export function RegisterPage() {
     return (
       <div className="mx-auto max-w-[640px] py-12 px-4">
         <div className="bg-primary-black rounded-sm p-8 text-white mb-8">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#007A7A] mb-2">Next Loyalty</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#007A7A] mb-2">Dunelm Loyalty</p>
           <h1 className="font-display text-3xl font-bold mb-2">Earn rewards every time you shop</h1>
-          <p className="text-sm text-neutral-300">No credit account needed. Open to every Next customer.</p>
+          <p className="text-sm text-neutral-300">No credit account needed. Open to every Dunelm customer.</p>
         </div>
 
         <div className="flex flex-col gap-4 mb-8">
@@ -50,7 +50,7 @@ export function RegisterPage() {
           </div>
           <div className="flex items-start gap-3">
             <span className="w-8 h-8 bg-[#007A7A]/10 rounded flex items-center justify-center text-[#007A7A] font-bold text-sm">⚡</span>
-            <div><p className="font-display text-sm font-semibold text-primary-black">Early sale access</p><p className="text-sm text-neutral-500">earn your way into the Next Sale before anyone else</p></div>
+            <div><p className="font-display text-sm font-semibold text-primary-black">Early sale access</p><p className="text-sm text-neutral-500">earn your way into the Dunelm Sale before anyone else</p></div>
           </div>
           <div className="flex items-start gap-3">
             <span className="w-8 h-8 bg-[#007A7A]/10 rounded flex items-center justify-center text-[#007A7A] font-bold text-sm">✓</span>
@@ -88,7 +88,7 @@ export function RegisterPage() {
         </div>
 
         <div className="bg-neutral-50 rounded-sm p-4 mb-8">
-          <p className="text-sm text-neutral-700"><strong>Physical card available</strong> — Don't have a smartphone? Request a loyalty card — works at every Next till.</p>
+          <p className="text-sm text-neutral-700"><strong>Physical card available</strong> — Don't have a smartphone? Request a loyalty card — works at every Dunelm till.</p>
         </div>
 
         <Button fullWidth onClick={() => setStep('privacy')}>Continue to sign up</Button>
@@ -151,7 +151,7 @@ export function RegisterPage() {
         <div className="border-t border-neutral-200 pt-4 mt-2">
           <div className="flex items-start gap-2 mb-3">
             <input type="checkbox" id="dataConsent" {...field('dataConsent')} className="mt-1 w-4 h-4 accent-[#007A7A]" />
-            <label htmlFor="dataConsent" className="text-xs text-neutral-600">I understand how Next will use my loyalty data</label>
+            <label htmlFor="dataConsent" className="text-xs text-neutral-600">I understand how Dunelm will use my loyalty data</label>
           </div>
           {errors.dataConsent && <p className="text-xs text-red-600 mb-2">{errors.dataConsent.message}</p>}
 

@@ -1,4 +1,4 @@
-package uk.co.next.loyalty.infrastructure.config;
+package uk.co.Dunelm.loyalty.infrastructure.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

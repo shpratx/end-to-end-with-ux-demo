@@ -27,13 +27,13 @@ const mockTransactions = [
 
 const mockNotifications = [
   { id: 'n1', title: 'Points earned!', body: 'You earned 150 points on your online purchase.', type: 'transactional', readAt: null, createdAt: '2026-05-18T14:30:00Z' },
-  { id: 'n2', title: 'Welcome to Next Loyalty!', body: 'You earned 200 bonus points for signing up.', type: 'transactional', readAt: '2026-01-15T10:01:00Z', createdAt: '2026-01-15T10:00:00Z' },
+  { id: 'n2', title: 'Welcome to Dunelm Loyalty!', body: 'You earned 200 bonus points for signing up.', type: 'transactional', readAt: '2026-01-15T10:01:00Z', createdAt: '2026-01-15T10:00:00Z' },
 ];
 
 const mockDashboard = {
   balance: mockBalance,
   tier: { tierId: 't1', name: 'Member', threshold: 0, earnRateMultiplier: 1.0, badgeColor: '#999999', benefits: ['Earn points on every purchase'] },
-  nextTierProgress: { nextTierName: 'Silver', pointsRequired: 2500, pointsEarned: 100, progressPercent: 4 },
+  DunelmTierProgress: { DunelmTierName: 'Silver', pointsRequired: 2500, pointsEarned: 100, progressPercent: 4 },
   recentTransactions: mockTransactions.slice(0, 5),
   activePromotions: [{ id: 'p1', name: '2x Points Weekend', description: 'Earn double points on all purchases this weekend!', endsAt: '2026-05-20T23:59:59Z' }],
 };
@@ -42,7 +42,7 @@ export const handlers = [
   // Auth
   http.post(`${BASE}/auth/register`, () => HttpResponse.json({ data: { customerId: mockUser.id, status: 'pending_verification' } }, { status: 201 })),
   http.post(`${BASE}/auth/verify-otp`, () => HttpResponse.json({ data: { verified: true } })),
-  http.post(`${BASE}/auth/resend-otp`, () => HttpResponse.json({ data: { sent: true, nextResendAt: new Date(Date.now() + 60000).toISOString() } })),
+  http.post(`${BASE}/auth/resend-otp`, () => HttpResponse.json({ data: { sent: true, DunelmResendAt: new Date(Date.now() + 60000).toISOString() } })),
   http.post(`${BASE}/auth/login`, () => HttpResponse.json({ data: mockTokens })),
   http.post(`${BASE}/auth/login/social`, () => HttpResponse.json({ data: { ...mockTokens, isNewAccount: false } })),
   http.post(`${BASE}/auth/refresh`, () => HttpResponse.json({ data: { accessToken: 'refreshed-token', expiresIn: 900 } })),

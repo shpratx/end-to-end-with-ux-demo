@@ -1,8 +1,8 @@
-package co.uk.next.loyalty.notification.application.query;
+package co.uk.Dunelm.loyalty.notification.application.query;
 
-import co.uk.next.loyalty.notification.application.dto.NotificationResponse;
-import co.uk.next.loyalty.notification.application.dto.PaginatedResponse;
-import co.uk.next.loyalty.notification.domain.port.NotificationRepository;
+import co.uk.Dunelm.loyalty.notification.application.dto.NotificationResponse;
+import co.uk.Dunelm.loyalty.notification.application.dto.PaginatedResponse;
+import co.uk.Dunelm.loyalty.notification.domain.port.NotificationRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 

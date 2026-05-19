@@ -1,10 +1,10 @@
-package co.uk.next.loyalty.notification.api.controller;
+package co.uk.Dunelm.loyalty.notification.api.controller;
 
-import co.uk.next.loyalty.notification.application.command.MarkNotificationReadCommand;
-import co.uk.next.loyalty.notification.application.dto.NotificationResponse;
-import co.uk.next.loyalty.notification.application.dto.PaginatedResponse;
-import co.uk.next.loyalty.notification.application.query.GetNotificationsQuery;
-import co.uk.next.loyalty.notification.application.query.GetUnreadCountQuery;
+import co.uk.Dunelm.loyalty.notification.application.command.MarkNotificationReadCommand;
+import co.uk.Dunelm.loyalty.notification.application.dto.NotificationResponse;
+import co.uk.Dunelm.loyalty.notification.application.dto.PaginatedResponse;
+import co.uk.Dunelm.loyalty.notification.application.query.GetNotificationsQuery;
+import co.uk.Dunelm.loyalty.notification.application.query.GetUnreadCountQuery;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

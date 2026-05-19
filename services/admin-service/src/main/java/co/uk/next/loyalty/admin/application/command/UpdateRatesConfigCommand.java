@@ -1,8 +1,8 @@
-package co.uk.next.loyalty.admin.application.command;
+package co.uk.Dunelm.loyalty.admin.application.command;
 
-import co.uk.next.loyalty.admin.application.dto.RatesConfigResponse;
-import co.uk.next.loyalty.admin.domain.model.RatesConfig;
-import co.uk.next.loyalty.admin.infrastructure.persistence.RatesConfigRepository;
+import co.uk.Dunelm.loyalty.admin.application.dto.RatesConfigResponse;
+import co.uk.Dunelm.loyalty.admin.domain.model.RatesConfig;
+import co.uk.Dunelm.loyalty.admin.infrastructure.persistence.RatesConfigRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

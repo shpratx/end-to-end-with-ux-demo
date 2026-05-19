@@ -1,7 +1,7 @@
-package co.uk.next.loyalty.admin.application.query;
+package co.uk.Dunelm.loyalty.admin.application.query;
 
-import co.uk.next.loyalty.admin.domain.model.AuditEntry;
-import co.uk.next.loyalty.admin.infrastructure.persistence.AuditLogRepository;
+import co.uk.Dunelm.loyalty.admin.domain.model.AuditEntry;
+import co.uk.Dunelm.loyalty.admin.infrastructure.persistence.AuditLogRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

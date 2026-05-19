@@ -29,8 +29,8 @@ interface Tier {
   benefits: string[];
 }
 
-interface NextTierProgress {
-  nextTierName: string;
+interface DunelmTierProgress {
+  DunelmTierName: string;
   pointsRequired: number;
   pointsEarned: number;
   progressPercent: number;
@@ -46,7 +46,7 @@ interface Promotion {
 interface DashboardData {
   balance: PointsBalance;
   tier: Tier;
-  nextTierProgress: NextTierProgress | null;
+  DunelmTierProgress: DunelmTierProgress | null;
   recentTransactions: Transaction[];
   activePromotions: Promotion[];
 }

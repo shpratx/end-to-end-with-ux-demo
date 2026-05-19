@@ -1,4 +1,4 @@
-package co.uk.next.loyalty.notification.infrastructure.config;
+package co.uk.Dunelm.loyalty.notification.infrastructure.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

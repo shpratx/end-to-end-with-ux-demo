@@ -9,7 +9,7 @@ import { useNetInfo } from '../../hooks/useAuth';
 interface DashboardData {
   balance: { availablePoints: number; monetaryEquivalent: number; pendingPoints: number; tierMultiplier: number };
   tier: { name: string; badgeColor: string; benefits: string[] };
-  nextTierProgress: { nextTierName: string; pointsRequired: number; pointsEarned: number; progressPercent: number };
+  DunelmTierProgress: { DunelmTierName: string; pointsRequired: number; pointsEarned: number; progressPercent: number };
   recentTransactions: Array<{ transactionId: string; type: string; points: number; description: string; createdAt: string }>;
 }
 
@@ -25,7 +25,7 @@ export function DashboardScreen() {
       contentContainerStyle={styles.content}
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor={colors.accent.teal} />}
     >
-      <Text variant="displayMedium" style={styles.greeting}>Next Loyalty</Text>
+      <Text variant="displayMedium" style={styles.greeting}>Dunelm Loyalty</Text>
 
       {/* Balance Card */}
       <View style={styles.balanceCard} accessibilityLabel={`Points balance: ${data?.balance.availablePoints ?? 0}`}>
@@ -39,7 +39,7 @@ export function DashboardScreen() {
         <Card style={styles.card}>
           <Card.Content>
             <Text variant="titleMedium">{data.tier.name} Member</Text>
-            <Text variant="bodyMedium" style={styles.muted}>{data.nextTierProgress.progressPercent}% to {data.nextTierProgress.nextTierName}</Text>
+            <Text variant="bodyMedium" style={styles.muted}>{data.DunelmTierProgress.progressPercent}% to {data.DunelmTierProgress.DunelmTierName}</Text>
           </Card.Content>
         </Card>
       )}

@@ -1,4 +1,4 @@
-package co.uk.next.loyalty.notification.domain.event;
+package co.uk.Dunelm.loyalty.notification.domain.event;
 
 public interface DomainEvent {
     String eventType();

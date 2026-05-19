@@ -1,15 +1,15 @@
-package uk.co.next.loyalty.auth.application.command;
+package uk.co.Dunelm.loyalty.auth.application.command;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uk.co.next.loyalty.auth.application.dto.AuthTokenResponse;
-import uk.co.next.loyalty.auth.domain.model.Customer;
-import uk.co.next.loyalty.auth.domain.model.RefreshToken;
-import uk.co.next.loyalty.auth.domain.model.SocialAccount;
-import uk.co.next.loyalty.auth.domain.port.CustomerRepository;
-import uk.co.next.loyalty.auth.domain.port.TokenRepository;
-import uk.co.next.loyalty.auth.infrastructure.config.JwtService;
-import uk.co.next.loyalty.auth.infrastructure.persistence.JpaSocialAccountRepository;
+import uk.co.Dunelm.loyalty.auth.application.dto.AuthTokenResponse;
+import uk.co.Dunelm.loyalty.auth.domain.model.Customer;
+import uk.co.Dunelm.loyalty.auth.domain.model.RefreshToken;
+import uk.co.Dunelm.loyalty.auth.domain.model.SocialAccount;
+import uk.co.Dunelm.loyalty.auth.domain.port.CustomerRepository;
+import uk.co.Dunelm.loyalty.auth.domain.port.TokenRepository;
+import uk.co.Dunelm.loyalty.auth.infrastructure.config.JwtService;
+import uk.co.Dunelm.loyalty.auth.infrastructure.persistence.JpaSocialAccountRepository;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -54,7 +54,7 @@ public class SocialLoginCommand {
             customerId = existing.get().getCustomerId();
         } else {
             // Create new customer
-            String loyaltyId = String.format("%010d", secureRandom.nextLong(1_000_000_000L, 9_999_999_999L));
+            String loyaltyId = String.format("%010d", secureRandom.DunelmLong(1_000_000_000L, 9_999_999_999L));
             Customer customer = new Customer(email, null, null, "SOCIAL_LOGIN_NO_PASSWORD", loyaltyId);
             customer.activate();
             customer = customerRepository.save(customer);

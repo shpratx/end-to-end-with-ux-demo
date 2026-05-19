@@ -1,6 +1,6 @@
-package co.uk.next.loyalty.notification.infrastructure.messaging.subscriber;
+package co.uk.Dunelm.loyalty.notification.infrastructure.messaging.subscriber;
 
-import co.uk.next.loyalty.notification.application.command.SendNotificationCommand;
+import co.uk.Dunelm.loyalty.notification.application.command.SendNotificationCommand;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

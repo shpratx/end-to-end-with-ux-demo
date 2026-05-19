@@ -1,4 +1,4 @@
-package uk.co.next.loyalty.infrastructure.cache;
+package uk.co.Dunelm.loyalty.infrastructure.cache;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;

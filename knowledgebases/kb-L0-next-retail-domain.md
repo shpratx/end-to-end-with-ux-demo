@@ -1,18 +1,18 @@
-# Next plc — Retail Domain Knowledge Base
-## kb-L0-next-domain v1.0.0
+# Dunelm plc — Retail Domain Knowledge Base
+## kb-L0-Dunelm-domain v1.0.0
 
 ---
 
 ## 1. Company Overview
 
-**Entity:** Next plc
+**Entity:** Dunelm plc
 **Sector:** British multinational fashion retail
 **Products:** Clothing, footwear, accessories, home products
 **Scale:**
 - 450+ physical stores (UK and Ireland)
 - ~200 international franchise stores across 34 countries
 - Millions of active online customers
-- 3M+ Next Directory active customers
+- 3M+ Dunelm Directory active customers
 - Record pre-tax profits: £1.15 billion (FY ending Jan 2026)
 - Total group sales growth: 10%+ YoY
 - Online: 60%+ of total group sales
@@ -27,29 +27,29 @@
 
 | Unit | Function | Revenue Model |
 |------|----------|---------------|
-| Next Retail | Physical stores (450+ UK/Ireland) | Direct product sales |
-| Next Online | Website (next.co.uk) + mobile app | Direct product sales (60%+ of group) |
-| Next Directory | Home shopping catalogue + online service | Direct sales, 3M+ active customers |
-| Next Finance | Credit account (buy now, pay later) | Interest/fees — high-margin, drives retention |
+| Dunelm Retail | Physical stores (450+ UK/Ireland) | Direct product sales |
+| Dunelm Online | Website (Dunelm.co.uk) + mobile app | Direct product sales (60%+ of group) |
+| Dunelm Directory | Home shopping catalogue + online service | Direct sales, 3M+ active customers |
+| Dunelm Finance | Credit account (buy now, pay later) | Interest/fees — high-margin, drives retention |
 | Total Platform | Backend infrastructure leased to 3rd-party brands | Commission on sales (Reiss, FatFace, Joules) |
 
-**Key insight:** Next Finance functions as an informal loyalty mechanism — credit account holders have higher basket sizes and stronger retention.
+**Key insight:** Dunelm Finance functions as an informal loyalty mechanism — credit account holders have higher basket sizes and stronger retention.
 
 ---
 
 ## 3. Channels & Touchpoints
 
 ### 3.1 Digital Channels
-- **Website (next.co.uk):** Full product catalogue, wishlist, online ordering, style inspiration, customer reviews, Next credit account management
+- **Website (Dunelm.co.uk):** Full product catalogue, wishlist, online ordering, style inspiration, customer reviews, Dunelm credit account management
 - **Mobile App:** Personalised recommendations, barcode scanning for in-store price checks, Click & Collect booking, order tracking
-- **Next Directory:** Home shopping catalogue and online platform
+- **Dunelm Directory:** Home shopping catalogue and online platform
 
 ### 3.2 Physical Channels
 - **Physical Stores (450+):** Fitting rooms, in-store returns, Click & Collect pickup. Increasingly designed as larger format stores combining clothing, home, and third-party brands
 - **Click & Collect:** Buy online, pick up in store. Significant and growing channel. Customers often add purchases during collection visits.
 
 ### 3.3 Financial Services
-- **Next Finance:** Credit account allowing customers to spread payments over time. Linked to loyalty and retention.
+- **Dunelm Finance:** Credit account allowing customers to spread payments over time. Linked to loyalty and retention.
 
 ### 3.4 Customer Journey Characteristics
 - **Non-linear journeys:** Customer might discover on social media → browse on app during commute → visit store to try on → complete purchase on website
@@ -71,7 +71,7 @@
 | Shein / Temu | Ultra-fast fashion, lowest price, volume and speed | High (price-sensitive segment) |
 | Boohoo | Pure online, fast fashion, declining performance | Low |
 
-**Next's competitive moat:** Quality + reliability + middle-market + Total Platform (infrastructure-as-a-service for other brands).
+**Dunelm's competitive moat:** Quality + reliability + middle-market + Total Platform (infrastructure-as-a-service for other brands).
 
 ---
 
@@ -84,7 +84,7 @@
 
 ### 5.2 Loyalty & Retention Gap
 - No formal points-based or tiered loyalty program spanning all channels
-- Next Finance acts as informal loyalty (credit = retention) but not structured
+- Dunelm Finance acts as informal loyalty (credit = retention) but not structured
 - Competitors investing heavily in loyalty as cross-channel connector
 - **Impact:** Customer churn to competitors with loyalty programs
 
@@ -106,12 +106,12 @@
 
 ### 5.6 Third-Party Brand Integration
 - Total Platform growing (Reiss, FatFace, Joules)
-- Shopping third-party brands alongside Next own-brand needs to feel seamless
+- Shopping third-party brands alongside Dunelm own-brand needs to feel seamless
 - Currently feels fragmented
 - **Impact:** Confused customer experience, lower conversion for partner brands
 
 ### 5.7 Delivery & Returns Expectations
-- Customers expect: next-day, same-day, Click & Collect, locker pickup
+- Customers expect: Dunelm-day, same-day, Click & Collect, locker pickup
 - Frictionless returns across channels expected
 - **Impact:** Competitive disadvantage if not met
 
@@ -126,9 +126,9 @@
 
 | Team | Responsibility |
 |------|---------------|
-| Digital Product | next.co.uk, mobile app, online checkout |
+| Digital Product | Dunelm.co.uk, mobile app, online checkout |
 | Retail Operations | In-store experience, store staffing, visual merchandising |
-| Next Finance | Credit accounts, payment services |
+| Dunelm Finance | Credit accounts, payment services |
 | Total Platform | Third-party brand integration, warehousing, distribution |
 | Customer Service | Post-purchase support across channels |
 | Marketing | CRM, email, social media, brand campaigns |
@@ -148,7 +148,7 @@
 ### 7.2 Purchase Patterns
 - Visit stores to try on items discovered online (fit-dependent categories)
 - Use Click & Collect to combine online convenience with store immediacy
-- Spread purchases over time using Next Finance credit accounts
+- Spread purchases over time using Dunelm Finance credit accounts
 - Shop across categories in single visit (clothing, accessories, home, third-party brands)
 
 ### 7.3 Post-Purchase
@@ -156,7 +156,7 @@
 - Add purchases during Click & Collect collection visits
 
 ### 7.4 Segment Insights
-- **Next Finance customers:** Higher basket sizes, stronger retention
+- **Dunelm Finance customers:** Higher basket sizes, stronger retention
 - **Higher-value purchases (coats, formalwear, shoes):** Research online → visit store
 - **Everyday basics/repeat purchases:** Online-only buying common
 
@@ -166,9 +166,9 @@
 
 | Term | Correct Usage | Do NOT Use |
 |------|--------------|------------|
-| Next Online | The website and online shopping service | "the site", "e-commerce" |
-| Next Directory | Home shopping catalogue and online platform | "catalogue" alone |
-| Next Finance | Credit account facility for spread payments | "BNPL", "credit card" |
+| Dunelm Online | The website and online shopping service | "the site", "e-commerce" |
+| Dunelm Directory | Home shopping catalogue and online platform | "catalogue" alone |
+| Dunelm Finance | Credit account facility for spread payments | "BNPL", "credit card" |
 | Total Platform | Backend infrastructure leased to third-party brands | "marketplace", "platform" alone |
 | Click & Collect | Buy online, pick up in store | "BOPIS", "pickup" |
 | Store associate | In-store staff member | "shop assistant", "sales staff" |
@@ -180,16 +180,16 @@
 
 ### Why Loyalty Now
 - Competitors (M&S, John Lewis) investing heavily in loyalty
-- Next Finance proves credit-as-retention works — formal loyalty extends this
+- Dunelm Finance proves credit-as-retention works — formal loyalty extends this
 - Cross-channel recognition is the #1 gap — loyalty program provides the identifier
 - App engagement needs a reason to open the app — points/rewards provide it
 
 ### Loyalty Program Design Constraints (from business context)
 - Must span ALL channels (online, app, physical stores, Click & Collect)
-- Must integrate with Next Finance (credit customers are highest-value)
+- Must integrate with Dunelm Finance (credit customers are highest-value)
 - Must enable store associate recognition of loyal customers
 - Must drive app engagement (incentivise app usage)
-- Must feel seamless across Next own-brand and Total Platform third-party brands
+- Must feel seamless across Dunelm own-brand and Total Platform third-party brands
 - Must not fragment the experience further (solve data silos, don't add another)
 
 ### Success Metrics (implied)
@@ -226,9 +226,9 @@ The practice of providing a seamless customer experience across all channels (on
 - Enables: personalised recommendations, recognition of VIP customers, upselling
 
 ### 10.5 Platform Business Model (Total Platform)
-- Next leases its backend (website, warehousing, distribution) to other brands
+- Dunelm leases its backend (website, warehousing, distribution) to other brands
 - Brands get enterprise-grade infrastructure without building it
-- Next earns commission on sales
+- Dunelm earns commission on sales
 - Creates ecosystem lock-in and diversified revenue
 - Brands on platform: Reiss, FatFace, Joules (and growing)
 
@@ -272,7 +272,7 @@ The practice of providing a seamless customer experience across all channels (on
 | Consumer Rights Act 2015 | Points/rewards are not "goods" but program T&Cs must be fair and transparent |
 | Consumer Protection from Unfair Trading Regulations 2008 | Loyalty offers must not be misleading; points value must be clear |
 | Privacy and Electronic Communications Regulations (PECR) | Marketing communications (push, email, SMS) require consent |
-| FCA (if linked to Next Finance) | If loyalty points can be earned/redeemed on credit transactions, FCA financial promotions rules may apply |
+| FCA (if linked to Dunelm Finance) | If loyalty points can be earned/redeemed on credit transactions, FCA financial promotions rules may apply |
 | Equality Act 2010 | Program must not discriminate; accessibility requirements (WCAG) |
 
 ### 12.3 Data Protection Considerations
@@ -285,19 +285,19 @@ The practice of providing a seamless customer experience across all channels (on
 
 ---
 
-## 13. Next Finance Integration Considerations
+## 13. Dunelm Finance Integration Considerations
 
-### 13.1 How Next Finance Works
+### 13.1 How Dunelm Finance Works
 - **Not a credit card** — it's a credit account (store credit facility)
 - Customers can spread payments over time (buy now, pay later)
-- Account managed via next.co.uk (online account management)
-- High-margin business segment for Next
+- Account managed via Dunelm.co.uk (online account management)
+- High-margin business segment for Dunelm
 - Drives retention: credit customers shop more frequently and spend more
 
 ### 13.2 Loyalty × Finance Integration Points
-- Should Next Finance customers earn points on credit purchases? (likely yes — they're highest-value)
+- Should Dunelm Finance customers earn points on credit purchases? (likely yes — they're highest-value)
 - Should points redemption reduce the credit balance or the purchase price? (design decision)
-- Next Finance account could serve as loyalty identifier (already has customer data)
+- Dunelm Finance account could serve as loyalty identifier (already has customer data)
 - Risk: FCA implications if loyalty incentivises credit usage (must not encourage irresponsible borrowing)
 - Opportunity: Bonus points for paying off credit balance on time (rewards responsible behaviour)
 
@@ -305,7 +305,7 @@ The practice of providing a seamless customer experience across all channels (on
 | Segment | Behaviour | Loyalty Strategy |
 |---------|-----------|-----------------|
 | Cash/Debit customers | Lower basket, less frequent | Incentivise sign-up, drive frequency |
-| Next Finance customers | Higher basket, more frequent, stronger retention | Reward loyalty, tier benefits, early access |
+| Dunelm Finance customers | Higher basket, more frequent, stronger retention | Reward loyalty, tier benefits, early access |
 | Click & Collect customers | Online convenience + store visit | Bonus points for collection, in-store add-on rewards |
 
 ---
@@ -313,7 +313,7 @@ The practice of providing a seamless customer experience across all channels (on
 ## 14. Social Media & Discovery Channels
 
 - Social media (Instagram, TikTok, Pinterest) is a key **discovery** channel
-- Customers follow Next for style inspiration and sale alerts
+- Customers follow Dunelm for style inspiration and sale alerts
 - Social → app/website → store journey is common
 - **Loyalty implication:** Referral programs, social sharing of rewards, influencer partnerships
 - Not a transactional channel (cannot buy directly via social — drives to website/app)

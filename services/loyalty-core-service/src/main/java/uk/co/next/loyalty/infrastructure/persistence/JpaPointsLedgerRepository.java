@@ -1,12 +1,12 @@
-package uk.co.next.loyalty.infrastructure.persistence;
+package uk.co.Dunelm.loyalty.infrastructure.persistence;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import uk.co.next.loyalty.domain.model.PointsLedgerEntry;
-import uk.co.next.loyalty.domain.port.PointsLedgerRepository;
+import uk.co.Dunelm.loyalty.domain.model.PointsLedgerEntry;
+import uk.co.Dunelm.loyalty.domain.port.PointsLedgerRepository;
 
 import java.time.Instant;
 import java.util.List;

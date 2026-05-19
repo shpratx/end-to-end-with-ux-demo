@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wireframes — Next Loyalty Enrolment</title>
+<title>Wireframes — Dunelm Loyalty Enrolment</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -125,7 +125,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
 <div class="doc-header">
   <div class="header-left">
     <div class="doc-tag">Experience Wireframing</div>
-    <div class="doc-title">Next Loyalty — Enrolment Flow · Screen Kit</div>
+    <div class="doc-title">Dunelm Loyalty — Enrolment Flow · Screen Kit</div>
     <div class="doc-sub">Scenario 1, Variation 1 — Self-Service Online Enrolment · Customer (Clara / Nathan)</div>
   </div>
   <div>
@@ -172,12 +172,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
         <div class="device-screen">
           <div class="wf-status-bar"><span>9:41</span><span>●●●</span></div>
           <div class="wf-hero-block">
-            <div class="wf-hero-tag">Next Loyalty</div>
+            <div class="wf-hero-tag">Dunelm Loyalty</div>
             <div class="wf-hero-title">Earn rewards every time you shop</div>
-            <div class="wf-hero-sub">No credit account needed. Open to every Next customer.</div>
+            <div class="wf-hero-sub">No credit account needed. Open to every Dunelm customer.</div>
           </div>
           <div class="wf-benefit-row"><div class="wf-benefit-icon">★</div><div class="wf-benefit-text"><strong>Earn points</strong> on every purchase — online, in-store, Click &amp; Collect</div></div>
-          <div class="wf-benefit-row"><div class="wf-benefit-icon">⚡</div><div class="wf-benefit-text"><strong>Early sale access</strong> — earn your way into the Next Sale before anyone else</div></div>
+          <div class="wf-benefit-row"><div class="wf-benefit-icon">⚡</div><div class="wf-benefit-text"><strong>Early sale access</strong> — earn your way into the Dunelm Sale before anyone else</div></div>
           <div class="wf-benefit-row"><div class="wf-benefit-icon">✓</div><div class="wf-benefit-text"><strong>In-store recognition</strong> — your loyalty shows at the till</div></div>
           <div class="wf-divider"></div>
           <div class="btn-primary">Join the Loyalty Programme</div>
@@ -189,7 +189,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
     <div class="frame-right">
       <div>
         <p class="frame-desc-heading">Screen Description</p>
-        <p class="frame-desc-text">The entry point to the loyalty programme — designed to immediately resolve the primary anxiety of the cash/debit customer cohort. The "No credit account needed" statement appears in the hero block as the most prominent text element after the headline, directly above the fold. Benefits are listed in order of research-validated priority: earn mechanics first, early access second, in-store recognition third. The page does not require sign-in to read — the full benefit summary is accessible before any commitment is requested. A secondary "Sign in" path serves existing Next account holders including nextpay customers looking to link their programme.</p>
+        <p class="frame-desc-text">The entry point to the loyalty programme — designed to immediately resolve the primary anxiety of the cash/debit customer cohort. The "No credit account needed" statement appears in the hero block as the most prominent text element after the headline, directly above the fold. Benefits are listed in order of research-validated priority: earn mechanics first, early access second, in-store recognition third. The page does not require sign-in to read — the full benefit summary is accessible before any commitment is requested. A secondary "Sign in" path serves existing Dunelm account holders including Dunelmpay customers looking to link their programme.</p>
       </div>
       <div>
         <p class="frame-desc-heading">Ecosystem Objects on Screen</p>
@@ -199,13 +199,13 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
         <p class="frame-desc-heading">Connections</p>
         <div class="conn-list">
           <div class="conn-item"><span class="conn-trigger">Join the Loyalty Programme</span><span class="conn-arrow">→</span><span class="conn-dest">2.0 Programme Overview</span></div>
-          <div class="conn-item"><span class="conn-trigger">Sign in to existing account</span><span class="conn-arrow">→</span><span class="conn-dest">Account Sign-In (existing Next account flow)</span></div>
+          <div class="conn-item"><span class="conn-trigger">Sign in to existing account</span><span class="conn-arrow">→</span><span class="conn-dest">Account Sign-In (existing Dunelm account flow)</span></div>
           <div class="conn-item"><span class="conn-trigger">Learn how it works ↓</span><span class="conn-arrow">→</span><span class="conn-dest">Scrolls to expanded earn mechanic detail on same page</span></div>
         </div>
       </div>
       <div>
         <p class="frame-desc-heading">Conditional / Disabled States</p>
-        <p class="cond-item">If the user is already signed in to a Next account with no loyalty membership — the "Join" CTA is pre-populated with their account email and skips to Screen 3.0 (Data Use Statement), bypassing the form</p>
+        <p class="cond-item">If the user is already signed in to a Dunelm account with no loyalty membership — the "Join" CTA is pre-populated with their account email and skips to Screen 3.0 (Data Use Statement), bypassing the form</p>
         <p class="cond-item">If the user is already a loyalty member and signed in — the page redirects to 6.0 Loyalty Dashboard automatically</p>
       </div>
       <div>
@@ -250,7 +250,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
           <div class="wf-benefit-row"><div class="wf-benefit-icon" style="background:#f59e0b;">G</div><div class="wf-benefit-text"><strong>Gold</strong> — extended sale access + exclusive collections</div></div>
           <div class="wf-divider"></div>
           <div class="wf-label">Physical card available</div>
-          <div class="wf-body-text">Don't have a smartphone? Request a loyalty card — works at every Next till.</div>
+          <div class="wf-body-text">Don't have a smartphone? Request a loyalty card — works at every Dunelm till.</div>
           <div class="btn-primary">Continue to sign up</div>
           <div class="scroll-hint">↑ scroll ↑</div>
         </div>
@@ -320,7 +320,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
           <div class="wf-benefit-row"><div class="wf-benefit-icon" style="background:#dc2626;">✗</div><div class="wf-benefit-text">Use your loyalty data to restrict your account</div></div>
           <div class="wf-benefit-row"><div class="wf-benefit-icon" style="background:#dc2626;">✗</div><div class="wf-benefit-text">Share your data with third parties for advertising</div></div>
           <div class="wf-divider"></div>
-          <div class="wf-checkbox-row"><div class="wf-checkbox checked"></div><div class="wf-checkbox-label">I understand how Next will use my loyalty data</div></div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox checked"></div><div class="wf-checkbox-label">I understand how Dunelm will use my loyalty data</div></div>
           <div class="wf-checkbox-row"><div class="wf-checkbox"></div><div class="wf-checkbox-label">I'd like to receive personalised sale and offer emails (optional)</div></div>
           <div class="btn-primary">I Understand — Continue</div>
           <div class="wf-link">Read full privacy policy</div>
@@ -348,7 +348,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
         <p class="frame-desc-heading">Conditional / Disabled States</p>
         <p class="cond-item">"I Understand — Continue" CTA is disabled until the data use acknowledgement checkbox is checked — it cannot be bypassed</p>
         <p class="cond-item">Marketing opt-in checkbox is unchecked by default — must be an active choice, never pre-selected (GDPR requirement confirmed in Section 3.4)</p>
-        <p class="cond-item">If customer arrived via nextpay sign-in, a note appears: "Your nextpay account data is managed separately under your credit agreement — this loyalty programme uses a separate data layer"</p>
+        <p class="cond-item">If customer arrived via Dunelmpay sign-in, a note appears: "Your Dunelmpay account data is managed separately under your credit agreement — this loyalty programme uses a separate data layer"</p>
       </div>
       <div>
         <p class="frame-desc-heading">Research Grounding</p>
@@ -386,7 +386,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
           <div class="wf-field placeholder">+44 7700 000000</div>
           <div class="wf-body-text" style="margin-top:2px;color:var(--indigo);">Adding your mobile means we can find your account at the till even if you forget your email.</div>
           <div class="wf-divider"></div>
-          <div class="wf-checkbox-row"><div class="wf-checkbox"></div><div class="wf-checkbox-label">Link my existing Next online account</div></div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div><div class="wf-checkbox-label">Link my existing Dunelm online account</div></div>
           <div class="wf-checkbox-row"><div class="wf-checkbox"></div><div class="wf-checkbox-label">Send me a physical loyalty card by post</div></div>
           <div class="wf-divider"></div>
           <div class="wf-label">Create a password</div>
@@ -399,11 +399,11 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
     <div class="frame-right">
       <div>
         <p class="frame-desc-heading">Screen Description</p>
-        <p class="frame-desc-text">Minimum required data collection to create a loyalty account. Email address is the primary identifier; mobile number is optional but actively encouraged with a plain-language explanation of its value as a till-lookup backup — directly addressing the email fragmentation problem identified in research. The "Link my existing Next online account" option is critical: it is the self-service route to unify the nextpay / online shopping account split that P01 discovered only through a failed return. Physical card request is a checkbox — not a separate journey — keeping the enrolment flow unified. Password or magic link are offered as equal options, reducing friction for customers who distrust password creation.</p>
+        <p class="frame-desc-text">Minimum required data collection to create a loyalty account. Email address is the primary identifier; mobile number is optional but actively encouraged with a plain-language explanation of its value as a till-lookup backup — directly addressing the email fragmentation problem identified in research. The "Link my existing Dunelm online account" option is critical: it is the self-service route to unify the Dunelmpay / online shopping account split that P01 discovered only through a failed return. Physical card request is a checkbox — not a separate journey — keeping the enrolment flow unified. Password or magic link are offered as equal options, reducing friction for customers who distrust password creation.</p>
       </div>
       <div>
         <p class="frame-desc-heading">Ecosystem Objects on Screen</p>
-        <div><span class="obj-tag">Enrolment</span><span class="obj-tag">Customer Profile</span><span class="obj-tag">Loyalty Account</span><span class="obj-tag">Next Finance Account</span></div>
+        <div><span class="obj-tag">Enrolment</span><span class="obj-tag">Customer Profile</span><span class="obj-tag">Loyalty Account</span><span class="obj-tag">Dunelm Finance Account</span></div>
       </div>
       <div>
         <p class="frame-desc-heading">Connections</p>
@@ -416,13 +416,13 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
       <div>
         <p class="frame-desc-heading">Conditional / Disabled States</p>
         <p class="cond-item">"Create my loyalty account" CTA is disabled until email field is populated and valid format confirmed</p>
-        <p class="cond-item">If user arrived from nextpay sign-in flow — email is pre-populated and read-only; "Link my existing Next online account" is pre-checked</p>
+        <p class="cond-item">If user arrived from Dunelmpay sign-in flow — email is pre-populated and read-only; "Link my existing Dunelm online account" is pre-checked</p>
         <p class="cond-item">If user selects "Send me a physical loyalty card" — a postal address field appears below (only when this checkbox is checked)</p>
         <p class="cond-item">Mobile number field shows inline validation: confirmed with a green tick when a valid UK mobile format is entered</p>
       </div>
       <div>
         <p class="frame-desc-heading">Research Grounding</p>
-        <p class="insight-ref">Finding 7: The nextpay/online account email split is a confirmed, reproducible failure. "The fact that my nextpay account and my online shopping account are two different things is something I only discovered because of this problem. That's genuinely broken." (P01) — account unification must be a self-service option in this form, not a customer service call.</p>
+        <p class="insight-ref">Finding 7: The Dunelmpay/online account email split is a confirmed, reproducible failure. "The fact that my Dunelmpay account and my online shopping account are two different things is something I only discovered because of this problem. That's genuinely broken." (P01) — account unification must be a self-service option in this form, not a customer service call.</p>
       </div>
     </div>
   </div>
@@ -451,7 +451,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
           <div class="wf-nav-bar"><div class="wf-nav-back">←</div><div class="wf-nav-title">Create your account</div></div>
           <div class="wf-error-box">
             <div class="wf-error-title">An account with this email already exists</div>
-            <div class="wf-error-text">This email is linked to an existing Next account. You can sign in to join the loyalty programme, or use a different email address.</div>
+            <div class="wf-error-text">This email is linked to an existing Dunelm account. You can sign in to join the loyalty programme, or use a different email address.</div>
           </div>
           <div class="btn-primary" style="margin-top:8px;">Sign in to this account</div>
           <div class="btn-secondary">Merge with a different email</div>
@@ -464,11 +464,11 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
     <div class="frame-right">
       <div>
         <p class="frame-desc-heading">Screen Description</p>
-        <p class="frame-desc-text">Error recovery screen triggered when the submitted email is already associated with a Next account — either a nextpay account, an existing online shopping account, or a previous loyalty membership. Three resolution paths are offered: sign in to the existing account and join the loyalty programme from there; merge accounts (for customers who have multiple emails in the Next system); or use a different email address. The "No loyalty history will be lost" reassurance is critical — customers must not feel that resolving the duplicate triggers a data loss. This screen is the primary resolution point for the account identity fragmentation problem confirmed in research.</p>
+        <p class="frame-desc-text">Error recovery screen triggered when the submitted email is already associated with a Dunelm account — either a Dunelmpay account, an existing online shopping account, or a previous loyalty membership. Three resolution paths are offered: sign in to the existing account and join the loyalty programme from there; merge accounts (for customers who have multiple emails in the Dunelm system); or use a different email address. The "No loyalty history will be lost" reassurance is critical — customers must not feel that resolving the duplicate triggers a data loss. This screen is the primary resolution point for the account identity fragmentation problem confirmed in research.</p>
       </div>
       <div>
         <p class="frame-desc-heading">Ecosystem Objects on Screen</p>
-        <div><span class="obj-tag">Loyalty Account</span><span class="obj-tag">Customer Profile</span><span class="obj-tag">Next Finance Account</span></div>
+        <div><span class="obj-tag">Loyalty Account</span><span class="obj-tag">Customer Profile</span><span class="obj-tag">Dunelm Finance Account</span></div>
       </div>
       <div>
         <p class="frame-desc-heading">Connections</p>
@@ -480,7 +480,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
       </div>
       <div>
         <p class="frame-desc-heading">Conditional / Disabled States</p>
-        <p class="cond-item">If the email belongs to a nextpay account — the error message specifies "This email is linked to your Next Finance account" and the sign-in path leads to a unified account creation within the loyalty programme</p>
+        <p class="cond-item">If the email belongs to a Dunelmpay account — the error message specifies "This email is linked to your Dunelm Finance account" and the sign-in path leads to a unified account creation within the loyalty programme</p>
         <p class="cond-item">If the email belongs to an existing loyalty member — a different message appears: "You're already a loyalty member — sign in to view your account" with a direct sign-in CTA</p>
       </div>
       <div>
@@ -513,12 +513,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
         <div class="device-screen">
           <div class="wf-status-bar"><span>9:41</span><span>●●●</span></div>
           <div class="wf-confirm-icon">✓</div>
-          <div class="wf-confirm-title">You're a Next loyalty member</div>
+          <div class="wf-confirm-title">You're a Dunelm loyalty member</div>
           <div class="wf-confirm-sub">Welcome bonus: 100 points added to your account</div>
           <div class="wf-qr-box">
             <div class="wf-qr-grid"></div>
             <div class="wf-qr-name">Clara M. · Member</div>
-            <div class="wf-qr-tier">Scan at any Next till to earn points</div>
+            <div class="wf-qr-tier">Scan at any Dunelm till to earn points</div>
           </div>
           <div class="wf-earn-preview">
             <div class="wf-earn-label">Your starting balance</div>
@@ -526,14 +526,14 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
           </div>
           <div class="btn-primary">Go to my loyalty dashboard</div>
           <div class="btn-secondary">Save QR code to wallet</div>
-          <div class="wf-link">Download the Next app for the full experience</div>
+          <div class="wf-link">Download the Dunelm app for the full experience</div>
         </div>
       </div>
     </div>
     <div class="frame-right">
       <div>
         <p class="frame-desc-heading">Screen Description</p>
-        <p class="frame-desc-text">The enrolment completion screen — designed to make membership feel real and immediately valuable. A welcome bonus of 100 points is applied on confirmation and displayed as both a points number and a monetary equivalent (£1.00), establishing the earn mechanic as concrete and visible from the first interaction. The loyalty QR code appears immediately — full-size, with the customer's name and tier label — ready to use at the next till visit. The QR code can be saved to Apple Wallet or Google Wallet to avoid the need to open the app in future in-store interactions. The app download CTA is tertiary, not blocking — card-only and web-only users are not excluded from the completion state.</p>
+        <p class="frame-desc-text">The enrolment completion screen — designed to make membership feel real and immediately valuable. A welcome bonus of 100 points is applied on confirmation and displayed as both a points number and a monetary equivalent (£1.00), establishing the earn mechanic as concrete and visible from the first interaction. The loyalty QR code appears immediately — full-size, with the customer's name and tier label — ready to use at the Dunelm till visit. The QR code can be saved to Apple Wallet or Google Wallet to avoid the need to open the app in future in-store interactions. The app download CTA is tertiary, not blocking — card-only and web-only users are not excluded from the completion state.</p>
       </div>
       <div>
         <p class="frame-desc-heading">Ecosystem Objects on Screen</p>
@@ -544,12 +544,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
         <div class="conn-list">
           <div class="conn-item"><span class="conn-trigger">Go to my loyalty dashboard</span><span class="conn-arrow">→</span><span class="conn-dest">6.0 Loyalty Dashboard</span></div>
           <div class="conn-item"><span class="conn-trigger">Save QR code to wallet</span><span class="conn-arrow">→</span><span class="conn-dest">Apple Wallet / Google Wallet native add flow</span></div>
-          <div class="conn-item"><span class="conn-trigger">Download the Next app</span><span class="conn-arrow">→</span><span class="conn-dest">App Store / Google Play (new tab)</span></div>
+          <div class="conn-item"><span class="conn-trigger">Download the Dunelm app</span><span class="conn-arrow">→</span><span class="conn-dest">App Store / Google Play (new tab)</span></div>
         </div>
       </div>
       <div>
         <p class="frame-desc-heading">Conditional / Disabled States</p>
-        <p class="cond-item">If welcome bonus is not configured in Programme Rules — the starting balance shows 0 pts and the "welcome bonus" line is not shown; earn preview text reads "Start earning on your next purchase"</p>
+        <p class="cond-item">If welcome bonus is not configured in Programme Rules — the starting balance shows 0 pts and the "welcome bonus" line is not shown; earn preview text reads "Start earning on your Dunelm purchase"</p>
         <p class="cond-item">If the customer is on a desktop browser — "Save QR to wallet" is replaced with "Email my QR code" and the QR code is shown at full resolution for screenshot</p>
         <p class="cond-item">If physical card was requested at 4.0 — a confirmation note appears below the QR: "Your loyalty card will arrive within 5–7 working days. Use this QR code in the meantime."</p>
       </div>
@@ -595,7 +595,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
           <div class="btn-primary" style="background:var(--indigo);margin-bottom:4px;">⬛ Scan at till</div>
           <div class="wf-label">Recent activity</div>
           <div class="wf-txn-row"><span class="wf-txn-name">Welcome bonus</span><span class="wf-txn-pts">+100 pts</span></div>
-          <div class="wf-body-text" style="color:var(--text-soft);text-align:center;padding:8px 0;">Your next purchase will appear here</div>
+          <div class="wf-body-text" style="color:var(--text-soft);text-align:center;padding:8px 0;">Your Dunelm purchase will appear here</div>
           <div class="wf-divider"></div>
           <div class="wf-label">Rewards available</div>
           <div class="wf-body-text">You need 400 more points to unlock your first £5 reward</div>
@@ -606,7 +606,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-dark);-w
     <div class="frame-right">
       <div>
         <p class="frame-desc-heading">Screen Description</p>
-        <p class="frame-desc-text">The loyalty programme home — the permanent reference state the customer returns to between purchases. The points balance is the largest element on the screen, displayed in both points and monetary equivalent at all times. The tier progress bar is beneath the balance, showing distance to the next tier (Silver — Early Sale Access) with a concrete label rather than an abstract percentage. The Scan at till action is the primary CTA — immediately below the balance hero, reachable in one tap. Recent activity shows the welcome bonus as the first entry, establishing that the transaction log is real and live. The rewards section shows the gap to the next redemption threshold — creating forward momentum from the first session.</p>
+        <p class="frame-desc-text">The loyalty programme home — the permanent reference state the customer returns to between purchases. The points balance is the largest element on the screen, displayed in both points and monetary equivalent at all times. The tier progress bar is beneath the balance, showing distance to the Dunelm tier (Silver — Early Sale Access) with a concrete label rather than an abstract percentage. The Scan at till action is the primary CTA — immediately below the balance hero, reachable in one tap. Recent activity shows the welcome bonus as the first entry, establishing that the transaction log is real and live. The rewards section shows the gap to the Dunelm redemption threshold — creating forward momentum from the first session.</p>
       </div>
       <div>
         <p class="frame-desc-heading">Ecosystem Objects on Screen</p>

@@ -1,6 +1,6 @@
-package uk.co.next.loyalty.auth.domain.port;
+package uk.co.Dunelm.loyalty.auth.domain.port;
 
-import uk.co.next.loyalty.auth.domain.model.OtpCode;
+import uk.co.Dunelm.loyalty.auth.domain.model.OtpCode;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;

@@ -291,7 +291,7 @@
     {
       "id": "FR-19",
       "title": "Loyalty Dashboard (Customer Home)",
-      "description": "Mobile app and website display a loyalty dashboard showing: current points balance, current tier, progress to next tier, recent transactions (last 5), and any active promotions or offers.",
+      "description": "Mobile app and website display a loyalty dashboard showing: current points balance, current tier, progress to Dunelm tier, recent transactions (last 5), and any active promotions or offers.",
       "user_facing": true,
       "priority": "Must-Have",
       "baseline_classification": "new",
@@ -411,7 +411,7 @@
     {
       "id": "FR-27",
       "title": "Terms & Conditions Acceptance",
-      "description": "Customers must accept loyalty program terms and conditions during sign-up. System records consent timestamp and T&C version. When T&C are updated, customers are prompted to re-accept on next login.",
+      "description": "Customers must accept loyalty program terms and conditions during sign-up. System records consent timestamp and T&C version. When T&C are updated, customers are prompted to re-accept on Dunelm login.",
       "user_facing": true,
       "priority": "Must-Have",
       "baseline_classification": "new",

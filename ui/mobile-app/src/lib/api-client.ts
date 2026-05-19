@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-const API_BASE = 'https://loyalty.next.co.uk/api/v1';
+const API_BASE = 'https://loyalty.Dunelm.co.uk/api/v1';
 
 export const apiClient = axios.create({ baseURL: API_BASE, timeout: 10000 });
 

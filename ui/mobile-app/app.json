@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Next Loyalty",
-    "slug": "next-loyalty",
+    "name": "Dunelm Loyalty",
+    "slug": "Dunelm-loyalty",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,7 +15,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "co.uk.next.loyalty",
+      "bundleIdentifier": "co.uk.Dunelm.loyalty",
       "infoPlist": {
         "NSFaceIDUsageDescription": "Use Face ID to sign in quickly"
       }
@@ -25,7 +25,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
       },
-      "package": "co.uk.next.loyalty"
+      "package": "co.uk.Dunelm.loyalty"
     },
     "plugins": [
       "expo-secure-store",

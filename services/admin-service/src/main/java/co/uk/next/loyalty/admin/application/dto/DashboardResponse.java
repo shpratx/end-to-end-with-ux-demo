@@ -1,4 +1,4 @@
-package co.uk.next.loyalty.admin.application.dto;
+package co.uk.Dunelm.loyalty.admin.application.dto;
 
 public record DashboardResponse(
         int activeMembers,

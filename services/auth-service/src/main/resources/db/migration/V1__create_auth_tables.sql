@@ -1,4 +1,4 @@
--- V1: Auth service tables for Next Loyalty Program
+-- V1: Auth service tables for Dunelm Loyalty Program
 
 CREATE TABLE customers (
   id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),

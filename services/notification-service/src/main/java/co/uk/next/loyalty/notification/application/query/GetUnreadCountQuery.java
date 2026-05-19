@@ -1,6 +1,6 @@
-package co.uk.next.loyalty.notification.application.query;
+package co.uk.Dunelm.loyalty.notification.application.query;
 
-import co.uk.next.loyalty.notification.domain.port.NotificationRepository;
+import co.uk.Dunelm.loyalty.notification.domain.port.NotificationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

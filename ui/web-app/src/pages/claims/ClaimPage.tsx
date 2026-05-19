@@ -25,7 +25,7 @@ export function ClaimPage() {
         </div>
         <div className="flex gap-2 mt-4">
           <Button fullWidth onClick={() => setStatus('form')}>Try Again</Button>
-          <Button variant="secondary" fullWidth onClick={() => window.location.href = 'mailto:loyalty@next.co.uk'}>Contact Us</Button>
+          <Button variant="secondary" fullWidth onClick={() => window.location.href = 'mailto:loyalty@Dunelm.co.uk'}>Contact Us</Button>
         </div>
       </div>
     );
@@ -42,8 +42,8 @@ export function ClaimPage() {
           <label className="block text-xs font-semibold text-black mb-1">Store</label>
           <select className="w-full bg-neutral-50 border border-neutral-200 rounded py-2.5 px-3 text-sm text-neutral-400">
             <option>Select store</option>
-            <option>Next, Oxford Street</option>
-            <option>Next, Westfield</option>
+            <option>Dunelm, Oxford Street</option>
+            <option>Dunelm, Westfield</option>
           </select>
         </div>
         <Input label="Date of purchase" type="date" required />

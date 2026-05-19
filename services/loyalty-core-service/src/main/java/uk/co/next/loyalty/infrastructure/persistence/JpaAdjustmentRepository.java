@@ -1,9 +1,9 @@
-package uk.co.next.loyalty.infrastructure.persistence;
+package uk.co.Dunelm.loyalty.infrastructure.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import uk.co.next.loyalty.domain.model.Adjustment;
-import uk.co.next.loyalty.domain.port.AdjustmentRepository;
+import uk.co.Dunelm.loyalty.domain.model.Adjustment;
+import uk.co.Dunelm.loyalty.domain.port.AdjustmentRepository;
 
 import java.util.UUID;
 

@@ -1,6 +1,6 @@
-package uk.co.next.loyalty.domain.port;
+package uk.co.Dunelm.loyalty.domain.port;
 
-import uk.co.next.loyalty.domain.model.Campaign;
+import uk.co.Dunelm.loyalty.domain.model.Campaign;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;

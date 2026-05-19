@@ -1,4 +1,4 @@
-package uk.co.next.loyalty.domain.model;
+package uk.co.Dunelm.loyalty.domain.model;
 
 import jakarta.persistence.*;
 import java.util.UUID;

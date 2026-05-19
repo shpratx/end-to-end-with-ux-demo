@@ -1,15 +1,15 @@
-package uk.co.next.loyalty.auth.application.command;
+package uk.co.Dunelm.loyalty.auth.application.command;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uk.co.next.loyalty.auth.domain.model.Customer;
-import uk.co.next.loyalty.auth.domain.model.OtpCode;
-import uk.co.next.loyalty.auth.domain.model.RefreshToken;
-import uk.co.next.loyalty.auth.domain.port.CustomerRepository;
-import uk.co.next.loyalty.auth.domain.port.OtpRepository;
-import uk.co.next.loyalty.auth.domain.port.TokenRepository;
-import uk.co.next.loyalty.auth.infrastructure.config.JwtService;
+import uk.co.Dunelm.loyalty.auth.domain.model.Customer;
+import uk.co.Dunelm.loyalty.auth.domain.model.OtpCode;
+import uk.co.Dunelm.loyalty.auth.domain.model.RefreshToken;
+import uk.co.Dunelm.loyalty.auth.domain.port.CustomerRepository;
+import uk.co.Dunelm.loyalty.auth.domain.port.OtpRepository;
+import uk.co.Dunelm.loyalty.auth.domain.port.TokenRepository;
+import uk.co.Dunelm.loyalty.auth.infrastructure.config.JwtService;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

@@ -1,9 +1,9 @@
-# Next plc — Enterprise Architecture Knowledge Base
-## kb-L0-next-enterprise-architecture v1.0.0
+# Dunelm plc — Enterprise Architecture Knowledge Base
+## kb-L0-Dunelm-enterprise-architecture v1.0.0
 
-**Purpose:** Reference architecture for engineering teams building on Next's platform
+**Purpose:** Reference architecture for engineering teams building on Dunelm's platform
 **Classification:** Internal
-**Confidence:** ⚠️ Inferred from business context, public information, and standard retail enterprise patterns. Next does not publicly disclose its full technology stack. Sections marked [Confirmed] are from the project context document; sections marked [Inferred] are based on standard patterns for UK retailers of this scale.
+**Confidence:** ⚠️ Inferred from business context, public information, and standard retail enterprise patterns. Dunelm does not publicly disclose its full technology stack. Sections marked [Confirmed] are from the project context document; sections marked [Inferred] are based on standard patterns for UK retailers of this scale.
 
 ---
 
@@ -13,8 +13,8 @@
 |---|-----------|-----------|
 | AP-1 | Channel-agnostic services | Business logic must not be tied to a single channel. Services serve web, app, POS, and third-party brands equally. |
 | AP-2 | Customer-centric data model | Single customer identity across all channels. Solve the data silo problem (§5.8 of domain KB). |
-| AP-3 | API-first design | All capabilities exposed as APIs. Enables Total Platform (third-party brands consume same APIs as Next's own channels). |
-| AP-4 | Platform thinking | Build once, deploy across Next own-brand and Total Platform brands. Shared infrastructure, brand-specific configuration. |
+| AP-3 | API-first design | All capabilities exposed as APIs. Enables Total Platform (third-party brands consume same APIs as Dunelm's own channels). |
+| AP-4 | Platform thinking | Build once, deploy across Dunelm own-brand and Total Platform brands. Shared infrastructure, brand-specific configuration. |
 | AP-5 | Progressive enhancement | Core functionality works everywhere; enhanced experiences for modern browsers/devices. |
 | AP-6 | Security by design | PII encrypted, RBAC enforced, audit trails on all customer data access. UK GDPR compliance built-in. |
 | AP-7 | Resilience over perfection | Graceful degradation preferred over hard failures. Retail cannot afford downtime during peak trading. |
@@ -27,13 +27,13 @@
 
 | System Domain | Purpose | Key Integrations |
 |--------------|---------|-----------------|
-| **E-commerce Platform** | next.co.uk — product catalogue, search, checkout, account management | Inventory, Payments, Customer, CMS |
+| **E-commerce Platform** | Dunelm.co.uk — product catalogue, search, checkout, account management | Inventory, Payments, Customer, CMS |
 | **Mobile App** | Native iOS/Android — personalised experience, barcode scanning, Click & Collect | E-commerce APIs, Push notifications, Customer |
 | **POS System** | In-store transactions, Click & Collect fulfilment, returns processing | Inventory, Payments, Customer, Loyalty |
 | **Order Management System (OMS)** | Order lifecycle: placement → fulfilment → delivery → returns | Inventory, Warehouse, Logistics, Customer |
 | **Inventory Management** | Stock levels across 450+ stores, warehouses, and online | OMS, POS, E-commerce, Supply Chain |
 | **Customer Data Platform (CDP)** | Unified customer profiles (currently siloed — key challenge) | All customer-facing systems |
-| **Next Finance System** | Credit account management, payments, statements | Customer, E-commerce, POS |
+| **Dunelm Finance System** | Credit account management, payments, statements | Customer, E-commerce, POS |
 | **Total Platform** | Multi-tenant infrastructure for third-party brands | E-commerce, OMS, Warehouse, Logistics |
 | **Content Management System (CMS)** | Product content, editorial, style inspiration | E-commerce, Mobile App |
 | **Warehouse Management System (WMS)** | Picking, packing, dispatch across distribution centres | OMS, Inventory, Logistics |
@@ -46,7 +46,7 @@
 │                        CUSTOMER CHANNELS                             │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌───────────────────┐  │
 │  │ Website  │  │Mobile App│  │  Stores  │  │ Third-Party Brands│  │
-│  │(next.co.uk)│ │(iOS/And) │  │  (POS)   │  │ (Total Platform) │  │
+│  │(Dunelm.co.uk)│ │(iOS/And) │  │  (POS)   │  │ (Total Platform) │  │
 │  └─────┬────┘  └─────┬────┘  └─────┬────┘  └────────┬──────────┘  │
 └────────┼──────────────┼─────────────┼────────────────┼──────────────┘
          │              │             │                │
@@ -64,7 +64,7 @@
 │ • Catalogue     │  │ • Identity      │  │ • OMS           │
 │ • Search        │  │ • Profiles      │  │ • Inventory     │
 │ • Pricing       │  │ • Preferences   │  │ • Warehouse     │
-│ • Checkout      │  │ • Next Finance  │  │ • Logistics     │
+│ • Checkout      │  │ • Dunelm Finance  │  │ • Logistics     │
 │ • Promotions    │  │ • Loyalty ←NEW  │  │ • Returns       │
 │ • Basket        │  │ • Consent       │  │ • Click&Collect │
 └─────────────────┘  └─────────────────┘  └─────────────────┘
@@ -85,7 +85,7 @@
 
 | Layer | Technology | Confidence |
 |-------|-----------|------------|
-| Website | Modern SPA or SSR framework (likely React/Next.js given scale) | ⚠️ Inferred |
+| Website | Modern SPA or SSR framework (likely React/Dunelm.js given scale) | ⚠️ Inferred |
 | Mobile App | Native (iOS: Swift, Android: Kotlin) or cross-platform | ⚠️ Inferred |
 | POS | Proprietary or vendor POS software | ⚠️ Inferred |
 | Design System | Shared component library across web and app | ⚠️ Inferred |
@@ -119,7 +119,7 @@
 |---------|---------|
 | Payment Gateway | Card processing (Adyen/Worldpay/Stripe) |
 | Delivery Partners | Royal Mail, DPD, Hermes/Evri for home delivery |
-| CRA (Credit Reference) | Experian/Equifax for Next Finance credit checks |
+| CRA (Credit Reference) | Experian/Equifax for Dunelm Finance credit checks |
 | Email/SMS | Transactional and marketing communications |
 | Push Notifications | FCM (Android), APNs (iOS) |
 | Analytics | Google Analytics, Adobe Analytics |
@@ -155,7 +155,7 @@
 | Loyalty → Checkout | ← Loyalty | Sync API | Redeem points as discount |
 | Customer registration | → Loyalty | Event | New loyalty account |
 | Returns/refunds | → Loyalty | Event | Reverse points |
-| Next Finance payment | → Loyalty | Event | Earn on credit purchase |
+| Dunelm Finance payment | → Loyalty | Event | Earn on credit purchase |
 | Marketing campaigns | ← Loyalty | Event | Tier changes, milestones |
 | Store associate POS | ← Loyalty | Sync API | Customer lookup, status |
 
@@ -192,7 +192,7 @@
 
 | Classification | Examples | Controls |
 |---------------|----------|----------|
-| Restricted | Payment card data, Next Finance credit data, passwords | PCI DSS, HSM, never stored in app |
+| Restricted | Payment card data, Dunelm Finance credit data, passwords | PCI DSS, HSM, never stored in app |
 | Confidential | Name, email, phone, address, purchase history, loyalty balance | Encrypted at rest, RBAC, audit logged |
 | Internal | Product data, pricing rules, inventory levels, staff data | Access controlled, not public |
 | Public | Published product catalogue, store locations, T&Cs | No restrictions |
@@ -209,11 +209,11 @@ The project context explicitly states data silos as the root cause of experience
 |------|------|-----------|
 | Customer accounts | Registration, login, preferences | Digital Product |
 | Transaction history | Online orders, in-store purchases | Separate per channel |
-| Credit accounts | Next Finance balances, payments, credit limits | Next Finance |
+| Credit accounts | Dunelm Finance balances, payments, credit limits | Dunelm Finance |
 | Inventory | Stock levels per location | Supply Chain |
 | CRM/Marketing | Segments, campaign history, email engagement | Marketing |
 
-**Problem:** No unified customer view. Store associates cannot see online activity. Online cannot see in-store purchases. Next Finance data isolated.
+**Problem:** No unified customer view. Store associates cannot see online activity. Online cannot see in-store purchases. Dunelm Finance data isolated.
 
 ### 6.2 Target State (Unified Customer Platform)
 
@@ -228,7 +228,7 @@ The project context explicitly states data silos as the root cause of experience
 │  └──────────┘  └──────────┘  └──────────────┘  │
 │                                                  │
 │  ┌──────────┐  ┌──────────┐  ┌──────────────┐  │
-│  │ Loyalty  │  │  Next    │  │  Consent &   │  │
+│  │ Loyalty  │  │  Dunelm    │  │  Consent &   │  │
 │  │ (points, │  │ Finance  │  │  Privacy     │  │
 │  │  tiers)  │  │ (credit) │  │  Management  │  │
 │  └──────────┘  └──────────┘  └──────────────┘  │
@@ -248,7 +248,7 @@ The project context explicitly states data silos as the root cause of experience
 | Transaction | id, customer_id, items, total, channel, store_id, timestamp | OMS |
 | Product | sku, name, category, price, images, stock_levels | Commerce Core |
 | Order | id, customer_id, items, status, delivery_method, tracking | OMS |
-| Credit Account | customer_id, balance, limit, payment_history | Next Finance |
+| Credit Account | customer_id, balance, limit, payment_history | Dunelm Finance |
 | Consent | customer_id, purpose, status, timestamp, version | Consent Service |
 
 ---
@@ -285,13 +285,13 @@ The project context explicitly states data silos as the root cause of experience
 | POS | 99.99% | Stores cannot operate without POS |
 | Loyalty Service | 99.9% | Important but not revenue-blocking |
 | Total Platform | 99.95% | SLA with third-party brands |
-| Next Finance | 99.9% | Financial services requirement |
+| Dunelm Finance | 99.9% | Financial services requirement |
 
 ---
 
 ## 8. Total Platform Architecture [Confirmed concept, inferred detail]
 
-Total Platform is Next's infrastructure-as-a-service offering for third-party brands:
+Total Platform is Dunelm's infrastructure-as-a-service offering for third-party brands:
 
 ### 8.1 Multi-Tenancy Model
 
@@ -300,7 +300,7 @@ Total Platform is Next's infrastructure-as-a-service offering for third-party br
 │           TOTAL PLATFORM                     │
 │                                              │
 │  ┌─────────┐  ┌─────────┐  ┌─────────┐    │
-│  │  Next   │  │  Reiss  │  │ FatFace │... │
+│  │  Dunelm   │  │  Reiss  │  │ FatFace │... │
 │  │ (tenant)│  │ (tenant)│  │ (tenant)│    │
 │  └────┬────┘  └────┬────┘  └────┬────┘    │
 │       │             │             │          │
@@ -319,8 +319,8 @@ Total Platform is Next's infrastructure-as-a-service offering for third-party br
 ### 8.2 Loyalty Implications for Total Platform
 - Should customers earn loyalty points on third-party brand purchases? (design decision)
 - If yes: Total Platform checkout must call Loyalty API
-- Brand-specific earn rates possible (e.g., 1 point/£1 for Next, 0.5 points/£1 for third-party)
-- Customer identity must span Next own-brand and Total Platform brands
+- Brand-specific earn rates possible (e.g., 1 point/£1 for Dunelm, 0.5 points/£1 for third-party)
+- Customer identity must span Dunelm own-brand and Total Platform brands
 
 ---
 
@@ -386,9 +386,9 @@ The loyalty service is a **new bounded context** within Customer Core:
 | PECR | Marketing communications | Opt-in for promotional push/email/SMS |
 | Consumer Rights Act 2015 | Loyalty T&Cs | Fair terms, transparent points value |
 | PCI DSS | Payment card data | Tokenisation, SAQ compliance, no card data in loyalty system |
-| FCA (if Next Finance linked) | Credit-related loyalty incentives | Must not encourage irresponsible borrowing |
+| FCA (if Dunelm Finance linked) | Credit-related loyalty incentives | Must not encourage irresponsible borrowing |
 | Equality Act 2010 | Accessibility | WCAG 2.1 AA for all customer-facing interfaces |
-| Modern Slavery Act 2015 | Supply chain | Not directly relevant to loyalty but applies to Next overall |
+| Modern Slavery Act 2015 | Supply chain | Not directly relevant to loyalty but applies to Dunelm overall |
 
 ### 11.2 Data Retention Policy
 
@@ -437,7 +437,7 @@ This reveals a **two-speed architecture**:
 |-------|----------|----------|
 | Total Platform (third-party brands) | Modern, API-driven, multi-tenant | Supports Reiss, FatFace, Joules at scale |
 | Internal customer systems | Legacy, siloed, inconsistent | Data silos, no cross-channel recognition |
-| E-commerce (next.co.uk) | Mature, high-traffic | 60%+ of sales, millions of users |
+| E-commerce (Dunelm.co.uk) | Mature, high-traffic | 60%+ of sales, millions of users |
 | Store systems (POS) | Functional but disconnected | Cannot access online customer context |
 | Mobile app | Exists but underutilised | Customers default to mobile web |
 
@@ -447,16 +447,16 @@ This reveals a **two-speed architecture**:
 
 - **Digital Product** owns web/app but not store systems
 - **Retail Operations** owns stores but has no access to digital data
-- **Next Finance** operates independently with its own customer data
+- **Dunelm Finance** operates independently with its own customer data
 - **Total Platform** has modern infrastructure but serves external brands, not internal needs
 
-**Implication for loyalty:** The loyalty service must bridge these organisational boundaries. It cannot be owned by a single team — it touches Digital Product (app/web), Retail Operations (POS), Next Finance (credit), and Marketing (campaigns).
+**Implication for loyalty:** The loyalty service must bridge these organisational boundaries. It cannot be owned by a single team — it touches Digital Product (app/web), Retail Operations (POS), Dunelm Finance (credit), and Marketing (campaigns).
 
 ### 13.3 Legacy System Indicators
 
 | System | Legacy Signal | Impact |
 |--------|-------------|--------|
-| Next Directory | "Home shopping catalogue" — predates modern e-commerce | May have separate customer database, separate order system |
+| Dunelm Directory | "Home shopping catalogue" — predates modern e-commerce | May have separate customer database, separate order system |
 | POS | Store staff "lack tools to access customer context" | POS likely cannot call modern APIs without middleware |
 | Customer data | "Sit in separate systems" | No unified customer ID across all systems today |
 | Inventory | Separate from customer/transaction data | Real-time stock visibility may be limited |
@@ -518,7 +518,7 @@ Refund issued to original payment method
 | Method | Speed | Integration |
 |--------|-------|-------------|
 | Standard delivery | 3-5 days | Carrier API (Royal Mail/Evri) |
-| Next-day delivery | Next working day | Premium carrier API |
+| Dunelm-day delivery | Dunelm working day | Premium carrier API |
 | Same-day delivery | Same day (limited areas) | Local courier/gig economy API |
 | Click & Collect | 1-2 days to store | OMS → Store allocation |
 | Locker pickup | 1-2 days to locker | Locker network API (InPost/Amazon) |
@@ -540,7 +540,7 @@ Mobile app feature allowing customers to scan product barcodes in-store:
 | Wishlist | Website/app only | Store associates | Staff cannot see what customer saved online |
 | Browsing history | Website analytics | App, store associates | Not shared across channels |
 | Purchase history | Separate per channel (online vs POS) | All channels | No unified view |
-| Credit account | Next Finance system | Website, POS, loyalty | Isolated from other customer data |
+| Credit account | Dunelm Finance system | Website, POS, loyalty | Isolated from other customer data |
 | Loyalty status | Does not exist yet | All channels | NEW — the loyalty program creates this |
 | Communication preferences | Marketing CRM | All channels | May not be consistent |
 | Delivery preferences | Order system | Checkout, app | Not personalised across channels |
@@ -559,7 +559,7 @@ Mobile app feature allowing customers to scan product barcodes in-store:
 | Total Platform concept | ✅ Confirmed | Explicitly stated — leases infrastructure to third-party brands |
 | Channels (web, app, stores, C&C) | ✅ Confirmed | Explicitly stated in project context |
 | Internal teams | ✅ Confirmed | Explicitly stated in project context |
-| Technology stack specifics | ⚠️ Inferred | Based on standard patterns; Next does not publicly disclose |
+| Technology stack specifics | ⚠️ Inferred | Based on standard patterns; Dunelm does not publicly disclose |
 | Security patterns | ⚠️ Inferred | Standard for UK retail handling PII and payments |
 | Performance targets | ⚠️ Inferred | Industry standard for retail at this scale |
-| Regulatory landscape | ✅ Confirmed (regulations exist) | Application to Next inferred |
+| Regulatory landscape | ✅ Confirmed (regulations exist) | Application to Dunelm inferred |

@@ -48,12 +48,12 @@ export function VerifyOtpPage() {
         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">✓</span>
         </div>
-        <h1 className="font-display text-2xl font-bold mb-2">You're a Next loyalty member</h1>
+        <h1 className="font-display text-2xl font-bold mb-2">You're a Dunelm loyalty member</h1>
         <p className="text-sm text-neutral-600 mb-6">Welcome bonus: <strong>100 points</strong> added to your account</p>
 
         <div className="bg-neutral-50 border border-neutral-200 rounded-sm p-6 mb-6">
           <p className="font-display text-sm font-semibold text-primary-black mb-1">Clara M. · Member</p>
-          <p className="text-xs text-neutral-500 mb-4">Scan at any Next till to earn points</p>
+          <p className="text-xs text-neutral-500 mb-4">Scan at any Dunelm till to earn points</p>
           <div className="w-32 h-32 mx-auto bg-[repeating-linear-gradient(0deg,#e2e8f0_0px,#e2e8f0_3px,#fff_3px,#fff_6px),repeating-linear-gradient(90deg,#e2e8f0_0px,#e2e8f0_3px,#fff_3px,#fff_6px)] border-2 border-primary-black rounded" aria-label="QR code for loyalty identification" />
         </div>
 
@@ -64,7 +64,7 @@ export function VerifyOtpPage() {
 
         <Button fullWidth onClick={() => navigate('/home')}>Go to my loyalty dashboard</Button>
         <Button variant="secondary" fullWidth className="mt-3" onClick={() => alert('Save to wallet functionality coming soon')}>Save QR code to wallet</Button>
-        <p className="text-xs text-neutral-400 mt-4 text-center">Download the Next app for the full experience</p>
+        <p className="text-xs text-neutral-400 mt-4 text-center">Download the Dunelm app for the full experience</p>
       </div>
     );
   }

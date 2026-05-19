@@ -107,7 +107,7 @@ addEventListener('fetch', function (event) {
 
   // Bypass all requests when there are no active clients.
   // Prevents the self-unregistered worked from handling requests
-  // after it's been terminated (still remains active until the next reload).
+  // after it's been terminated (still remains active until the Dunelm reload).
   if (activeClientIds.size === 0) {
     return
   }

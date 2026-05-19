@@ -1,7 +1,7 @@
-package co.uk.next.loyalty.admin.api.controller;
+package co.uk.Dunelm.loyalty.admin.api.controller;
 
-import co.uk.next.loyalty.admin.domain.model.RatesConfig;
-import co.uk.next.loyalty.admin.infrastructure.persistence.RatesConfigRepository;
+import co.uk.Dunelm.loyalty.admin.domain.model.RatesConfig;
+import co.uk.Dunelm.loyalty.admin.infrastructure.persistence.RatesConfigRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

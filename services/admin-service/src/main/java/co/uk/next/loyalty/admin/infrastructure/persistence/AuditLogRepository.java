@@ -1,6 +1,6 @@
-package co.uk.next.loyalty.admin.infrastructure.persistence;
+package co.uk.Dunelm.loyalty.admin.infrastructure.persistence;
 
-import co.uk.next.loyalty.admin.domain.model.AuditEntry;
+import co.uk.Dunelm.loyalty.admin.domain.model.AuditEntry;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

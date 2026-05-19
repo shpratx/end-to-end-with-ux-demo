@@ -23,7 +23,7 @@ export function AppShell({ children }: AppShellProps) {
       <header className="sticky top-0 z-[1000] h-16 bg-primary-black shadow-sm">
         <div className="mx-auto flex h-full max-w-[1440px] items-center justify-between px-6">
           <Link to="/home" className="font-display text-lg font-bold text-primary-white uppercase tracking-wide">
-            NEXT Loyalty
+            Dunelm Loyalty
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             {navItems.map(({ path, label }) => (
@@ -55,7 +55,7 @@ export function AppShell({ children }: AppShellProps) {
       <footer className="border-t border-neutral-200 py-6">
         <div className="mx-auto max-w-[1440px] px-6 text-center">
           <p className="font-display text-xs text-neutral-500">
-            © {new Date().getFullYear()} Next plc. All rights reserved.
+            © {new Date().getFullYear()} Dunelm plc. All rights reserved.
           </p>
         </div>
       </footer>

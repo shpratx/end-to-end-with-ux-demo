@@ -1,8 +1,8 @@
-package uk.co.next.loyalty.application.query;
+package uk.co.Dunelm.loyalty.application.query;
 
 import org.springframework.stereotype.Service;
-import uk.co.next.loyalty.domain.model.Tier;
-import uk.co.next.loyalty.domain.port.TierRepository;
+import uk.co.Dunelm.loyalty.domain.model.Tier;
+import uk.co.Dunelm.loyalty.domain.port.TierRepository;
 
 import java.util.List;
 

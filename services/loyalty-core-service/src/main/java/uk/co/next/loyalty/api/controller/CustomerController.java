@@ -1,10 +1,10 @@
-package uk.co.next.loyalty.api.controller;
+package uk.co.Dunelm.loyalty.api.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.co.next.loyalty.application.query.GetCustomerDashboardQuery;
-import uk.co.next.loyalty.application.query.GetCustomerQrCodeQuery;
-import uk.co.next.loyalty.application.query.IdentifyCustomerQuery;
+import uk.co.Dunelm.loyalty.application.query.GetCustomerDashboardQuery;
+import uk.co.Dunelm.loyalty.application.query.GetCustomerQrCodeQuery;
+import uk.co.Dunelm.loyalty.application.query.IdentifyCustomerQuery;
 
 import java.util.UUID;
 

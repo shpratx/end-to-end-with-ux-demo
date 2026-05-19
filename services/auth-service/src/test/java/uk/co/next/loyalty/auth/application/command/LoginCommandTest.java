@@ -1,4 +1,4 @@
-package uk.co.next.loyalty.auth.application.command;
+package uk.co.Dunelm.loyalty.auth.application.command;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,12 +6,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import uk.co.next.loyalty.auth.application.dto.AuthTokenResponse;
-import uk.co.next.loyalty.auth.application.dto.LoginRequest;
-import uk.co.next.loyalty.auth.domain.model.Customer;
-import uk.co.next.loyalty.auth.domain.port.CustomerRepository;
-import uk.co.next.loyalty.auth.domain.port.TokenRepository;
-import uk.co.next.loyalty.auth.infrastructure.config.JwtService;
+import uk.co.Dunelm.loyalty.auth.application.dto.AuthTokenResponse;
+import uk.co.Dunelm.loyalty.auth.application.dto.LoginRequest;
+import uk.co.Dunelm.loyalty.auth.domain.model.Customer;
+import uk.co.Dunelm.loyalty.auth.domain.port.CustomerRepository;
+import uk.co.Dunelm.loyalty.auth.domain.port.TokenRepository;
+import uk.co.Dunelm.loyalty.auth.infrastructure.config.JwtService;
 
 import java.util.Optional;
 import java.util.UUID;

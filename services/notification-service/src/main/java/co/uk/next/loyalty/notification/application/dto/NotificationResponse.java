@@ -1,6 +1,6 @@
-package co.uk.next.loyalty.notification.application.dto;
+package co.uk.Dunelm.loyalty.notification.application.dto;
 
-import co.uk.next.loyalty.notification.domain.model.Notification;
+import co.uk.Dunelm.loyalty.notification.domain.model.Notification;
 import java.time.Instant;
 import java.util.UUID;
 

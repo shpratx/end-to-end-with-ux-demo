@@ -9,11 +9,11 @@
         <version>3.3.0</version>
         <relativePath/>
     </parent>
-    <groupId>co.uk.next.loyalty</groupId>
+    <groupId>co.uk.Dunelm.loyalty</groupId>
     <artifactId>admin-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>admin-service</name>
-    <description>Next Loyalty Admin Service</description>
+    <description>Dunelm Loyalty Admin Service</description>
     <properties>
         <java.version>21</java.version>
     </properties>

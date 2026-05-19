@@ -1,11 +1,11 @@
-package uk.co.next.loyalty.auth.application.command;
+package uk.co.Dunelm.loyalty.auth.application.command;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uk.co.next.loyalty.auth.domain.model.OtpCode;
-import uk.co.next.loyalty.auth.domain.port.CustomerRepository;
-import uk.co.next.loyalty.auth.domain.port.OtpRepository;
+import uk.co.Dunelm.loyalty.auth.domain.model.OtpCode;
+import uk.co.Dunelm.loyalty.auth.domain.port.CustomerRepository;
+import uk.co.Dunelm.loyalty.auth.domain.port.OtpRepository;
 
 import java.security.SecureRandom;
 import java.time.Instant;
@@ -38,7 +38,7 @@ public class ResendOtpCommand {
             throw new IllegalStateException("RATE_LIMIT_EXCEEDED");
         }
 
-        String otpPlain = String.format("%06d", secureRandom.nextInt(1_000_000));
+        String otpPlain = String.format("%06d", secureRandom.DunelmInt(1_000_000));
         otpRepository.save(new OtpCode(
                 customerId, passwordEncoder.encode(otpPlain),
                 OtpCode.OtpPurpose.REGISTRATION,
@@ -47,7 +47,7 @@ public class ResendOtpCommand {
 
         return Map.of(
                 "sent", true,
-                "nextResendAt", Instant.now().plusSeconds(60).toString()
+                "DunelmResendAt", Instant.now().plusSeconds(60).toString()
         );
     }
 }
