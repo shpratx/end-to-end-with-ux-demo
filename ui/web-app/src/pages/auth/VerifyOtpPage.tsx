@@ -91,7 +91,7 @@ export function VerifyOtpPage() {
               value={digit}
               onChange={(e) => handleChange(i, e.target.value)}
               onKeyDown={(e) => handleKeyDown(i, e)}
-              className="w-12 h-14 text-center text-xl font-bold border border-neutral-200 rounded focus:border-[#007A7A] focus:outline-none focus:ring-2 focus:ring-[#007A7A]/20"
+              className="w-12 h-14 text-center text-xl font-bold border border-neutral-200 rounded focus:border-[#0A8A00] focus:outline-none focus:ring-2 focus:ring-[#0A8A00]/20"
               aria-label={`Digit ${i + 1}`}
             />
           ))}
@@ -106,7 +106,7 @@ export function VerifyOtpPage() {
         {countdown > 0 ? (
           <p className="text-sm text-neutral-400">Resend code in {countdown}s</p>
         ) : (
-          <button className="font-display text-sm text-[#007A7A] underline" onClick={() => setCountdown(60)}>Resend code</button>
+          <button className="font-display text-sm text-[#0A8A00] underline" onClick={() => setCountdown(60)}>Resend code</button>
         )}
       </div>
     </div>

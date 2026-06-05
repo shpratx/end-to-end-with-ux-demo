@@ -35,7 +35,7 @@ export function Toast({ message, variant = 'info', onDismiss, autoDismissMs }: T
     <div
       role="alert"
       aria-live="assertive"
-      className={`fixed bottom-6 right-6 z-[9000] max-w-[400px] rounded-lg p-4 shadow-lg text-primary-white text-sm flex items-center gap-3 animate-[slideUp_200ms_ease] ${variantStyles[variant]}`}
+      className={`fixed bottom-20 left-1/2 -translate-x-1/2 z-[9000] w-[88%] max-w-[380px] rounded-md p-4 shadow-lg text-white text-sm flex items-center gap-3 animate-[slideUp_200ms_ease] ${variantStyles[variant]}`}
     >
       <span className="flex-1">{message}</span>
       <button

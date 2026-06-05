@@ -10,8 +10,8 @@ export function ConfirmationPage() {
       <h1 className="font-display text-2xl font-bold mb-1">Order confirmed</h1>
       <p className="text-sm text-neutral-500 mb-6">Order #NXT-2026-04821</p>
 
-      <div className="bg-[#007A7A]/5 border border-[#007A7A]/20 rounded-sm p-4 mb-6 text-center">
-        <p className="font-display text-sm font-bold text-[#007A7A]">★ 505 points earned!</p>
+      <div className="bg-[#0A8A00]/5 border border-[#0A8A00]/20 rounded-sm p-4 mb-6 text-center">
+        <p className="font-display text-sm font-bold text-[#0A8A00]">★ 505 points earned!</p>
         <p className="text-xs text-neutral-600 mt-1">Worth £5.05 · Your balance: 605 pts</p>
       </div>
 
@@ -22,7 +22,7 @@ export function ConfirmationPage() {
       </div>
 
       <Link to="/home"><Button fullWidth>View my loyalty dashboard</Button></Link>
-      <Link to="/" className="block mt-3 font-display text-sm text-[#007A7A] underline">Continue shopping</Link>
+      <Link to="/" className="block mt-3 font-display text-sm text-[#0A8A00] underline">Continue shopping</Link>
     </div>
   );
 }

@@ -15,13 +15,13 @@ export function PaymentPage() {
   if (showEnrolment) {
     return (
       <div className="mx-auto max-w-[640px] py-12 px-4">
-        <button onClick={() => setShowEnrolment(false)} className="font-display text-sm text-[#007A7A] mb-6">← Back to payment</button>
+        <button onClick={() => setShowEnrolment(false)} className="font-display text-sm text-[#0A8A00] mb-6">← Back to payment</button>
         <h1 className="font-display text-xl font-bold mb-4">Join Dunelm Loyalty</h1>
         <div className="bg-neutral-50 border border-neutral-200 rounded-sm p-4 mb-4">
           <p className="text-xs text-neutral-600 leading-relaxed">We track purchases to give you rewards. We do not use data to restrict your account.</p>
           <div className="mt-3 flex flex-col gap-2">
-            <label className="flex items-start gap-2 text-xs text-neutral-600"><input type="checkbox" className="mt-0.5 accent-[#007A7A]" /> I understand</label>
-            <label className="flex items-start gap-2 text-xs text-neutral-600"><input type="checkbox" className="mt-0.5 accent-[#007A7A]" /> Send me offers (optional)</label>
+            <label className="flex items-start gap-2 text-xs text-neutral-600"><input type="checkbox" className="mt-0.5 accent-[#0A8A00]" /> I understand</label>
+            <label className="flex items-start gap-2 text-xs text-neutral-600"><input type="checkbox" className="mt-0.5 accent-[#0A8A00]" /> Send me offers (optional)</label>
           </div>
         </div>
         <Input label="Email address" defaultValue="clara@example.com" />
@@ -35,7 +35,7 @@ export function PaymentPage() {
 
   return (
     <div className="mx-auto max-w-[640px] py-12 px-4">
-      <Link to="/checkout/basket" className="font-display text-sm text-[#007A7A] mb-6 block">← Back to basket</Link>
+      <Link to="/checkout/basket" className="font-display text-sm text-[#0A8A00] mb-6 block">← Back to basket</Link>
       <h1 className="font-display text-xl font-bold mb-2">Payment</h1>
       <p className="text-sm text-neutral-500 mb-6">Order total: £{orderTotal.toFixed(2)}</p>
 
@@ -46,10 +46,10 @@ export function PaymentPage() {
       </div>
 
       {!isAuthenticated && !dismissed && (
-        <div className="bg-[#007A7A]/5 border border-[#007A7A]/20 rounded-sm p-4 mt-6">
-          <p className="font-display text-sm font-bold text-[#007A7A]">★ You'd earn {pointsEarnable} points (worth £{(pointsEarnable / 100).toFixed(2)}) on this order</p>
+        <div className="bg-[#0A8A00]/5 border border-[#0A8A00]/20 rounded-sm p-4 mt-6">
+          <p className="font-display text-sm font-bold text-[#0A8A00]">★ You'd earn {pointsEarnable} points (worth £{(pointsEarnable / 100).toFixed(2)}) on this order</p>
           <div className="flex gap-2 mt-3">
-            <button onClick={() => setShowEnrolment(true)} className="flex-1 bg-[#007A7A] text-white border-none rounded py-2 text-xs font-bold cursor-pointer">Join Now</button>
+            <button onClick={() => setShowEnrolment(true)} className="flex-1 bg-[#0A8A00] text-white border-none rounded py-2 text-xs font-bold cursor-pointer">Join Now</button>
             <button className="flex-1 bg-white text-neutral-500 border border-neutral-200 rounded py-2 text-xs cursor-pointer" onClick={() => setDismissed(true)}>Skip</button>
           </div>
         </div>

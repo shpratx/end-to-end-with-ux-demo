@@ -2,9 +2,110 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Dunelm design tokens ─────────────────────────────────────────── */
+:root {
+  --green-action: #0A8A00;
+  --green-action-hover: #067006;
+  --green-link: #0A7A0A;
+  --green-forest: #023F2F;
+  --green-forest-deep: #012A20;
+  --bg-page: #FFFFFF;
+  --bg-surface: #FFFFFF;
+  --bg-surface-alt: #F6F6F3;
+  --text-primary: #1C1C1A;
+  --text-secondary: #5A5A55;
+  --text-dim: #8C8C86;
+  --border-light: #E2E2DD;
+  --border-input: #C9C9C3;
+  --sale-red: #D8232A;
+  --error: #C62828;
+}
+
+html, body {
+  background: #d4d4cd;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+}
+
+/* ─── Mobile-frame: make the browser look like a phone ──────────────── */
+/* On wider screens, centre the app inside a phone-shaped frame so the
+   wireframes read as the mobile UI they were designed for. Below 480px,
+   the frame disappears and the app fills the viewport.                  */
+@media (min-width: 480px) {
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0;
+    background:
+      radial-gradient(1200px 600px at 50% 0%, #e7e8e2 0%, #d4d4cd 60%, #c5c6c0 100%);
+  }
+
+  #root {
+    width: 420px;
+    height: min(900px, calc(100vh - 48px));
+    background: var(--bg-page);
+    border-radius: 44px;
+    box-shadow:
+      0 0 0 10px #1c1c1a,
+      0 0 0 12px #2a2a28,
+      0 30px 60px rgba(2, 42, 32, 0.35),
+      0 12px 24px rgba(2, 42, 32, 0.25);
+    overflow: hidden;
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* Phone notch */
+  #root::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 28px;
+    background: #1c1c1a;
+    border-radius: 0 0 18px 18px;
+    z-index: 2000;
+    pointer-events: none;
+  }
+
+  /* Mock status-bar time */
+  #root::after {
+    content: '9:41';
+    position: absolute;
+    top: 6px;
+    left: 28px;
+    color: #ffffff;
+    font: 600 13px/1 'Inter', sans-serif;
+    z-index: 2001;
+    pointer-events: none;
+  }
+
+  #root > * {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #root > *::-webkit-scrollbar { width: 0; background: transparent; }
+}
+
+@media (max-width: 479px) {
+  body { background: var(--bg-page); }
+}
+
 @layer base {
   *:focus-visible {
-    outline: 2px solid #007A7A;
+    outline: 2px solid var(--green-action);
     outline-offset: 2px;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Lora', Georgia, 'Times New Roman', serif;
   }
 }

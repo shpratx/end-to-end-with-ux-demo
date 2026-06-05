@@ -13,7 +13,7 @@ export function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Points Balance Hero */}
-      <section className="bg-gradient-to-br from-primary-black to-[#1e3a6e] rounded-sm p-8 text-center text-white" aria-label="Points balance">
+      <section className="bg-gradient-to-br from-primary-black to-[#012A20] rounded-sm p-8 text-center text-white" aria-label="Points balance">
         <p className="text-xs uppercase tracking-wide text-neutral-300 mb-1">Your Points Balance</p>
         <p className="font-display text-5xl font-bold" data-testid="points-balance">
           {balance.availablePoints.toLocaleString()}
@@ -26,7 +26,7 @@ export function DashboardPage() {
         {DunelmTierProgress && (
           <div className="mt-4">
             <div className="w-full bg-white/15 rounded-full h-1.5">
-              <div className="bg-[#007A7A] h-1.5 rounded-full transition-all" style={{ width: `${DunelmTierProgress.progressPercent}%` }} />
+              <div className="bg-[#0A8A00] h-1.5 rounded-full transition-all" style={{ width: `${DunelmTierProgress.progressPercent}%` }} />
             </div>
             <p className="text-xs text-neutral-400 mt-2">
               {(DunelmTierProgress.pointsRequired - DunelmTierProgress.pointsEarned).toLocaleString()} pts to {DunelmTierProgress.DunelmTierName} · {DunelmTierProgress.DunelmTierName === 'Silver' ? 'Early Sale Access' : 'Extended Sale Access'}
@@ -36,7 +36,7 @@ export function DashboardPage() {
       </section>
 
       {/* Scan at Till CTA */}
-      <Link to="/qr" className="flex items-center justify-center gap-2 bg-[#007A7A] text-white rounded-sm py-3 font-display text-sm font-semibold hover:bg-[#006565] transition-colors" aria-label="Show QR code to scan at till">
+      <Link to="/qr" className="flex items-center justify-center gap-2 bg-[#0A8A00] text-white rounded-sm py-3 font-display text-sm font-semibold hover:bg-[#067006] transition-colors" aria-label="Show QR code to scan at till">
         <span className="w-5 h-5 bg-white/20 rounded flex items-center justify-center text-xs">▣</span>
         Scan at till
       </Link>
@@ -52,7 +52,7 @@ export function DashboardPage() {
                   <p className="font-display text-sm text-primary-black">{tx.description ?? tx.type}</p>
                   <p className="text-xs text-neutral-400">{new Date(tx.createdAt).toLocaleDateString()}</p>
                 </div>
-                <p className={`font-display text-sm font-bold ${tx.points > 0 ? 'text-[#1A7A4A]' : 'text-red-600'}`}>
+                <p className={`font-display text-sm font-bold ${tx.points > 0 ? 'text-[#0A7A0A]' : 'text-red-600'}`}>
                   {tx.points > 0 ? '+' : ''}{tx.points} pts
                 </p>
               </div>
@@ -61,7 +61,7 @@ export function DashboardPage() {
         ) : (
           <p className="text-sm text-neutral-400">Your Dunelm purchase will appear here</p>
         )}
-        <Link to="/history" className="block mt-3 font-display text-sm text-[#007A7A] underline">View all activity</Link>
+        <Link to="/history" className="block mt-3 font-display text-sm text-[#0A8A00] underline">View all activity</Link>
       </section>
 
       {/* Rewards Available */}
@@ -79,7 +79,7 @@ export function DashboardPage() {
         <section aria-label="Active promotions">
           <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-neutral-500 mb-3">Promotions</h2>
           {activePromotions.map((promo) => (
-            <div key={promo.id} className="bg-[#FF6A3B]/10 border border-[#FF6A3B]/30 rounded-sm p-4">
+            <div key={promo.id} className="bg-[#D8232A]/10 border border-[#D8232A]/30 rounded-sm p-4">
               <p className="font-display text-sm font-bold text-primary-black">{promo.name}</p>
               <p className="text-xs text-neutral-600 mt-1">{promo.description}</p>
             </div>

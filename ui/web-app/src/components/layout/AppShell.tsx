@@ -7,11 +7,11 @@ interface AppShellProps {
 }
 
 const navItems = [
-  { path: '/home', label: 'Home' },
-  { path: '/history', label: 'History' },
-  { path: '/qr', label: 'QR Code' },
-  { path: '/notifications', label: 'Notifications' },
-  { path: '/profile', label: 'Profile' },
+  { path: '/home', label: 'Home', icon: '⌂' },
+  { path: '/history', label: 'History', icon: '◷' },
+  { path: '/qr', label: 'QR', icon: '▣' },
+  { path: '/notifications', label: 'Inbox', icon: '✉' },
+  { path: '/profile', label: 'Profile', icon: '◌' },
 ];
 
 export function AppShell({ children }: AppShellProps) {
@@ -19,46 +19,58 @@ export function AppShell({ children }: AppShellProps) {
   const user = useAuthStore((s) => s.user);
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-[1000] h-16 bg-primary-black shadow-sm">
-        <div className="mx-auto flex h-full max-w-[1440px] items-center justify-between px-6">
-          <Link to="/home" className="font-display text-lg font-bold text-primary-white uppercase tracking-wide">
-            Dunelm Loyalty
+    <div className="flex h-full flex-col bg-dunelm-page">
+      {/* Forest-green app header (Dunelm brand) */}
+      <header className="sticky top-0 z-[900] bg-dunelm-forest pt-8 pb-3 px-5 shadow-sm">
+        <div className="flex items-center justify-between">
+          <Link
+            to="/home"
+            className="font-display text-xl font-bold text-white tracking-tight"
+          >
+            Dunelm
           </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            {navItems.map(({ path, label }) => (
-              <Link
-                key={path}
-                to={path}
-                className={`font-display text-sm font-medium uppercase tracking-wide transition-colors min-h-[44px] flex items-center ${
-                  location.pathname === path
-                    ? 'text-primary-white border-b-2 border-accent-teal'
-                    : 'text-neutral-300 hover:text-primary-white'
-                }`}
-              >
-                {label}
-              </Link>
-            ))}
-          </nav>
           {user && (
-            <span className="font-display text-sm text-neutral-300 hidden lg:block">
-              {user.name}
+            <span className="font-serif text-xs text-white/75">
+              Hi, {user.name.split(' ')[0]}
             </span>
           )}
         </div>
       </header>
 
-      <main className="flex-1 mx-auto w-full max-w-[1440px] px-4 py-8 md:px-6">
+      {/* Main scrollable content area */}
+      <main className="flex-1 w-full px-5 pt-5 pb-24 overflow-y-auto">
         {children}
       </main>
 
-      <footer className="border-t border-neutral-200 py-6">
-        <div className="mx-auto max-w-[1440px] px-6 text-center">
-          <p className="font-display text-xs text-neutral-500">
-            © {new Date().getFullYear()} Dunelm plc. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      {/* Bottom tab navigation (mobile) */}
+      <nav
+        className="absolute bottom-0 left-0 right-0 h-16 bg-white border-t border-neutral-200 z-[900] flex justify-around items-center"
+        aria-label="Primary"
+      >
+        {navItems.map(({ path, label, icon }) => {
+          const active = location.pathname === path;
+          return (
+            <Link
+              key={path}
+              to={path}
+              className={`relative flex flex-col items-center gap-0.5 min-w-[44px] py-1 font-serif text-[11px] font-medium ${
+                active ? 'text-dunelm-action' : 'text-neutral-600'
+              }`}
+            >
+              {active && (
+                <span
+                  aria-hidden
+                  className="absolute -top-2 w-6 h-[3px] rounded-b-[3px] bg-dunelm-action"
+                />
+              )}
+              <span className="text-[18px] leading-none" aria-hidden>
+                {icon}
+              </span>
+              <span>{label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 }

@@ -38,22 +38,22 @@ export function RegisterPage() {
     return (
       <div className="mx-auto max-w-[640px] py-12 px-4">
         <div className="bg-primary-black rounded-sm p-8 text-white mb-8">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#007A7A] mb-2">Dunelm Loyalty</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#0A8A00] mb-2">Dunelm Loyalty</p>
           <h1 className="font-display text-3xl font-bold mb-2">Earn rewards every time you shop</h1>
           <p className="text-sm text-neutral-300">No credit account needed. Open to every Dunelm customer.</p>
         </div>
 
         <div className="flex flex-col gap-4 mb-8">
           <div className="flex items-start gap-3">
-            <span className="w-8 h-8 bg-[#007A7A]/10 rounded flex items-center justify-center text-[#007A7A] font-bold text-sm">★</span>
+            <span className="w-8 h-8 bg-[#0A8A00]/10 rounded flex items-center justify-center text-[#0A8A00] font-bold text-sm">★</span>
             <div><p className="font-display text-sm font-semibold text-primary-black">Earn points</p><p className="text-sm text-neutral-500">on every purchase — online, in-store, Click &amp; Collect</p></div>
           </div>
           <div className="flex items-start gap-3">
-            <span className="w-8 h-8 bg-[#007A7A]/10 rounded flex items-center justify-center text-[#007A7A] font-bold text-sm">⚡</span>
+            <span className="w-8 h-8 bg-[#0A8A00]/10 rounded flex items-center justify-center text-[#0A8A00] font-bold text-sm">⚡</span>
             <div><p className="font-display text-sm font-semibold text-primary-black">Early sale access</p><p className="text-sm text-neutral-500">earn your way into the Dunelm Sale before anyone else</p></div>
           </div>
           <div className="flex items-start gap-3">
-            <span className="w-8 h-8 bg-[#007A7A]/10 rounded flex items-center justify-center text-[#007A7A] font-bold text-sm">✓</span>
+            <span className="w-8 h-8 bg-[#0A8A00]/10 rounded flex items-center justify-center text-[#0A8A00] font-bold text-sm">✓</span>
             <div><p className="font-display text-sm font-semibold text-primary-black">In-store recognition</p><p className="text-sm text-neutral-500">your loyalty shows at the till</p></div>
           </div>
         </div>
@@ -69,7 +69,7 @@ export function RegisterPage() {
   if (step === 'overview') {
     return (
       <div className="mx-auto max-w-[640px] py-12 px-4">
-        <button onClick={() => setStep('landing')} className="font-display text-sm text-[#007A7A] mb-6" aria-label="Go back">← Back</button>
+        <button onClick={() => setStep('landing')} className="font-display text-sm text-[#0A8A00] mb-6" aria-label="Go back">← Back</button>
         <h1 className="font-display text-2xl font-bold mb-6">How it works</h1>
 
         <div className="bg-neutral-50 rounded-sm p-6 mb-6">
@@ -100,7 +100,7 @@ export function RegisterPage() {
   if (step === 'privacy') {
     return (
       <div className="mx-auto max-w-[640px] py-12 px-4">
-        <button onClick={() => setStep('overview')} className="font-display text-sm text-[#007A7A] mb-6" aria-label="Go back">← Back</button>
+        <button onClick={() => setStep('overview')} className="font-display text-sm text-[#0A8A00] mb-6" aria-label="Go back">← Back</button>
         <h1 className="font-display text-2xl font-bold mb-2">Your data &amp; privacy</h1>
         <p className="text-sm text-neutral-600 mb-6">How we use your loyalty data</p>
 
@@ -131,7 +131,7 @@ export function RegisterPage() {
   // Screen 4.0: Enrolment Form
   return (
     <div className="mx-auto max-w-[640px] py-12 px-4">
-      <button onClick={() => setStep('privacy')} className="font-display text-sm text-[#007A7A] mb-6" aria-label="Go back">← Back</button>
+      <button onClick={() => setStep('privacy')} className="font-display text-sm text-[#0A8A00] mb-6" aria-label="Go back">← Back</button>
       <h1 className="font-display text-2xl font-bold mb-6">Create your account</h1>
 
       {error && (
@@ -146,17 +146,17 @@ export function RegisterPage() {
         </div>
         <Input label="Create a password" type="password" placeholder="Min. 8 characters" {...field('password')} required error={errors.password?.message} />
         <p className="text-center text-xs text-neutral-400 my-2">— Or —</p>
-        <p className="text-xs text-neutral-500 text-center">continue with a <span className="text-[#007A7A] font-semibold">magic link</span> — we'll email you a sign-in link instead</p>
+        <p className="text-xs text-neutral-500 text-center">continue with a <span className="text-[#0A8A00] font-semibold">magic link</span> — we'll email you a sign-in link instead</p>
 
         <div className="border-t border-neutral-200 pt-4 mt-2">
           <div className="flex items-start gap-2 mb-3">
-            <input type="checkbox" id="dataConsent" {...field('dataConsent')} className="mt-1 w-4 h-4 accent-[#007A7A]" />
+            <input type="checkbox" id="dataConsent" {...field('dataConsent')} className="mt-1 w-4 h-4 accent-[#0A8A00]" />
             <label htmlFor="dataConsent" className="text-xs text-neutral-600">I understand how Dunelm will use my loyalty data</label>
           </div>
           {errors.dataConsent && <p className="text-xs text-red-600 mb-2">{errors.dataConsent.message}</p>}
 
           <div className="flex items-start gap-2">
-            <input type="checkbox" id="marketingConsent" {...field('marketingConsent')} className="mt-1 w-4 h-4 accent-[#007A7A]" />
+            <input type="checkbox" id="marketingConsent" {...field('marketingConsent')} className="mt-1 w-4 h-4 accent-[#0A8A00]" />
             <label htmlFor="marketingConsent" className="text-xs text-neutral-600">I'd like to receive personalised sale and offer emails (optional)</label>
           </div>
         </div>

@@ -13,8 +13,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const helperId = `${inputId}-helper`;
 
     return (
-      <div className="flex flex-col gap-1">
-        <label htmlFor={inputId} className="font-display text-sm font-medium text-primary-black">
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor={inputId} className="font-serif text-sm font-semibold text-neutral-700">
           {label}
           {props.required && <span className="text-error ml-1">*</span>}
         </label>
@@ -24,21 +24,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           aria-invalid={!!error}
           aria-describedby={error ? errorId : helperText ? helperId : undefined}
           className={[
-            'h-[48px] rounded-md border px-4 py-3 font-serif text-md text-primary-black placeholder:text-neutral-400 transition-colors',
-            'focus:border-accent-teal focus:shadow-xs',
+            'h-[48px] rounded-sm border-[1.5px] px-4 py-3 font-serif text-md text-neutral-700 placeholder:text-neutral-400 transition-colors bg-white',
+            'focus:border-dunelm-action focus:outline-none focus:ring-[3px] focus:ring-[#0A8A00]/15',
             'disabled:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed',
-            error ? 'border-error' : 'border-neutral-200 hover:border-neutral-400',
+            error ? 'border-error' : 'border-neutral-300 hover:border-neutral-400',
             className,
           ].join(' ')}
           {...props}
         />
         {error && (
-          <p id={errorId} className="text-sm text-error" role="alert">
+          <p id={errorId} className="text-xs text-error" role="alert">
             {error}
           </p>
         )}
         {!error && helperText && (
-          <p id={helperId} className="text-sm text-neutral-500">
+          <p id={helperId} className="text-xs text-neutral-500">
             {helperText}
           </p>
         )}

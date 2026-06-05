@@ -12,21 +12,21 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<Variant, string> = {
   primary:
-    'bg-primary-black text-primary-white hover:bg-neutral-700 active:bg-neutral-900 disabled:bg-neutral-100 disabled:text-neutral-400',
+    'bg-dunelm-action text-white hover:bg-dunelm-action-hover active:bg-[#045200] disabled:bg-[#BFD9BC] disabled:text-white',
   secondary:
-    'bg-primary-white text-primary-black border border-primary-black hover:bg-neutral-50 active:bg-neutral-100 disabled:bg-neutral-100 disabled:text-neutral-400',
+    'bg-white text-neutral-700 border-[1.5px] border-neutral-300 hover:border-neutral-700 active:bg-neutral-50 disabled:opacity-50',
   ghost:
-    'bg-transparent text-accent-teal hover:bg-neutral-50 hover:underline disabled:text-neutral-400',
+    'bg-transparent text-dunelm-link hover:underline disabled:text-neutral-400',
   promo:
-    'bg-accent-orange text-primary-white hover:opacity-90 active:opacity-80 disabled:opacity-40',
+    'bg-dunelm-sale text-white hover:bg-dunelm-sale-dark active:opacity-90 disabled:opacity-40',
   danger:
-    'bg-error text-primary-white hover:opacity-90 active:opacity-80 disabled:opacity-40',
+    'bg-error text-white hover:opacity-90 active:opacity-80 disabled:opacity-40',
 };
 
 const sizeStyles: Record<Size, string> = {
-  sm: 'h-[32px] px-3 text-xs',
+  sm: 'h-[36px] px-4 text-xs',
   md: 'h-[44px] px-5 text-sm',
-  lg: 'h-[52px] px-6 text-md',
+  lg: 'h-[52px] px-7 text-md',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -35,7 +35,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ref={ref}
       disabled={disabled || loading}
       className={[
-        'inline-flex items-center justify-center gap-2 rounded-md font-display font-semibold uppercase tracking-normal transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-40',
+        'inline-flex items-center justify-center gap-2 rounded-full font-serif font-semibold tracking-normal transition-colors cursor-pointer disabled:cursor-not-allowed',
         variantStyles[variant],
         sizeStyles[size],
         fullWidth ? 'w-full' : '',

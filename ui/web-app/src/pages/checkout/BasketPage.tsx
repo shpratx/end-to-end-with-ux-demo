@@ -27,7 +27,7 @@ export function BasketPage() {
 
       <div className="flex flex-col gap-1 text-sm mb-2">
         <div className="flex justify-between"><span>Subtotal</span><span>£{subtotal.toFixed(2)}</span></div>
-        <div className="flex justify-between text-[#1A7A4A]"><span>Delivery (Click & Collect)</span><span>FREE</span></div>
+        <div className="flex justify-between text-[#0A7A0A]"><span>Delivery (Click & Collect)</span><span>FREE</span></div>
       </div>
       <div className="border-t border-neutral-200 pt-2 mb-6">
         <div className="flex justify-between font-display text-base font-bold"><span>Total</span><span>£{subtotal.toFixed(2)}</span></div>
